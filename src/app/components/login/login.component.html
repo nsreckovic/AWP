@@ -1,0 +1,29 @@
+<h1>Log In</h1>
+
+<!-- <div
+  class="alert alert-danger alert-dismissible fade show"
+  role="alert"
+  *ngIf="error"
+>
+  {{ error_message }}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div> -->
+
+<form [formGroup]="loginForm" (ngSubmit)="submitForm(loginForm.value)">
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input type="text" class="form-control" formControlName="username" [class.is-invalid]="username.errors" />
+    <div *ngIf="username.errors?.required" class="invalid-feedback">Username is required.</div>
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" class="form-control" formControlName="password" [class.is-invalid]="password.errors" />
+    <div *ngIf="password.errors?.required" class="invalid-feedback">Password is required.</div>
+    <div *ngIf="password.errors?.minlength" class="invalid-feedback">Password must be at least 4 characters long.</div>
+  </div>
+  <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">
+    Log In
+  </button>
+</form>
