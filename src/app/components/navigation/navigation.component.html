@@ -22,11 +22,14 @@
         </li>
       </ul>
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/login" *ngIf="!authService.isUserLoggedIn()">Login</a>
+        <li class="nav-item" *ngIf="authService.isUserLoggedIn()">
+          <span class="navbar-text">{{ authService.getLoggedInUser() }}</span>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/logout" *ngIf="authService.isUserLoggedIn()">Logout</a>
+          <a class="nav-link" routerLink="/login" *ngIf="!authService.isUserLoggedIn()">Log In</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/logout" *ngIf="authService.isUserLoggedIn()">Log Out</a>
         </li>
       </ul>
     </div>

@@ -1,28 +1,42 @@
 <h1>Log In</h1>
 
-<!-- <div
-  class="alert alert-danger alert-dismissible fade show"
-  role="alert"
-  *ngIf="error"
->
+<!-- Error message -->
+<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" *ngIf="error">
   {{ error_message }}
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
-</div> -->
+</div>
 
+<!-- LogIn form -->
 <form [formGroup]="loginForm" (ngSubmit)="submitForm(loginForm.value)">
+
+  <!-- Username -->
   <div class="form-group">
     <label for="username">Username</label>
-    <input type="text" class="form-control" formControlName="username" [class.is-invalid]="username.errors" />
+    <input type="text" class="form-control" formControlName="username" [class.is-invalid]="username.errors" placeholder="Enter email here." />
     <div *ngIf="username.errors?.required" class="invalid-feedback">Username is required.</div>
+    <div *ngIf="username.errors?.minlength" class="invalid-feedback">Username must be at least 4 characters long.</div>
   </div>
+
+  <!-- Password -->
   <div class="form-group">
     <label for="password">Password</label>
-    <input type="password" class="form-control" formControlName="password" [class.is-invalid]="password.errors" />
+    <input type="password" class="form-control" formControlName="password" [class.is-invalid]="password.errors" placeholder="Enter password here." />
     <div *ngIf="password.errors?.required" class="invalid-feedback">Password is required.</div>
     <div *ngIf="password.errors?.minlength" class="invalid-feedback">Password must be at least 4 characters long.</div>
   </div>
+
+  <!-- JWT Token duration -->
+  <div class="form-group">
+    <label for="JWT Duration">JWT Duration</label>
+    <input type="number" class="form-control" formControlName="jwtDuration" [class.is-invalid]="jwtDuration.errors" placeholder="Enter JWT Token duration (in seconds) here." min="1" />
+    <div *ngIf="jwtDuration.errors?.required" class="invalid-feedback">JWT Duration is required.</div>
+    <div *ngIf="jwtDuration.errors?.pattern" class="invalid-feedback">JWT Duration must be a number.</div>
+    <div *ngIf="jwtDuration.errors?.min" class="invalid-feedback">JWT Duration must be at least 1 seccond.</div>
+  </div>
+
+  <!-- LogIn button -->
   <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">
     Log In
   </button>

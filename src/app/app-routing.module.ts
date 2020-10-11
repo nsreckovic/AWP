@@ -8,7 +8,7 @@ import { RouteGuardService } from './service/routes/route-guard.service';
 import { UsersComponent } from './components/users/users.component';
 
 const routes: Routes = [
-  { path: '', component: UsersComponent },
+  { path: '', component: UsersComponent, canActivate: [RouteGuardService] },
   { path: 'users', component: UsersComponent, canActivate: [RouteGuardService] },
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent, canActivate: [RouteGuardService] },

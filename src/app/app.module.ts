@@ -11,6 +11,7 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { UsersComponent } from './components/users/users.component';
 import { LogoutComponent } from './components/logout/logout.component';
 import { GroupsComponent } from './components/groups/groups.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { GroupsComponent } from './components/groups/groups.component';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
