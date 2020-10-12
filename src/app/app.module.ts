@@ -11,7 +11,10 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { UsersComponent } from './components/users/users.component';
 import { LogoutComponent } from './components/logout/logout.component';
 import { GroupsComponent } from './components/groups/groups.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpInterceptorService } from './service/http/http-interceptor.service';
+import { UserComponent } from './components/user/user.component';
+import { Data } from './data';
 
 @NgModule({
   declarations: [
@@ -22,7 +25,8 @@ import { HttpClientModule } from '@angular/common/http';
     NavigationComponent,
     UsersComponent,
     LogoutComponent,
-    GroupsComponent
+    GroupsComponent,
+    UserComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +35,14 @@ import { HttpClientModule } from '@angular/common/http';
     ReactiveFormsModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpInterceptorService,
+      multi: true,
+    },
+    Data
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

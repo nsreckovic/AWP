@@ -24,7 +24,7 @@ export class AuthenticationService {
       .pipe(
         map((response) => {
           localStorage.setItem('user', response.username);
-          localStorage.setItem('jwt', response.jwt);
+          localStorage.setItem('jwt', response.JWT);
         })
       );
 

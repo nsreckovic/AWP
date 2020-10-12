@@ -1,4 +1,4 @@
 export interface LoginResponse {
   username: string
-  jwt: string
+  JWT: string
 }

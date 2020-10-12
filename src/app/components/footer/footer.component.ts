@@ -15,7 +15,7 @@ export class FooterComponent implements OnInit {
     this.refreshData();
     setInterval(() => { 
         this.refreshData(); 
-    }, 10000);
+    }, 1000);
   }
 
   refreshData(){

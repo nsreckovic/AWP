@@ -1,0 +1,57 @@
+<h1>User's Page</h1>
+
+<!-- Error message -->
+<div
+  class="alert alert-danger alert-dismissible fade show mt-3"
+  role="alert"
+  *ngIf="error"
+>
+  {{ error_message }}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<!-- LogIn form -->
+<form [formGroup]="userForm" (ngSubmit)="saveUser(userForm.value)">
+  <!-- First Name -->
+  <div class="form-group">
+    <label for="firstName">First Name</label>
+    <input
+      type="text"
+      class="form-control"
+      formControlName="firstName"
+      [class.is-invalid]="firstName.errors"
+      placeholder="Enter First Name here."
+    />
+    <div *ngIf="firstName.errors?.required" class="invalid-feedback">
+      First Name is required.
+    </div>
+    <div *ngIf="firstName.errors?.minlength" class="invalid-feedback">
+      First Name must be at least 2 characters long.
+    </div>
+  </div>
+
+  <!-- Last Name -->
+  <div class="form-group">
+    <label for="lastName">Last Name</label>
+    <input
+      type="text"
+      class="form-control"
+      formControlName="lastName"
+      [class.is-invalid]="lastName.errors"
+      placeholder="Enter Last Name here."
+    />
+    <div *ngIf="lastName.errors?.required" class="invalid-feedback">
+      Last Name is required.
+    </div>
+    <div *ngIf="lastName.errors?.minlength" class="invalid-feedback">
+      Last Name must be at least 2 characters long.
+    </div>
+  </div>
+
+  <!-- LogIn button -->
+  <button type="submit" class="btn btn-primary" [disabled]="!userForm.valid">
+    Save
+  </button>
+</form>
