@@ -29,11 +29,14 @@ export class UserComponent implements OnInit {
     this.user_id = this.route.snapshot.params['id'];
     if (this.user_id != -1) {
       this.userService.getUser(this.user_id).subscribe((data) => {
-        this.user = data;
-        this.userForm.setValue({
-          firstName: this.user.firstName,
-          lastName: this.user.lastName,
-        });
+        if (data === undefined) this.router.navigate(['users']);
+        else {
+          this.user = data;
+          this.userForm.setValue({
+            firstName: this.user.firstName,
+            lastName: this.user.lastName,
+          });
+        }
       });
     }
 

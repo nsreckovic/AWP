@@ -7,6 +7,7 @@ import { LogoutComponent } from './components/logout/logout.component';
 import { RouteGuardService } from './service/routes/route-guard.service';
 import { UsersComponent } from './components/users/users.component';
 import { UserComponent } from './components/user/user.component';
+import { GroupComponent } from './components/group/group.component';
 
 const routes: Routes = [
   { path: '', component: UsersComponent, canActivate: [RouteGuardService] },
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent, canActivate: [RouteGuardService] },
   { path: 'groups', component: GroupsComponent, canActivate: [RouteGuardService] },
+  { path: 'groups/:id', component: GroupComponent, canActivate: [RouteGuardService] },
 
   { path: '**', component: ErrorComponent },
 ];

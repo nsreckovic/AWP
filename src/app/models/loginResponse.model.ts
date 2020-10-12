@@ -1,4 +1,4 @@
-export interface LoginResponse {
+export class LoginResponse {
   username: string
   JWT: string
 }

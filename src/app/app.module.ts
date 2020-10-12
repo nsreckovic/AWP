@@ -15,6 +15,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpInterceptorService } from './service/http/http-interceptor.service';
 import { UserComponent } from './components/user/user.component';
 import { Data } from './data';
+import { GroupComponent } from './components/group/group.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { Data } from './data';
     UsersComponent,
     LogoutComponent,
     GroupsComponent,
-    UserComponent
+    UserComponent,
+    GroupComponent
   ],
   imports: [
     BrowserModule,
