@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Data } from 'src/app/data';
 import { User } from 'src/app/models/user.model';
+import { GroupService } from 'src/app/service/groups/group.service';
 import { UserService } from 'src/app/service/users/user.service';
 
 @Component({
@@ -15,6 +16,7 @@ export class UsersComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    private groupService: GroupService,
     private router: Router,
     private data: Data
   ) {}
@@ -36,7 +38,7 @@ export class UsersComponent implements OnInit {
 
   userDetails(user) {
     this.data.setUser(user);
-    this.router.navigate(['users', user.id]);
+    this.router.navigate(['users', user.id, 'details']);
   }
 
   addUser() {
@@ -49,10 +51,10 @@ export class UsersComponent implements OnInit {
     this.router.navigate(['users', user.id]);
   }
 
-  deleteUser(user_id) {
-    console.log('delete');
-    this.userService.deleteUser(user_id).subscribe(
+  deleteUser(user) {
+    this.userService.deleteUser(user.id).subscribe(
       (response) => {
+        this.groupService.removeUserFromGroup(user)
         this.success_message = 'User deleted successfully.';
         this.getUsers();
       },

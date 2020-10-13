@@ -8,13 +8,17 @@ import { RouteGuardService } from './service/routes/route-guard.service';
 import { UsersComponent } from './components/users/users.component';
 import { UserComponent } from './components/user/user.component';
 import { GroupComponent } from './components/group/group.component';
+import { UserDetailsComponent } from './components/user-details/user-details.component';
 
 const routes: Routes = [
   { path: '', component: UsersComponent, canActivate: [RouteGuardService] },
-  { path: 'users', component: UsersComponent, canActivate: [RouteGuardService] },
-  { path: 'users/:id', component: UserComponent, canActivate: [RouteGuardService] },
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent, canActivate: [RouteGuardService] },
+
+  { path: 'users', component: UsersComponent, canActivate: [RouteGuardService] },
+  { path: 'users/:id', component: UserComponent, canActivate: [RouteGuardService] },
+  { path: 'users/:id/details', component: UserDetailsComponent, canActivate: [RouteGuardService] },
+
   { path: 'groups', component: GroupsComponent, canActivate: [RouteGuardService] },
   { path: 'groups/:id', component: GroupComponent, canActivate: [RouteGuardService] },
 
