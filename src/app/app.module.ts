@@ -17,6 +17,7 @@ import { UserComponent } from './components/user/user.component';
 import { Data } from './data';
 import { GroupComponent } from './components/group/group.component';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
+import { GroupDetailsComponent } from './components/group-details/group-details.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { UserDetailsComponent } from './components/user-details/user-details.com
     GroupsComponent,
     UserComponent,
     GroupComponent,
-    UserDetailsComponent
+    UserDetailsComponent,
+    GroupDetailsComponent
   ],
   imports: [
     BrowserModule,

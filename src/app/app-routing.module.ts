@@ -9,6 +9,7 @@ import { UsersComponent } from './components/users/users.component';
 import { UserComponent } from './components/user/user.component';
 import { GroupComponent } from './components/group/group.component';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
+import { GroupDetailsComponent } from './components/group-details/group-details.component';
 
 const routes: Routes = [
   { path: '', component: UsersComponent, canActivate: [RouteGuardService] },
@@ -20,7 +21,8 @@ const routes: Routes = [
   { path: 'users/:id/details', component: UserDetailsComponent, canActivate: [RouteGuardService] },
 
   { path: 'groups', component: GroupsComponent, canActivate: [RouteGuardService] },
-  { path: 'groups/:id', component: GroupComponent, canActivate: [RouteGuardService] },
+  { path: 'groups/:name', component: GroupComponent, canActivate: [RouteGuardService] },
+  { path: 'groups/:name/details', component: GroupDetailsComponent, canActivate: [RouteGuardService] },
 
   { path: '**', component: ErrorComponent },
 ];

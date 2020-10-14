@@ -41,7 +41,7 @@ export class UserDetailsComponent implements OnInit {
   }
 
   closeAlert() {
-    this.message = undefined;
+    this.message = null;
   }
 
   saveGroup() {

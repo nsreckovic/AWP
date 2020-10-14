@@ -1,1 +1,42 @@
 <h1>Group's Page</h1>
+
+<div
+  class="alert alert-success alert-dismissible fade show mt-2"
+  [class.alert-success]="success"
+  [class.alert-danger]="!success"
+  role="alert"
+  *ngIf="message"
+>
+  {{ message }}
+  <button type="button" class="close" (click)="closeAlert()" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<!-- Group form -->
+<form [formGroup]="groupForm" (ngSubmit)="saveGroup(groupForm.value)">
+  <!-- Group Name -->
+  <div class="form-group">
+    <label for="name">Group Name</label>
+    <input
+      type="text"
+      class="form-control"
+      formControlName="name"
+      [class.is-invalid]="name.errors"
+      placeholder="Enter Group Name here."
+    />
+    <div *ngIf="name.errors?.required" class="invalid-feedback">
+      Group name is required.
+    </div>
+    <div *ngIf="name.errors?.minlength" class="invalid-feedback">
+      Group name must be at least 2 characters long.
+    </div>
+    <div *ngIf="name.errors?.forbiddenName" class="invalid-feedback">
+      Group name cannot be 'new'.
+    </div>
+  </div>
+  <!-- Save button -->
+  <button type="submit" class="btn btn-primary" [disabled]="!name.valid">
+    Save
+  </button>
+</form>

@@ -15,20 +15,39 @@ export class GroupService {
     }
   }
 
-  getAll() {
+  getAll(): Group[] {
     return this.groups;
   }
 
-  getByName(group_name) {
-    return this.groups.filter((g) => (g.name = group_name))[0];
+  getAllUsersForGroup(group_name): User[] {
+    for (var i = 0; i < this.groups.length; i++) {
+      if (this.groups[i].name === group_name) {
+        return this.groups[i].users;
+      }
+    }
+    return null;
+  }
+
+  getByName(group_name): Group {
+    for (var i = 0; i < this.groups.length; i++) {
+      if (this.groups[i].name === group_name) {
+        return this.groups[i];
+      }
+    }
+    return null;
   }
 
   add(group: Group): boolean {
-    if (!this.groups.filter((g) => (g.name = group.name))[0]) {
+    if (!this.groups.some((g) => { return g.name === group.name; })) {
       this.groups.push(group);
       return true;
     }
     return false;
+  }
+
+  edit(group: Group): boolean {
+    // TODO
+    return false
   }
 
   remove(group: Group): boolean {
@@ -42,10 +61,14 @@ export class GroupService {
   }
 
   addUserToGroup(group: Group, user: User): boolean {
-    this.removeUserFromGroup(user)
+    this.removeUserFromGroup(user);
     for (var i = 0; i < this.groups.length; i++) {
       if (this.groups[i].name === group.name) {
-        if (!this.groups[i].users.some((u) => {return u.id === user.id;})) {
+        if (
+          !this.groups[i].users.some((u) => {
+            return u.id === user.id;
+          })
+        ) {
           this.groups[i].users.push(user);
           return true;
         }
@@ -68,7 +91,11 @@ export class GroupService {
 
   getGroupForUser(user: User): Group {
     for (var i = 0; i < this.groups.length; i++) {
-      if (this.groups[i].users.some((u) => {return u.id === user.id;})) {
+      if (
+        this.groups[i].users.some((u) => {
+          return u.id === user.id;
+        })
+      ) {
         return this.groups[i];
       }
     }
