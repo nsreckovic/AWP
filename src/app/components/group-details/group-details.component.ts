@@ -47,6 +47,16 @@ export class GroupDetailsComponent implements OnInit {
     this.router.navigate(['users', -1]);
   }
 
+  removeUserFromGroup(user) {
+    if (this.groupService.removeUserFromGroup(user)) {
+      this.success = true;
+      this.message = 'User removed successfully.';
+    } else {
+      this.success = false;
+      this.message = 'Error occured while removing the user from the group.';
+    }
+  }
+
   editUser(user) {
     this.router.navigate(['users', user.id]);
   }

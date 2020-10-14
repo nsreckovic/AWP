@@ -10,9 +10,10 @@ import { UserComponent } from './components/user/user.component';
 import { GroupComponent } from './components/group/group.component';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { GroupDetailsComponent } from './components/group-details/group-details.component';
+import { HomeComponent } from './components/home/home.component';
 
 const routes: Routes = [
-  { path: '', component: UsersComponent, canActivate: [RouteGuardService] },
+  { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent, canActivate: [RouteGuardService] },
 

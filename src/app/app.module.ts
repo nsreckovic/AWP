@@ -18,6 +18,7 @@ import { Data } from './data';
 import { GroupComponent } from './components/group/group.component';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { GroupDetailsComponent } from './components/group-details/group-details.component';
+import { HomeComponent } from './components/home/home.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { GroupDetailsComponent } from './components/group-details/group-details.
     UserComponent,
     GroupComponent,
     UserDetailsComponent,
-    GroupDetailsComponent
+    GroupDetailsComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

@@ -45,30 +45,33 @@ export class UserDetailsComponent implements OnInit {
   }
 
   saveGroup() {
-    if (this.groupService.addUserToGroup(this.selectedGroup, this.user)) {
-      this.success = true;
-      this.message = 'Group changed successfully.';
-      this.currentGroup = this.groupService.getGroupForUser(this.user);
-      this.currentGroupName = this.currentGroup.name;
+    if (this.selectedGroup) {
+      if (this.groupService.addUserToGroup(this.selectedGroup, this.user)) {
+        this.success = true;
+        this.message = 'Group changed successfully.';
+        this.currentGroup = this.groupService.getGroupForUser(this.user);
+        this.currentGroupName = this.currentGroup.name;
+      } else {
+        this.success = false;
+        this.message = 'Error occured while changing the group.';
+      }
     } else {
       this.success = false;
-      this.message = 'Error occured while changing the group.';
+      this.message = 'Please select a group.';
     }
   }
 
-  editUser() {
-
-  }
+  editUser() {}
 
   deleteUser() {
     this.userService.deleteUser(this.user_id).subscribe(
       (response) => {
-        this.groupService.removeUserFromGroup(this.user)
+        this.groupService.removeUserFromGroup(this.user);
         this.router.navigate(['users']);
       },
       (error) => {
-        this.message = 'Error occured while deleting the user.'
-        this.success = false
+        this.message = 'Error occured while deleting the user.';
+        this.success = false;
       }
     );
   }
