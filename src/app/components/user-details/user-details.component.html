@@ -1,0 +1,68 @@
+<h1>{{ user.firstName }} {{ user.lastName }}'s Page</h1>
+
+<div
+  class="alert alert-success alert-dismissible fade show mt-2"
+  [class.alert-success]="success"
+  [class.alert-danger]="!success"
+  role="alert"
+  *ngIf="message"
+>
+  {{ message }}
+  <button type="button" class="close" (click)="closeAlert()" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+
+<div class="row">
+  <div class="col-5">
+    <h4>
+      <span class="text-muted">Group:</span> {{ currentGroupName }}
+    </h4>
+  </div>
+  <div class="col-5"></div>
+  <div class="col-2 text-right">
+    <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+      Options
+    </button>
+  </div>
+</div>
+
+<div class="collapse mt-2" id="collapseExample">
+  <div class="card card-body">
+    <div class="row">
+      <div class="col-1 pl-0">
+        <button (click)="editUser()" class="btn btn-outline-secondary btn-block">
+          Edit
+        </button>
+      </div>
+      <div class="col-1 px-0">
+        <button (click)="deleteUser()" class="btn btn-outline-danger btn-block">
+          Delete
+        </button>
+      </div>
+      <div class="col-6"></div>
+      <div class="col-4">
+        <div class="row">
+          <div class="col-6 pr-1 text-right">
+            <label for="group-selection" class="mr-2 my-2">Change Group:</label>
+          </div>
+          <div class="col-3 px-0">
+            <select
+              id="group-selection"
+              class="form-control mr-2"
+              [(ngModel)]="selectedGroup"
+            >
+              <option *ngFor="let g of groupService.getAll()" [ngValue]="g">
+                {{ g.name }}
+              </option>
+            </select>
+          </div>
+          <div class="col-3 pl-0 text-right">
+            <button class="btn btn-primary" (click)="saveGroup()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

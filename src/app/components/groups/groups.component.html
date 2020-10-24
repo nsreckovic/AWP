@@ -1,0 +1,48 @@
+<div style="max-width: 50em;" class="card mx-auto">
+  <div class="card-body">
+    <h1>All Groups</h1>
+    <div
+      class="alert alert-success alert-dismissible fade show mt-2"
+      [class.alert-success]="success"
+      [class.alert-danger]="!success"
+      role="alert"
+      *ngIf="message"
+    >
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <table class="table mt-3 table-hover text-center">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>User Count</th>
+          <!-- <th>Edit</th> -->
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let group of groupService.getAll()">
+          <td (click)="groupDetails(group)">{{ group.name }}</td>
+          <td (click)="groupDetails(group)">{{ group.users.length }}</td>
+          <!-- <td>
+            <button (click)="editGroup(group)" class="btn btn-outline-secondary mr-1" >
+              Edit
+            </button>
+          </td> -->
+          <td>
+            <button (click)="deleteGroup(group)" class="btn btn-outline-danger">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="text-center">
+      <button class="btn btn-primary"(click)="addGroup()">Add Group</button>
+    </div>
+  </div>
+</div>
