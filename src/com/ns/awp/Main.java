@@ -4,16 +4,8 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         Root root = new Root();
-        DIEngine engine = createEngine(root);
+        DIEngine.getInstance(Main.class.getPackageName(), root);
         root.test();
     }
 
-    private static DIEngine createEngine(Object root) throws Exception {
-        String rootPackageName = Main.class.getPackageName();
-        return DIEngine.createEngineForPackage(rootPackageName, root);
-    }
-
-    private static void demonstrate() {
-
-    }
 }

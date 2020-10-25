@@ -1,104 +1,154 @@
 package com.ns.awp;
 
-import com.ns.awp.annotations.Autowired;
-import com.ns.awp.annotations.Bean;
-import com.ns.awp.annotations.Component;
-import com.ns.awp.annotations.Service;
+import com.ns.awp.annotations.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class DIEngine {
 
+    private static DIEngine instance = null;
     private final Set<Object> serviceInstances = new HashSet<>();
-    private static Set<Class<?>> allClassesInPackage;
-    private static Set<Class<?>> serviceClasses = new HashSet<>();
-    private static Set<Class<?>> componentClasses = new HashSet<>();
-    private static Object root;
+    private static final Set<Class<?>> serviceClasses = new HashSet<>();
+    private static final Set<Class<?>> componentClasses = new HashSet<>();
+    private static Map<String, Class<?>> dependencySupplier = new HashMap<>();
 
-    public static DIEngine createEngineForPackage(String rootPackageName, Object rootObject) throws Exception {
-        root = rootObject;
-        allClassesInPackage = ClassPathScanner.getAllClassesInPackage(rootPackageName);
+    private DIEngine(String rootPackageName, Object rootObject) throws Exception {
+        checkClasses(rootPackageName);
+        checkFields(rootObject, rootObject.getClass());
+    }
+
+    public static DIEngine getInstance(String rootPackageName, Object rootObject) throws Exception {
+        if (instance == null) instance = new DIEngine(rootPackageName, rootObject);
+        return instance;
+    }
+
+    // Checks all classes and sorts annotated ones
+    private void checkClasses(String rootPackageName) throws Exception {
+        Set<Class<?>> allClassesInPackage = ClassPathScanner.getAllClassesInPackage(rootPackageName);
         for (Class<?> aClass : allClassesInPackage) {
-            if (aClass.isAnnotationPresent(Service.class)) serviceClasses.add(aClass);
-            else if (aClass.isAnnotationPresent(Component.class)) componentClasses.add(aClass);
-            else if (aClass.isAnnotationPresent(Bean.class) && !aClass.isInterface()) {
-                switch (aClass.getAnnotation(Bean.class).scope()) {
-                    case SCOPE_SINGLETON:
-                        serviceClasses.add(aClass);
-                        break;
-                    case SCOPE_PROTOTYPE:
-                        componentClasses.add(aClass);
-                        break;
+            if (aClass.isInterface() || aClass.isEnum()) {
+                continue;
+            } else {
+                if (aClass.isAnnotationPresent(Service.class)) {
+                    serviceClasses.add(aClass);
+                } else if (aClass.isAnnotationPresent(Component.class)) {
+                    componentClasses.add(aClass);
+                } else if (aClass.isAnnotationPresent(Bean.class)) {
+                    switch (aClass.getAnnotation(Bean.class).scope()) {
+                        case SCOPE_SINGLETON:
+                            serviceClasses.add(aClass);
+                            break;
+                        case SCOPE_PROTOTYPE:
+                            componentClasses.add(aClass);
+                            break;
+                    }
+                }
+                if (aClass.isAnnotationPresent(Qualifier.class)) {
+                    if (!aClass.isAnnotationPresent(Service.class) &&
+                            !aClass.isAnnotationPresent(Component.class) &&
+                            !aClass.isAnnotationPresent(Bean.class))
+                        throw new Error("Class with Qualifier annotation must be a Bean.");
+                    else dependencySupplier.put(aClass.getAnnotation(Qualifier.class).key(), aClass);
                 }
             }
+
         }
-        List<Collection<Class<?>>> sortedClasses = new ArrayList<>();
-        sortedClasses.add(serviceClasses);
-        sortedClasses.add(componentClasses);
-        System.out.println(sortedClasses);
-        return new DIEngine(serviceClasses);
     }
 
-    private List<Collection<Class<?>>> checkClasses() {
+    // Checks all fields in given class and sorts annotated ones
+    private void checkFields(Object fieldObject, Class classToCheck) throws Exception {
 
-        return null;
-    }
-
-    private List<Collection<Field>> checkFields(Class classToCheck) throws Exception {
-        System.out.println("Pre: " + serviceInstances);
         for (Field field : classToCheck.getDeclaredFields()) {
+            // If not annotated continue to next one
             if (!field.isAnnotationPresent(Autowired.class)) continue;
+
             Class<?> fieldType = field.getType();
-            if (!serviceClasses.contains(fieldType)) throw new Exception("Nije anotiran sa service");
-            if (getServiceInstance(fieldType) == null) {
+
+            // If it's among the services
+            if (serviceClasses.contains(fieldType)) {
+                if (getServiceInstance(fieldType) == null) {
+                    Constructor<?> constructor = fieldType.getConstructor();
+                    constructor.setAccessible(true);
+                    Object serviceInstance = constructor.newInstance();
+                    if (field.getAnnotation(Autowired.class).verbose()) printFieldDetails(field, serviceInstance);
+                    this.serviceInstances.add(serviceInstance);
+                    if (fieldType.getDeclaredFields().length > 0) checkFields(serviceInstance, fieldType);
+                }
+                field.setAccessible(true);
+                field.set(fieldObject, getServiceInstance(fieldType));
+
+            // If it's among the components
+            } else if (componentClasses.contains(fieldType)) {
                 Constructor<?> constructor = fieldType.getConstructor();
                 constructor.setAccessible(true);
-                Object serviceInstance = constructor.newInstance();
-                this.serviceInstances.add(serviceInstance);
+                Object componentInstance = constructor.newInstance();
+                if (field.getAnnotation(Autowired.class).verbose()) printFieldDetails(field, componentInstance);
+                field.setAccessible(true);
+                field.set(fieldObject, componentInstance);
+                if (fieldType.getDeclaredFields().length > 0) checkFields(componentInstance, fieldType);
+
+            // If it's annotated with Qualifier
+            } else if (field.isAnnotationPresent(Qualifier.class)) {
+                // Check in dependency supplier if there is class to inject
+                Class<?> classToInject = dependencySupplier.get(field.getAnnotation(Qualifier.class).key());
+                if (classToInject != null) {
+                    // Check if it's among the services
+                    if (serviceClasses.contains(classToInject)) {
+                        if (getServiceInstance(classToInject) == null) {
+                            Constructor<?> constructor = classToInject.getConstructor();
+                            constructor.setAccessible(true);
+                            Object serviceInstance = constructor.newInstance();
+                            if (field.getAnnotation(Autowired.class).verbose()) printFieldDetails(field, serviceInstance);
+                            this.serviceInstances.add(serviceInstance);
+                            if (classToInject.getDeclaredFields().length > 0) checkFields(serviceInstance, fieldType);
+                        }
+                        field.setAccessible(true);
+                        field.set(fieldObject, getServiceInstance(classToInject));
+
+                    // Check if it's among the components
+                    } else if (componentClasses.contains(classToInject)) {
+                        Constructor<?> constructor = classToInject.getConstructor();
+                        constructor.setAccessible(true);
+                        Object componentInstance = constructor.newInstance();
+                        if (field.getAnnotation(Autowired.class).verbose()) printFieldDetails(field, componentInstance);
+                        field.setAccessible(true);
+                        field.set(fieldObject, componentInstance);
+                        if (classToInject.getDeclaredFields().length > 0) checkFields(componentInstance, classToInject);
+                    } else {
+                        throw new ClassNotFoundException("Class for injection must be annotated with Bean annotation.");
+                    }
+
+                } else {
+                    throw new ClassNotFoundException("No class found for injection");
+                }
+
+            // Else it's annotated with Autowired, but there is no implementation class
+            } else {
+                throw new ClassNotFoundException("No class found for injection");
+
             }
-            field.setAccessible(true);
-            field.set(root, getServiceInstance(fieldType));
+
         }
-        System.out.println("Posle: " + serviceInstances);
-        return null;
     }
 
-
-    public DIEngine(Collection<Class<?>> serviceClasses) throws Exception {
-        checkFields(Root.class);
-//        // create an instance of each service class
-//        for (Class<?> serviceClass : serviceClasses) {
-//            Constructor<?> constructor = serviceClass.getConstructor();
-//            constructor.setAccessible(true);
-//            Object serviceInstance = constructor.newInstance();
-//            this.serviceInstances.add(serviceInstance);
-//        }
-//        // wire them together
-//        for (Object serviceInstance : this.serviceInstances) {
-//            for (Field field : serviceInstance.getClass().getDeclaredFields()) {
-//                if (!field.isAnnotationPresent(Autowired.class)) {
-//                    // this field is none of our business
-//                    continue;
-//                }
-//                Class<?> fieldType = field.getType();
-//                field.setAccessible(true);
-//                // find a suitable matching service instance
-//                for (Object matchPartner : this.serviceInstances) {
-//                    if (fieldType.isInstance(matchPartner)) {
-//                        field.set(serviceInstance, matchPartner);
-//                    }
-//                }
-//            }
-//        }
+    private void printFieldDetails(Field field, Object instance) {
+        System.out.println(
+                "Type: " + field.getType().getName() + "\n" +
+                        "Name: " + field.getName() + "\n" +
+                        "Parent Class: " + field.getDeclaringClass().getName() + "\n" +
+                        "Init time: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss:nnnnnnnnn dd/MM/yyyy")) + "\n" +
+                        "Hash code: " + instance.hashCode() + "\n"
+        );
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getServiceInstance(Class<T> serviceClass) {
+    public Object getServiceInstance(Class<?> serviceClass) {
         for (Object serviceInstance : this.serviceInstances) {
             if (serviceClass.isInstance(serviceInstance)) {
-                return (T) serviceInstance;
+                return serviceInstance;
             }
         }
         return null;
