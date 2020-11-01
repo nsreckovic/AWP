@@ -1,7 +1,6 @@
-package com.ns.awp.test1;
+package com.ns.awp.main;
 
-import com.ns.awp.DIEngine;
-import com.ns.awp.Root;
+import com.ns.awp.engine.DIEngine;
 
 public class Main {
 

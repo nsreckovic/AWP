@@ -1,8 +1,7 @@
-package com.ns.awp;
+package com.ns.awp.components;
 
 import com.ns.awp.annotations.Autowired;
 import com.ns.awp.annotations.Component;
-import com.ns.awp.test2.Component1;
 
 @Component
 public class Component3 {
@@ -10,7 +9,7 @@ public class Component3 {
     Component1 component1InsideComponent3;
 
     public void print() {
-        component1InsideComponent3.ispis();
-        System.out.println("Print from component 3 - " + hashCode());
+        component1InsideComponent3.print();
+        System.out.println("Print from Component3 - Hash: " + this.hashCode());
     }
 }

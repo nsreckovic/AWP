@@ -1,4 +1,4 @@
-package com.ns.awp;
+package com.ns.awp.services.interfaces;
 
 public interface InterfaceInjection {
     void print();

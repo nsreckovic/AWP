@@ -1,4 +1,4 @@
-package com.ns.awp;
+package com.ns.awp.engine;
 
 import com.ns.awp.annotations.*;
 
@@ -102,7 +102,7 @@ public class DIEngine {
 
                     // Else, it's a class that has Qualifier, but no Bean annotation
                     } else {
-                        throw new RuntimeException("Class for Qualifier injection must be annotated with Bean annotation.");
+                        throw new RuntimeException("Class annotated with Qualifier must have Bean annotation.");
                     }
 
                 // Else, throw an exception
@@ -112,7 +112,7 @@ public class DIEngine {
 
             // Else, it's annotated with Autowired, but there is no implementation class
             } else {
-                throw new RuntimeException("No class found for injection");
+                throw new RuntimeException("No class found for the injection.");
 
             }
 
