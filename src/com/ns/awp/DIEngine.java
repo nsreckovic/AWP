@@ -16,19 +16,22 @@ public class DIEngine {
     private static final Set<Class<?>> componentClasses = new HashSet<>();
     private static final Map<String, Class<?>> dependencySupplier = new HashMap<>();
 
-    private DIEngine(String rootPackageName, Object rootObject) throws Exception {
-        checkClasses(rootPackageName);
+    private DIEngine(Object rootObject) throws Exception {
+        checkClasses();
         checkFields(rootObject, rootObject.getClass());
     }
 
-    public static DIEngine getInstance(String rootPackageName, Object rootObject) throws Exception {
-        if (instance == null) instance = new DIEngine(rootPackageName, rootObject);
+    public static DIEngine getInstance(Object rootObject) throws Exception {
+        if (instance == null) instance = new DIEngine(rootObject);
         return instance;
     }
 
     // Check all classes and sort annotated ones
-    private void checkClasses(String rootPackageName) throws Exception {
-        Set<Class<?>> allClassesInPackage = ClassPathScanner.getAllClassesInPackage(rootPackageName);
+    private void checkClasses() throws Exception {
+        // Get all classes
+        Set<Class<?>> allClassesInPackage = ClassPathScanner.getAllClassesInPackage();
+
+        // Sort classes
         for (Class<?> aClass : allClassesInPackage) {
             boolean beanClass = false;
             if (!aClass.isInterface() && !aClass.isEnum()) {
@@ -107,7 +110,7 @@ public class DIEngine {
                     throw new RuntimeException("No class with Qualifier key \"" + field.getAnnotation(Qualifier.class).key() + "\" found for injection.");
                 }
 
-            // Else it's annotated with Autowired, but there is no implementation class
+            // Else, it's annotated with Autowired, but there is no implementation class
             } else {
                 throw new RuntimeException("No class found for injection");
 

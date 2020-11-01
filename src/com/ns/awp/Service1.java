@@ -2,6 +2,7 @@ package com.ns.awp;
 
 import com.ns.awp.annotations.Autowired;
 import com.ns.awp.annotations.Service;
+import com.ns.awp.test2.Component1;
 
 @Service
 public class Service1 {

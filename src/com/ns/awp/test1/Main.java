@@ -1,10 +1,13 @@
-package com.ns.awp;
+package com.ns.awp.test1;
+
+import com.ns.awp.DIEngine;
+import com.ns.awp.Root;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
         Root root = new Root();
-        DIEngine.getInstance(Main.class.getPackageName(), root);
+        DIEngine.getInstance(root);
         root.test();
     }
 

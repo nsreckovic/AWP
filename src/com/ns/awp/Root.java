@@ -29,7 +29,6 @@ public class Root {
     @Qualifier(key = "test")
     InterfaceInjection injection;
 
-
     public void test() {
 //        nekiMojServis.ispis();
 //        nekiMojServis2.ispis();

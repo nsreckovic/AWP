@@ -1,24 +1,25 @@
 package com.ns.awp;
 
 import java.io.File;
+import java.lang.instrument.Instrumentation;
 import java.net.URL;
 import java.util.*;
 
 public class ClassPathScanner {
 
-    public static Set<Class<?>> getAllClassesInPackage(String packageName) throws Exception {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        String path = packageName.replace('.', '/');
-        Enumeration<URL> resources = classLoader.getResources(path);
+    public static Set<Class<?>> getAllClassesInPackage() throws Exception {
+//        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        Enumeration<URL> resources = classLoader.getResources("");
         List<File> dirs = new ArrayList<>();
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
-            //dirs.add(new File(resource.getFile()));
+            // dirs.add(new File(resource.getFile()));
             dirs.add(new File(resource.toURI()));
         }
         Set<Class<?>> classes = new HashSet<>();
         for (File directory : dirs) {
-            classes.addAll(findClasses(directory, packageName));
+            classes.addAll(findClasses(directory, ""));
         }
         return classes;
     }
@@ -31,7 +32,8 @@ public class ClassPathScanner {
         File[] files = directory.listFiles();
         for (File file : files) {
             if (file.isDirectory()) {
-                classes.addAll(findClasses(file, packageName + "." + file.getName()));
+                if (packageName.equals("")) classes.addAll(findClasses(file, file.getName()));
+                else classes.addAll(findClasses(file, packageName + "." + file.getName()));
             } else if (file.getName().endsWith(".class")) {
                 classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
             }

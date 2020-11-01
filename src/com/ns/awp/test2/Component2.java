@@ -1,4 +1,4 @@
-package com.ns.awp;
+package com.ns.awp.test2;
 
 import com.ns.awp.annotations.Component;
 
