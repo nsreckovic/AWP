@@ -7,11 +7,13 @@ import com.ns.awp.components.Component1;
 import com.ns.awp.components.Component2;
 import com.ns.awp.components.Component3;
 import com.ns.awp.services.BeanSingleton;
+import com.ns.awp.services.Service1;
+import com.ns.awp.services.Service2;
 import com.ns.awp.services.interfaces.InterfaceInjection;
 
 public class Root {
-//    @Autowired(verbose = true)
-//    Service1 testService1;
+    @Autowired(verbose = true)
+    Service1 testService1;
 //    @Autowired(verbose = true)
 //    Service1 testService2;
 //    @Autowired(verbose = true)
@@ -35,14 +37,17 @@ public class Root {
 //    @Autowired(verbose = false)
 //    NoBeanClass noBeanClass;
 
-    @Autowired(verbose = true)
-    @Qualifier(key = "test")
-    InterfaceInjection injection;
+//    @Autowired(verbose = true)
+//    @Qualifier(key = "test")
+//    InterfaceInjection injection;
+
+//    @Autowired(verbose = true)
+//    String testJavaClass;
 
     public void test() {
         System.out.println("\n-------------------- Root prints: --------------------\n\n");
 
-//        testService1.print();
+        testService1.print();
 //        testService2.print();
 //        testService3.print();
 //        testService4.print();
@@ -56,7 +61,7 @@ public class Root {
 
 //        noBeanClass.toString();
 
-        injection.print();
+//        injection.print();
 
     }
 }

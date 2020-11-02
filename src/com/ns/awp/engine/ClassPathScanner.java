@@ -8,7 +8,7 @@ import java.util.*;
 public class ClassPathScanner {
 
     public static Set<Class<?>> getAllClassesInPackage() throws Exception {
-//        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        //  ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         Enumeration<URL> resources = classLoader.getResources("");
         List<File> dirs = new ArrayList<>();
@@ -35,7 +35,8 @@ public class ClassPathScanner {
                 if (packageName.equals("")) classes.addAll(findClasses(file, file.getName()));
                 else classes.addAll(findClasses(file, packageName + "." + file.getName()));
             } else if (file.getName().endsWith(".class")) {
-                classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
+                if (packageName.equals("")) classes.add(Class.forName(file.getName().substring(0, file.getName().length() - 6)));
+                else classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
             }
         }
         return classes;
