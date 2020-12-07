@@ -1,6 +1,5 @@
 package com.ns.awp_h3.controller;
 
-import com.ns.awp_h3.models.Response;
 import com.ns.awp_h3.models.UserType;
 import com.ns.awp_h3.service.UserTypeService;
 import lombok.RequiredArgsConstructor;

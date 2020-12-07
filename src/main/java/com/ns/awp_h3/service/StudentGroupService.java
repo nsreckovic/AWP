@@ -1,12 +1,12 @@
 package com.ns.awp_h3.service;
 
-import com.ns.awp_h3.models.UserType;
+import com.ns.awp_h3.models.StudentGroup;
 import org.springframework.http.ResponseEntity;
 
 public interface StudentGroupService {
-    ResponseEntity newStudentGroup(UserType userType);
+    ResponseEntity newStudentGroup(StudentGroup studentGroup);
 
-    ResponseEntity updateStudentGroup(UserType userType);
+    ResponseEntity updateStudentGroup(StudentGroup studentGroup);
 
     ResponseEntity getAllStudentGroups();
 
