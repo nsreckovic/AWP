@@ -16,7 +16,9 @@ public class UserTypeServiceImpl implements UserTypeService {
     @Override
     public ResponseEntity newUserType(UserType userType) {
         try {
+            // Saving
             userTypeRepository.save(userType);
+
             return ResponseEntity.ok(userType);
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(400).body("User Type name must be non null and unique.");
@@ -28,10 +30,22 @@ public class UserTypeServiceImpl implements UserTypeService {
     @Override
     public ResponseEntity updateUserType(UserType userType) {
         try {
-            if (userTypeRepository.existsById(userType.getId())) {
-                userTypeRepository.save(userType);
-                return ResponseEntity.ok(userType);
-            } else return ResponseEntity.status(404).body("User Type with provided id not found.");
+            // Id check
+            if (!userTypeRepository.existsById(userType.getId())) {
+                return ResponseEntity.status(404).body("User Type with provided id not found.");
+            }
+            UserType existingUserType = userTypeRepository.findById(userType.getId()).get();
+
+            // New Name check
+            if (userTypeRepository.existsByName(userType.getName())) {
+                return ResponseEntity.status(400).body("User Type with provided name already exists.");
+            }
+
+            // Updating
+            existingUserType.setName(userType.getName());
+            userTypeRepository.save(existingUserType);
+
+            return ResponseEntity.ok(existingUserType);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
         }
@@ -60,10 +74,15 @@ public class UserTypeServiceImpl implements UserTypeService {
     @Override
     public ResponseEntity deleteUserTypeById(int id) {
         try {
-            if (userTypeRepository.existsById(id)) {
-                userTypeRepository.deleteById(id);
-                return ResponseEntity.ok("User Type deleted.");
-            } else return ResponseEntity.status(404).body("User Type with provided id not found.");
+            // Id check
+            if (!userTypeRepository.existsById(id)) {
+                ResponseEntity.status(404).body("User Type with provided id not found.");
+            }
+
+            // Deleting
+            userTypeRepository.deleteById(id);
+
+            return ResponseEntity.ok("User Type deleted.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
         }

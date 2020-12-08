@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Data
-public class StudentGroup {
+public class UserGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -15,6 +15,6 @@ public class StudentGroup {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(orphanRemoval = true, mappedBy = "studentGroup")
+    @OneToMany(mappedBy = "userGroup")
     private List<User> users;
 }

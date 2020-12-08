@@ -9,8 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor @NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +18,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -34,5 +34,5 @@ public class User {
 
     @JsonIgnore
     @ManyToOne()
-    private StudentGroup studentGroup;
+    private UserGroup userGroup;
 }

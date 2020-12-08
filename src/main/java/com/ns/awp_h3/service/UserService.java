@@ -1,9 +1,8 @@
 package com.ns.awp_h3.service;
 
 import com.ns.awp_h3.dto.NewUserRequestDto;
-import lombok.RequiredArgsConstructor;
+import com.ns.awp_h3.dto.UserSearchRequestDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
 public interface UserService {
     ResponseEntity newUser(NewUserRequestDto user);
@@ -15,4 +14,6 @@ public interface UserService {
     ResponseEntity getUserById(int id);
 
     ResponseEntity deleteUserById(int id);
+
+    ResponseEntity searchUsers(UserSearchRequestDto userParams);
 }

@@ -1,6 +1,5 @@
 package com.ns.awp_h3.dto;
 
-import com.ns.awp_h3.models.StudentGroup;
 import com.ns.awp_h3.models.UserType;
 import lombok.Data;
 
