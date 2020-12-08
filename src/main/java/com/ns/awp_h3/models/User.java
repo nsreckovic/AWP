@@ -1,5 +1,6 @@
 package com.ns.awp_h3.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,9 +28,11 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
+    @JsonIgnore
     @ManyToOne(optional = false)
     private UserType userType;
 
+    @JsonIgnore
     @ManyToOne()
     private StudentGroup studentGroup;
 }

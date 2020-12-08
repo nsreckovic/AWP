@@ -1,10 +1,9 @@
 package com.ns.awp_h3.models;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Data;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -15,4 +14,7 @@ public class UserType {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    @OneToMany(orphanRemoval = true, mappedBy = "userType")
+    private List<User> users;
 }

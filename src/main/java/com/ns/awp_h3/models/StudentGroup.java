@@ -3,7 +3,7 @@ package com.ns.awp_h3.models;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
@@ -15,6 +15,6 @@ public class StudentGroup {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany()
-    private Collection<User> users;
+    @OneToMany(orphanRemoval = true, mappedBy = "studentGroup")
+    private List<User> users;
 }

@@ -7,50 +7,33 @@ import com.ns.awp_h3.models.UserType;
 import com.ns.awp_h3.repository.StudentGroupRepository;
 import com.ns.awp_h3.repository.UserRepository;
 import com.ns.awp_h3.repository.UserTypeRepository;
+import com.ns.awp_h3.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserRepository userRepository;
-    private final UserTypeRepository userTypeRepository;
-    private final StudentGroupRepository studentGroupRepository;
+    private final UserService userService;
 
     @PostMapping("/new")
-    public String addNewUser (@RequestBody NewUserRequestDto user) {
-        if (userTypeRepository.existsById(user.getUserType()) && studentGroupRepository.existsById(user.getStudentGroup())) {
-            UserType userType = userTypeRepository.findById(user.getUserType()).get();
-            StudentGroup studentGroup = studentGroupRepository.findById(user.getStudentGroup()).get();
-            User u = userRepository.save(new User(
-                    -1,
-                    user.getUsername(),
-                    user.getPassword(),
-                    user.getName(),
-                    user.getLastName(),
-                    userType,
-                    studentGroup
-            ));
-            studentGroup.getUsers().add(u);
-            studentGroupRepository.save(studentGroup);
-        } else {
-            return "Error";
-        }
-
-        return "Saved";
+    public ResponseEntity addNewUser (@RequestBody NewUserRequestDto user) {
+        return userService.newUser(user);
     }
 
     @GetMapping("/all")
-    public Iterable<User> getAllUsers() {
-        return userRepository.findAll();
+    public ResponseEntity getAllUsers() {
+        return userService.getAllUsers();
     }
 
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable("id") int id) {
-        userRepository.deleteById(id);
-        return "Deleted.";
+//        userRepository.deleteById(id);
+//        return "Deleted.";
+        return null;
     }
 
 }
