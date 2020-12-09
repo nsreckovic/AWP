@@ -5,15 +5,15 @@ import com.ns.awp_h3.dto.UserSearchRequestDto;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
-    ResponseEntity newUser(NewUserRequestDto user);
+    ResponseEntity<?> newUser(NewUserRequestDto user);
 
-    ResponseEntity updateUser(NewUserRequestDto user);
+    ResponseEntity<?> updateUser(NewUserRequestDto user);
 
-    ResponseEntity getAllUsers();
+    ResponseEntity<?> getAllUsers();
 
-    ResponseEntity getUserById(int id);
+    ResponseEntity<?> getUserById(int id);
 
-    ResponseEntity deleteUserById(int id);
+    ResponseEntity<?> deleteUserById(int id);
 
-    ResponseEntity searchUsers(UserSearchRequestDto userParams);
+    ResponseEntity<?> searchUsers(UserSearchRequestDto userParams);
 }

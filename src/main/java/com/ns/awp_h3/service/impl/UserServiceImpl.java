@@ -11,21 +11,30 @@ import com.ns.awp_h3.repository.UserRepository;
 import com.ns.awp_h3.repository.UserTypeRepository;
 import com.ns.awp_h3.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
-@Service
+@Service(value = "userService")
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final UserTypeRepository userTypeRepository;
     private final UserGroupRepository userGroupRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Override
-    public ResponseEntity newUser(NewUserRequestDto user) {
+    public ResponseEntity<?> newUser(NewUserRequestDto user) {
         try {
             // Username check
             if (userRepository.existsByUsername(user.getUsername())) {
@@ -50,7 +59,8 @@ public class UserServiceImpl implements UserService {
             User saved = userRepository.save(new User(
                     -1,
                     user.getUsername(),
-                    user.getPassword(),
+                    bCryptPasswordEncoder.encode(user.getPassword()),
+//                    user.getPassword(),
                     user.getName(),
                     user.getLastName(),
                     userType,
@@ -61,12 +71,13 @@ public class UserServiceImpl implements UserService {
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(400).body("Invalid request body.");
         } catch (Exception e) {
+            System.out.println(e);
             return ResponseEntity.status(500).body("Internal Server Error.");
         }
     }
 
     @Override
-    public ResponseEntity updateUser(NewUserRequestDto user) {
+    public ResponseEntity<?> updateUser(NewUserRequestDto user) {
         try {
             // Id check
             if (user.getId() == null || !userRepository.existsById(user.getId())) {
@@ -111,7 +122,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity getAllUsers() {
+    public ResponseEntity<?> getAllUsers() {
         try {
             ArrayList<UserResponseDto> users = new ArrayList<>();
             userRepository.findAll().forEach(user -> users.add(new UserResponseDto(user)));
@@ -123,7 +134,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity getUserById(int id) {
+    public ResponseEntity<?> getUserById(int id) {
         try {
             // Id check
             if (!userRepository.existsById(id)) {
@@ -139,7 +150,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity deleteUserById(int id) {
+    public ResponseEntity<?> deleteUserById(int id) {
         try {
             // Id check
             if (!userRepository.existsById(id)) {
@@ -156,7 +167,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity searchUsers(UserSearchRequestDto userParams) {
+    public ResponseEntity<?> searchUsers(UserSearchRequestDto userParams) {
         ArrayList<UserResponseDto> users = new ArrayList<>();
 
         // Searching
@@ -169,5 +180,12 @@ public class UserServiceImpl implements UserService {
         ).forEach(user -> users.add(new UserResponseDto(user)));
 
         return ResponseEntity.ok(users);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username);
+        if (user == null) throw new UsernameNotFoundException("Invalid username or password.");
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
     }
 }

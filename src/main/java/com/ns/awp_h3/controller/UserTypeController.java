@@ -13,27 +13,27 @@ public class UserTypeController {
     private final UserTypeService userTypeService;
 
     @PostMapping("/")
-    public ResponseEntity newUserType(@RequestBody UserType userType) {
+    public ResponseEntity<?> newUserType(@RequestBody UserType userType) {
         return userTypeService.newUserType(userType);
     }
 
     @PutMapping("/")
-    public ResponseEntity updateUserType(@RequestBody UserType userType) {
+    public ResponseEntity<?> updateUserType(@RequestBody UserType userType) {
         return userTypeService.updateUserType(userType);
     }
 
     @GetMapping("/all")
-    public ResponseEntity getAllUserTypes() {
+    public ResponseEntity<?> getAllUserTypes() {
         return userTypeService.getAllUserTypes();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getUserTypeById(@PathVariable("id") int id) {
+    public ResponseEntity<?> getUserTypeById(@PathVariable("id") int id) {
         return userTypeService.getUserTypeById(id);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteUserType(@PathVariable("id") int id) {
+    public ResponseEntity<?> deleteUserType(@PathVariable("id") int id) {
         return userTypeService.deleteUserTypeById(id);
     }
 

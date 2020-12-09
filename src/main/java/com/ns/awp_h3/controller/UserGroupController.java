@@ -13,27 +13,27 @@ public class UserGroupController {
     private final UserGroupService userGroupService;
 
     @PostMapping("/")
-    public ResponseEntity addNewUserGroup(@RequestBody UserGroup userGroup) {
+    public ResponseEntity<?> addNewUserGroup(@RequestBody UserGroup userGroup) {
         return userGroupService.newUserGroup(userGroup);
     }
 
     @PutMapping("/")
-    public ResponseEntity updateUserGroup(@RequestBody UserGroup userGroup) {
+    public ResponseEntity<?> updateUserGroup(@RequestBody UserGroup userGroup) {
         return userGroupService.updateUserGroup(userGroup);
     }
 
     @GetMapping("/all")
-    public ResponseEntity getAllUserGroups() {
+    public ResponseEntity<?> getAllUserGroups() {
         return userGroupService.getAllUserGroups();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getUserGroupById(@PathVariable("id") int id) {
+    public ResponseEntity<?> getUserGroupById(@PathVariable("id") int id) {
         return userGroupService.getUserGroupById(id);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteUserGroup(@PathVariable("id") int id) {
+    public ResponseEntity<?> deleteUserGroup(@PathVariable("id") int id) {
         return userGroupService.deleteUserGroup(id);
     }
 }

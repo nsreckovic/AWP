@@ -14,7 +14,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     private final UserGroupRepository userGroupRepository;
 
     @Override
-    public ResponseEntity newUserGroup(UserGroup userGroup) {
+    public ResponseEntity<?> newUserGroup(UserGroup userGroup) {
         try {
             // Saving
             userGroupRepository.save(userGroup);
@@ -28,7 +28,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public ResponseEntity updateUserGroup(UserGroup userGroup) {
+    public ResponseEntity<?> updateUserGroup(UserGroup userGroup) {
         try {
             // Id check
             if (!userGroupRepository.existsById(userGroup.getId())) {
@@ -50,7 +50,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public ResponseEntity getAllUserGroups() {
+    public ResponseEntity<?> getAllUserGroups() {
         try {
             Iterable<UserGroup> userGroups = userGroupRepository.findAll();
             return ResponseEntity.ok(userGroups);
@@ -60,7 +60,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public ResponseEntity getUserGroupById(int id) {
+    public ResponseEntity<?> getUserGroupById(int id) {
         try {
             UserGroup userGroup = userGroupRepository.findById(id).get();
             return ResponseEntity.ok(userGroup);
@@ -70,7 +70,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public ResponseEntity deleteUserGroup(int id) {
+    public ResponseEntity<?> deleteUserGroup(int id) {
         try {
             // Id check
             if (!userGroupRepository.existsById(id)) {
