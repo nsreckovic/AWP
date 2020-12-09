@@ -14,8 +14,10 @@ public class UserTypeServiceImpl implements UserTypeService {
     private final UserTypeRepository userTypeRepository;
 
     @Override
-    public ResponseEntity newUserType(UserType userType) {
+    public ResponseEntity<?> newUserType(UserType userType) {
         try {
+            userType.setName(userType.getName().toUpperCase());
+
             // Saving
             userTypeRepository.save(userType);
 
@@ -28,7 +30,7 @@ public class UserTypeServiceImpl implements UserTypeService {
     }
 
     @Override
-    public ResponseEntity updateUserType(UserType userType) {
+    public ResponseEntity<?> updateUserType(UserType userType) {
         try {
             // Id check
             if (!userTypeRepository.existsById(userType.getId())) {
@@ -42,7 +44,7 @@ public class UserTypeServiceImpl implements UserTypeService {
             }
 
             // Updating
-            existingUserType.setName(userType.getName());
+            existingUserType.setName(userType.getName().toUpperCase());
             userTypeRepository.save(existingUserType);
 
             return ResponseEntity.ok(existingUserType);
@@ -52,7 +54,7 @@ public class UserTypeServiceImpl implements UserTypeService {
     }
 
     @Override
-    public ResponseEntity getAllUserTypes() {
+    public ResponseEntity<?> getAllUserTypes() {
         try {
             Iterable<UserType> userTypes = userTypeRepository.findAll();
             return ResponseEntity.ok(userTypes);
@@ -62,7 +64,7 @@ public class UserTypeServiceImpl implements UserTypeService {
     }
 
     @Override
-    public ResponseEntity getUserTypeById(int id) {
+    public ResponseEntity<?> getUserTypeById(int id) {
         try {
             UserType userType = userTypeRepository.findById(id).get();
             return ResponseEntity.ok(userType);
@@ -72,7 +74,7 @@ public class UserTypeServiceImpl implements UserTypeService {
     }
 
     @Override
-    public ResponseEntity deleteUserTypeById(int id) {
+    public ResponseEntity<?> deleteUserTypeById(int id) {
         try {
             // Id check
             if (!userTypeRepository.existsById(id)) {

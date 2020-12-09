@@ -1,8 +1,7 @@
 package com.ns.awp_h3.service.impl;
 
-import com.ns.awp_h3.dto.NewUserRequestDto;
-import com.ns.awp_h3.dto.UserResponseDto;
-import com.ns.awp_h3.dto.UserSearchRequestDto;
+import com.ns.awp_h3.config.JwtUtil;
+import com.ns.awp_h3.dto.*;
 import com.ns.awp_h3.models.UserGroup;
 import com.ns.awp_h3.models.User;
 import com.ns.awp_h3.models.UserType;
@@ -22,6 +21,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service(value = "userService")
 @RequiredArgsConstructor
@@ -29,6 +30,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final UserTypeRepository userTypeRepository;
     private final UserGroupRepository userGroupRepository;
+    private final JwtUtil jwtTokenUtil;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -60,7 +62,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     -1,
                     user.getUsername(),
                     bCryptPasswordEncoder.encode(user.getPassword()),
-//                    user.getPassword(),
                     user.getName(),
                     user.getLastName(),
                     userType,
@@ -86,7 +87,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             User existingUser = userRepository.findById(user.getId()).get();
 
             // Password check
-            if (!existingUser.getPassword().equals(user.getPassword())) {
+            if (!bCryptPasswordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
                 return ResponseEntity.status(401).body("Wrong password. Unauthorized update request.");
             }
 
@@ -109,13 +110,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
             // New Password check
             if (user.getNewPassword() != null) {
-                existingUser.setPassword(user.getNewPassword());
+                existingUser.setPassword(bCryptPasswordEncoder.encode(user.getNewPassword()));
             }
+
+            // Name and LastName
+            existingUser.setName(user.getName());
+            existingUser.setLastName(user.getLastName());
 
             // Updating
             userRepository.save(existingUser);
 
-            return ResponseEntity.ok(new UserResponseDto(existingUser));
+            final UserDetails userDetails = loadUserByUsername(existingUser.getUsername());
+            final String jwt = jwtTokenUtil.generateToken(userDetails);
+
+            return ResponseEntity.ok(new UserWithJwtDto(new UserResponseDto(existingUser), new TokenDto(jwt)));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
         }
@@ -186,6 +194,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
         if (user == null) throw new UsernameNotFoundException("Invalid username or password.");
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), getAuthority(user));
     }
+
+    private Set<SimpleGrantedAuthority> getAuthority(User user) {
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserType().getName()));
+        return authorities;
+    }
+
 }
