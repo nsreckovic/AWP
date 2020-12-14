@@ -19,9 +19,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userService;
 
-    @Autowired
-    private JwtAuthenticationEntryPoint unauthorizedHandler;
-
     @Bean
     public JwtRequestFilter jwtRequestFilter() throws Exception {
         return new JwtRequestFilter();
@@ -65,7 +62,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(unauthorizedHandler)
 
                 .and()
                 .sessionManagement()

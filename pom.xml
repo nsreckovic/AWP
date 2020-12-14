@@ -11,7 +11,7 @@
     <groupId>com.ns</groupId>
     <artifactId>awp_h3</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>awp_h3</name>
+    <name>AWP-H3</name>
     <description>Third homework for the Advanced Web Development course.</description>
 
     <properties>
