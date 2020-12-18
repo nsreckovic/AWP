@@ -1,5 +1,6 @@
 package com.ns.awp.airline.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ns.awp.flight.models.Flight;
 import lombok.Data;
 
@@ -19,6 +20,7 @@ public class Airline {
     @Column(nullable = false)
     private String link;
 
+    @JsonIgnore
     @OneToMany(orphanRemoval = true, mappedBy = "airline")
     private List<Flight> flights;
 }

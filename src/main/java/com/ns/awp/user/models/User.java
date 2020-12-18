@@ -39,6 +39,6 @@ public class User {
     @OneToMany(orphanRemoval = true, mappedBy = "user")
     private List<Reservation> reservations;
 
-    @OneToMany(orphanRemoval = true, mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     private List<Ticket> tickets;
 }
