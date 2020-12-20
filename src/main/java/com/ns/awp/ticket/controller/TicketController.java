@@ -1,6 +1,5 @@
 package com.ns.awp.ticket.controller;
 
-import com.ns.awp.ticket.models.dto.BulkTicketSaveRequestDto;
 import com.ns.awp.ticket.models.dto.Filter;
 import com.ns.awp.ticket.models.dto.TicketSaveRequestDto;
 import com.ns.awp.ticket.service.TicketService;
@@ -21,44 +20,34 @@ public class TicketController {
     }
 
     //@PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/bulk")
-    public ResponseEntity<?> newTickets(@RequestBody BulkTicketSaveRequestDto bulkRequest) {
-        return ticketService.newBulkTicket(bulkRequest);
-    }
-
-    //@PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/")
     public ResponseEntity<?> updateTicket(@RequestBody TicketSaveRequestDto ticket) {
         return ticketService.updateTicket(ticket);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<?> getAllTickets() {
-        return ticketService.getAllTickets();
-    }
-
-    @GetMapping("/user/{id}")
-    public ResponseEntity<?> getAllTicketsByUserId(@PathVariable("id") int userId) {
-        return ticketService.getAllTicketsByUser(userId);
-    }
-
-    @GetMapping("/airline/{id}")
-    public ResponseEntity<?> getAllTicketsByAirlineId(@PathVariable("id") int airlineId) {
-        return ticketService.getAllTicketsByAirline(airlineId);
+    @PostMapping("/all")
+    public ResponseEntity<?> getAllTickets(@RequestBody Filter filter) {
+        // TODO
+        //  - admin check -> get all
+        //  - regular check -> check if it's authenticated user in the filter
+        return ticketService.getAllTickets(filter);
     }
 
     @PostMapping("/from")
-    public ResponseEntity<?> getAllFromTicketsByFilter(@RequestBody Filter filter) {
-        return ticketService.getAllFromTicketsByFilter(filter);
+    public ResponseEntity<?> getAllAvailableFromTicketsByFilter(@RequestBody Filter filter) {
+        return ticketService.getAllAvailableFromTicketsByFilter(filter);
     }
 
     @PostMapping("/return")
-    public ResponseEntity<?> getAllReturnTicketsByFilter(@RequestBody Filter filter) {
-        return ticketService.getAllReturnTicketsByFilter(filter);
+    public ResponseEntity<?> getAllAvailableReturnTicketsByFilter(@RequestBody Filter filter) {
+        return ticketService.getAllAvailableReturnTicketsByFilter(filter);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTicketById(@PathVariable("id") int id) {
+        // TODO
+        //  - admin check -> get ticket
+        //  - regular check -> check if it's authenticated user in the ticket
         return ticketService.getTicketById(id);
     }
 

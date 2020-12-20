@@ -4,16 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ns.awp.flightInstance.models.FlightInstance;
 import com.ns.awp.reservation.models.Reservation;
 import com.ns.awp.user.models.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Data
-@AllArgsConstructor @NoArgsConstructor
+@NoArgsConstructor
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,4 +31,8 @@ public class Ticket {
     @JsonIgnore
     @OneToOne(orphanRemoval = true, mappedBy = "returnTicket")
     private Reservation reservation1;
+
+    public Ticket(FlightInstance flightInstance) {
+        this.flightInstance = flightInstance;
+    }
 }

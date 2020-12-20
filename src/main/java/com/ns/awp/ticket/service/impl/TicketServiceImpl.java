@@ -6,15 +6,12 @@ import com.ns.awp.ticket.models.Ticket;
 import com.ns.awp.ticket.models.dto.*;
 import com.ns.awp.ticket.repository.TicketRepository;
 import com.ns.awp.ticket.service.TicketService;
-import com.ns.awp.user.models.User;
-import com.ns.awp.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,13 +21,18 @@ import java.util.concurrent.TimeUnit;
 public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final FlightInstanceRepository flightInstanceRepository;
-    private final UserRepository userRepository;
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     @Override
-    @Transactional
     public ResponseEntity<?> newTicket(TicketSaveRequestDto ticket) {
         try {
+            // Null check
+            if (ticket.getFlightInstanceId() == null) {
+                return ResponseEntity.status(400).body("Flight instance id cannot be null.");
+            }
+            if (ticket.getTicketCount() == null || ticket.getTicketCount() < 1) {
+                return ResponseEntity.status(400).body("Ticket count cannot be null and must be positive number.");
+            }
+
             // Flight Instance check
             FlightInstance flightInstance;
             if (!flightInstanceRepository.existsById(ticket.getFlightInstanceId())) {
@@ -40,78 +42,27 @@ public class TicketServiceImpl implements TicketService {
             }
 
             // Count check
-            if (flightInstance.getCount() < 1) {
-                return ResponseEntity.status(400).body("Maximum flight capacity reached.");
+            if (flightInstance.getCount() - ticket.getTicketCount() < 0) {
+                return ResponseEntity.status(400).body("Requested number of tickets exceeds maximum capacity of flight's " + flightInstance.getCount() + " tickets.");
             } else {
-                flightInstance.decrementCount();
-            }
-
-            // User check
-            User user;
-            if (!userRepository.existsById(ticket.getUserId())) {
-                return ResponseEntity.status(404).body("User with provided id not found.");
-            } else {
-                user = userRepository.findById(ticket.getUserId()).get();
-            }
-
-            // Save
-            flightInstanceRepository.save(flightInstance);
-            Ticket saved = ticketRepository.save(new Ticket(
-                    -1,
-                    flightInstance,
-                    user,
-                    null,
-                    null
-            ));
-
-            return ResponseEntity.ok(new TicketResponseDto(saved));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Internal Server Error.");
-        }
-    }
-
-    @Override
-    @Transactional
-    public ResponseEntity<?> newBulkTicket(BulkTicketSaveRequestDto bulkRequest) {
-        try {
-            // Flight Instance check
-            FlightInstance flightInstance;
-            if (!flightInstanceRepository.existsById(bulkRequest.getFlightInstanceId())) {
-                return ResponseEntity.status(404).body("Flight instance not found.");
-            } else {
-                flightInstance = flightInstanceRepository.findById(bulkRequest.getFlightInstanceId()).get();
-            }
-
-            // Count check
-            if (flightInstance.getCount() - bulkRequest.getCount() < 0) {
-                return ResponseEntity.status(400).body("Requested number of tickets exceeds maximum capacity of " + flightInstance.getCount() + " tickets.");
-            } else {
-                flightInstance.bulkDecrementCount(bulkRequest.getCount());
+                flightInstance.bulkDecrementCount(ticket.getTicketCount());
             }
 
             // Save
             flightInstanceRepository.save(flightInstance);
             List<TicketResponseDto> saved = new ArrayList<>();
-            for (int i = 0; i < bulkRequest.getCount(); i++) {
-                Ticket t = new Ticket(
-                        -1,
-                        flightInstance,
-                        null,
-                        null,
-                        null
-                );
+            for (int i = 0; i < ticket.getTicketCount(); i++) {
+                Ticket t = new Ticket(flightInstance);
                 saved.add(new TicketResponseDto(ticketRepository.save(t)));
             }
 
             return ResponseEntity.ok(saved);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(500).body("Internal Server Error.");
         }
     }
 
     @Override
-    @Transactional
     public ResponseEntity<?> updateTicket(TicketSaveRequestDto ticket) {
         try {
             // Ticket id check
@@ -126,7 +77,7 @@ public class TicketServiceImpl implements TicketService {
 
             // Flight Instance check
             FlightInstance oldFlightInstance = null, newFlightInstance = null;
-            if (ticket.getFlightInstanceId() != existing.getFlightInstance().getId()) {
+            if (ticket.getFlightInstanceId() != null && ticket.getFlightInstanceId() != existing.getFlightInstance().getId()) {
                 if (!flightInstanceRepository.existsById(ticket.getFlightInstanceId())) {
                     return ResponseEntity.status(404).body("Flight instance not found.");
                 } else {
@@ -139,19 +90,10 @@ public class TicketServiceImpl implements TicketService {
             // Count check
             if (newFlightInstance != null) {
                 if (newFlightInstance.getCount() < 1) {
-                    return ResponseEntity.status(400).body("Maximum flight capacity reached.");
+                    return ResponseEntity.status(400).body("Flight instance with the requested id already has the maximum number of tickets.");
                 } else {
                     oldFlightInstance.incrementCount();
                     newFlightInstance.decrementCount();
-                }
-            }
-
-            // User check
-            if (ticket.getUserId() != existing.getUser().getId()) {
-                if (!userRepository.existsById(ticket.getUserId())) {
-                    return ResponseEntity.status(404).body("User with provided id not found.");
-                } else {
-                    existing.setUser(userRepository.findById(ticket.getUserId()).get());
                 }
             }
 
@@ -167,50 +109,11 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public ResponseEntity<?> getAllTickets() {
-        try {
-            // Get all
-            List<TicketResponseDto> tickets = new ArrayList<>();
-            ticketRepository.findAll().forEach(ticket -> tickets.add(new TicketResponseDto(ticket)));
-
-            return ResponseEntity.ok(tickets);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Internal Server Error.");
-        }
-    }
-
-    @Override
-    public ResponseEntity<?> getAllTicketsByUser(int userId) {
-        try {
-            // Get all from user with provided id
-            List<TicketResponseDto> tickets = new ArrayList<>();
-            ticketRepository.findAllByUserId(userId).forEach(ticket -> tickets.add(new TicketResponseDto(ticket)));
-
-            return ResponseEntity.ok(tickets);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Internal Server Error.");
-        }
-    }
-
-    @Override
-    public ResponseEntity<?> getAllTicketsByAirline(int airlineId) {
-        try {
-            // Get all from airline with provided id
-            List<TicketResponseDto> tickets = new ArrayList<>();
-            ticketRepository.findAllByAirlineId(airlineId).forEach(ticket -> tickets.add(new TicketResponseDto(ticket)));
-
-            return ResponseEntity.ok(tickets);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Internal Server Error.");
-        }
-    }
-
-    @Override
-    public ResponseEntity<?> getAllFromTicketsByFilter(Filter filter) {
+    public ResponseEntity<?> getAllTickets(Filter filter) {
         try {
             // Get filtered
             List<TicketResponseDto> tickets = new ArrayList<>();
-            ticketRepository.findAllTicketsByFilter(
+            ticketRepository.findAllUserTicketsByFilter(
                     filter.getUserId(),
                     filter.getFromDate() != null ? new Timestamp(filter.getFromDate()) : null,
                     filter.getToDate() != null ? new Timestamp(filter.getToDate()) : null,
@@ -226,21 +129,39 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public ResponseEntity<?> getAllReturnTicketsByFilter(Filter filter) {
+    public ResponseEntity<?> getAllAvailableFromTicketsByFilter(Filter filter) {
         try {
-            if (filter.getCurrentFromTicketId() == null) {
+            // Get filtered
+            List<TicketResponseDto> tickets = new ArrayList<>();
+            ticketRepository.findAllAvailableTicketsByFilter(
+                    filter.getFromDate() != null ? new Timestamp(filter.getFromDate()) : null,
+                    filter.getToDate() != null ? new Timestamp(filter.getToDate()) : null,
+                    filter.getFromAirportId(),
+                    filter.getToAirportId(),
+                    filter.getAirlineId()).forEach(ticket -> tickets.add(new TicketResponseDto(ticket)));
+
+            return ResponseEntity.ok(tickets);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Internal Server Error.");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getAllAvailableReturnTicketsByFilter(Filter filter) {
+        try {
+            // From ticket check
+            if (filter.getFromTicketId() == null) {
                 return ResponseEntity.status(400).body("You must provide from ticket id.");
             }
-
-            // Id check
             Ticket fromTicket;
-            if (!ticketRepository.existsById(filter.getCurrentFromTicketId())) {
+            if (!ticketRepository.existsById(filter.getFromTicketId())) {
                 return ResponseEntity.status(404).body("Ticket not found.");
             } else {
-                fromTicket = ticketRepository.findById(filter.getCurrentFromTicketId()).get();
+                fromTicket = ticketRepository.findById(filter.getFromTicketId()).get();
             }
 
-            // Set flight from date (timestamp) for filter query
+            // Set fromDate (timestamp) for filter query
             Timestamp fromTimestamp = fromTicket.getFlightInstance().getFlightDate();
             fromTimestamp.setTime(
                     // Departure time
@@ -251,14 +172,17 @@ public class TicketServiceImpl implements TicketService {
                     TimeUnit.MINUTES.toMillis(60)
             );
 
+            // Set airports for filter query
+            String departureAirportId = fromTicket.getFlightInstance().getFlight().getArrivalAirport().getAirportId();
+            String arrivalAirportId = fromTicket.getFlightInstance().getFlight().getDepartureAirport().getAirportId();
+
             // Get filtered tickets
             List<TicketResponseDto> tickets = new ArrayList<>();
-            ticketRepository.findAllTicketsByFilter(
-                    filter.getUserId(),
+            ticketRepository.findAllAvailableTicketsByFilter(
                     fromTimestamp,
                     filter.getToDate() != null ? new Timestamp(filter.getToDate()) : null,
-                    fromTicket.getFlightInstance().getFlight().getArrivalAirport().getAirportId(),
-                    fromTicket.getFlightInstance().getFlight().getDepartureAirport().getAirportId(),
+                    departureAirportId,
+                    arrivalAirportId,
                     filter.getAirlineId()).forEach(ticket -> tickets.add(new TicketResponseDto(ticket)));
 
             return ResponseEntity.ok(tickets);
