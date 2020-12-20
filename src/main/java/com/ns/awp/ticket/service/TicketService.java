@@ -1,6 +1,6 @@
 package com.ns.awp.ticket.service;
 
-import com.ns.awp.ticket.models.dto.Filter;
+import com.ns.awp.ticket.models.dto.TicketFilter;
 import com.ns.awp.ticket.models.dto.TicketSaveRequestDto;
 import org.springframework.http.ResponseEntity;
 
@@ -9,11 +9,11 @@ public interface TicketService {
 
     ResponseEntity<?> updateTicket(TicketSaveRequestDto ticket);
 
-    ResponseEntity<?> getAllTickets(Filter filter);
+    ResponseEntity<?> getAllTickets(TicketFilter filter);
 
-    ResponseEntity<?> getAllAvailableFromTicketsByFilter(Filter filter);
+    ResponseEntity<?> getAllAvailableFromTicketsByFilter(TicketFilter filter);
 
-    ResponseEntity<?> getAllAvailableReturnTicketsByFilter(Filter filter);
+    ResponseEntity<?> getAllAvailableReturnTicketsByFilter(TicketFilter filter);
 
     ResponseEntity<?> getTicketById(int id);
 

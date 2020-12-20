@@ -1,11 +1,13 @@
 package com.ns.awp.reservation.service.impl;
 
 import com.ns.awp.reservation.models.Reservation;
+import com.ns.awp.reservation.models.dto.ReservationFilter;
 import com.ns.awp.reservation.models.dto.ReservationResponseDto;
 import com.ns.awp.reservation.models.dto.ReservationSaveRequestDto;
 import com.ns.awp.reservation.repository.ReservationRepository;
 import com.ns.awp.reservation.service.ReservationService;
 import com.ns.awp.ticket.models.Ticket;
+import com.ns.awp.ticket.models.dto.TicketResponseDto;
 import com.ns.awp.ticket.repository.TicketRepository;
 import com.ns.awp.user.models.User;
 import com.ns.awp.user.repository.UserRepository;
@@ -14,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -28,10 +32,10 @@ public class ReservationServiceImpl implements ReservationService {
     public ResponseEntity<?> newReservation(ReservationSaveRequestDto reservation) {
         try {
             // Null check
-            if (reservation.getUserId() == null) {
-                return ResponseEntity.status(400).body("User id cannot be null.");
-            } else if (reservation.getDepartureTicketId() == null) {
+            if (reservation.getDepartureTicketId() == null) {
                 return ResponseEntity.status(400).body("Departure ticket id cannot be null.");
+            } else if (reservation.getUserId() == null) {
+                return ResponseEntity.status(400).body("User id cannot be null.");
             }
 
             // Reservation timestamp
@@ -56,6 +60,8 @@ public class ReservationServiceImpl implements ReservationService {
                 } else {
                     if (reservationTimestamp.after(departureTicket.getFlightInstance().getFlightDate())) {
                         return ResponseEntity.status(400).body("Reservation cannot be made for a flight in the past.");
+                    } else if (reservationTimestamp.after(new Timestamp(departureTicket.getFlightInstance().getFlightDate().getTime() - TimeUnit.DAYS.toMillis(1)))) {
+                        return ResponseEntity.status(400).body("Reservation cannot be made 24 hours before the flight.");
                     } else {
                         departureTicket.setUser(user);
                     }
@@ -64,18 +70,19 @@ public class ReservationServiceImpl implements ReservationService {
 
             // Return ticket
             Ticket returnTicket;
-            if (reservation.getReturnTicketId() != null && !ticketRepository.existsById(reservation.getReturnTicketId())) {
-                return ResponseEntity.status(404).body("Ticket not found.");
-            } else {
-                returnTicket = reservation.getReturnTicketId() != null ? ticketRepository.findById(reservation.getReturnTicketId()).get() : null;
-                if (returnTicket != null) {
+            if (reservation.getReturnTicketId() != null) {
+                if (!ticketRepository.existsById(reservation.getReturnTicketId())) {
+                    return ResponseEntity.status(404).body("Ticket not found.");
+                } else {
+                    returnTicket = ticketRepository.findById(reservation.getReturnTicketId()).get();
                     if (returnTicket.getUser() != null) {
                         return ResponseEntity.status(400).body("Return ticket with provided id has already been assigned to the user.");
                     } else {
                         returnTicket.setUser(user);
                     }
-                    returnTicket.setUser(user);
                 }
+            } else {
+                returnTicket = null;
             }
 
             // Save
@@ -110,13 +117,22 @@ public class ReservationServiceImpl implements ReservationService {
             }
             existing = reservationRepository.findById(reservation.getId()).get();
 
-            // Reservation timestamp
-            Timestamp currentTimestamp = new Timestamp(new Date().getTime());
 
-            // Update time check
-            if ((existing.getDepartureTicket().getFlightInstance().getFlightDate().getTime() + TimeUnit.DAYS.toMillis(1)) <= currentTimestamp.getTime()) {
-                return ResponseEntity.status(400).body("Reservation cannot be changed the day before or after the departure flight.");
+
+            // Reservation timestamp
+            Timestamp updateTimestamp = new Timestamp(new Date().getTime());
+
+
+
+            // Time check
+            // TODO enable first if for admins
+            if (updateTimestamp.after(existing.getDepartureTicket().getFlightInstance().getFlightDate())) {
+                return ResponseEntity.status(400).body("Past reservations cannot be changed.");
+            } else if (updateTimestamp.after(new Timestamp(existing.getDepartureTicket().getFlightInstance().getFlightDate().getTime() - TimeUnit.DAYS.toMillis(1)))) {
+                return ResponseEntity.status(400).body("Reservation cannot be updated 24 hours before the flight.");
             }
+
+
 
             // User check
             User oldUser = null;
@@ -129,21 +145,27 @@ public class ReservationServiceImpl implements ReservationService {
                 }
             }
 
+
+
             // Departure ticket
             Ticket oldDepartureTicket = null;
             Ticket newDepartureTicket = null;
+
             if (reservation.getDepartureTicketId() != null) {
                 if (!ticketRepository.existsById(reservation.getDepartureTicketId())) {
                     return ResponseEntity.status(404).body("Ticket not found.");
                 } else {
                     oldDepartureTicket = existing.getDepartureTicket();
                     newDepartureTicket = ticketRepository.findById(reservation.getDepartureTicketId()).get();
+
                     if (!oldDepartureTicket.equals(newDepartureTicket)) {
                         if (newDepartureTicket.getUser() != null) {
                             return ResponseEntity.status(400).body("Departure ticket with provided id has already been assigned to the user.");
                         } else {
-                            if (currentTimestamp.after(newDepartureTicket.getFlightInstance().getFlightDate())) {
-                                return ResponseEntity.status(400).body("Reservation cannot be made for a flight in the past.");
+                            if (updateTimestamp.after(newDepartureTicket.getFlightInstance().getFlightDate())) {
+                                return ResponseEntity.status(400).body("Reservation cannot be updated for the flight in the past.");
+                            } else if (updateTimestamp.after(new Timestamp(newDepartureTicket.getFlightInstance().getFlightDate().getTime() - TimeUnit.DAYS.toMillis(1)))) {
+                                return ResponseEntity.status(400).body("Reservation cannot be updated for the flight that leaves in next 24 hours.");
                             } else {
                                 // Reset old departure ticket
                                 oldDepartureTicket.setUser(null);
@@ -152,25 +174,35 @@ public class ReservationServiceImpl implements ReservationService {
                                 existing.setDepartureTicket(newDepartureTicket);
                             }
                         }
+
+                    // If departure tickets are the same, set the departure tickets to null so that ticketRepository isn't unnecessary called
                     } else {
                         oldDepartureTicket = null;
                         newDepartureTicket = null;
                     }
                 }
+
+            // If departure ticket is not changing, check if user is going to be changed so it can be changed in the departure ticket as well
             } else if (oldUser != null && !oldUser.equals(existing.getUser())){
                 existing.getDepartureTicket().setUser(existing.getUser());
                 oldDepartureTicket = existing.getDepartureTicket();
             }
 
+
+
             // Return ticket
             Ticket oldReturnTicket = null;
             Ticket newReturnTicket = null;
-            if (reservation.getReturnTicketId() != null && reservation.getReturnTicketId() == -1 && existing.getReturnTicket() != null) {
-                // Reset old return ticket
-                oldReturnTicket = existing.getReturnTicket();
-                oldReturnTicket.setUser(null);
-                // Set new return ticket
-                existing.setReturnTicket(null);
+
+            // -1 sets the return ticket to null, null ignores the return ticket setting and everything else is viewed as a return ticket id
+            if (reservation.getReturnTicketId() != null && reservation.getReturnTicketId() == -1) {
+                if (existing.getReturnTicket() != null) {
+                    // Reset old return ticket
+                    oldReturnTicket = existing.getReturnTicket();
+                    oldReturnTicket.setUser(null);
+                    // Set new return ticket
+                    existing.setReturnTicket(null);
+                }
 
             } else if (reservation.getReturnTicketId() != null && reservation.getReturnTicketId() != -1) {
                 if (!ticketRepository.existsById(reservation.getReturnTicketId())) {
@@ -179,13 +211,19 @@ public class ReservationServiceImpl implements ReservationService {
                     oldReturnTicket = existing.getReturnTicket();
                     newReturnTicket = ticketRepository.findById(reservation.getReturnTicketId()).get();
 
-                    if (oldReturnTicket == null || !oldReturnTicket.equals(newReturnTicket)){
+                    if (!newReturnTicket.equals(oldReturnTicket)){
                         if (newReturnTicket.getUser() != null) {
                             return ResponseEntity.status(400).body("Return ticket with provided id has already been assigned to the user.");
-                        } else if (newReturnTicket.getFlightInstance().getFlightDate().before(existing.getDepartureTicket().getFlightInstance().getFlightDate())) {
-                            return ResponseEntity.status(400).body("Return ticket must be after the departure ticket.");
+
+                        } else if (newReturnTicket.getFlightInstance().getFlightDate().before(new Timestamp(existing.getDepartureTicket().getFlightInstance().getFlightDate().getTime() + TimeUnit.MINUTES.toMillis(existing.getDepartureTicket().getFlightInstance().getFlightLengthInMinutes()) + TimeUnit.MINUTES.toMillis(60)))) {
+                            return ResponseEntity.status(400).body("Return ticket must be at least one hour after the departure flight has landed.");
+
                         } else if (!existing.getDepartureTicket().getFlightInstance().getFlight().getArrivalAirport().getId().equals(newReturnTicket.getFlightInstance().getFlight().getDepartureAirport().getId())) {
                             return ResponseEntity.status(400).body("Arrival airport of the departure ticket must be the same as the departure airport of the return ticket.");
+
+                        } else if (!existing.getDepartureTicket().getFlightInstance().getFlight().getDepartureAirport().getId().equals(newReturnTicket.getFlightInstance().getFlight().getArrivalAirport().getId())) {
+                            return ResponseEntity.status(400).body("Departure airport of the departure ticket must be the same as the arrival airport of the return ticket.");
+
                         } else {
                             // Reset old return ticket
                             if (oldReturnTicket != null) oldReturnTicket.setUser(null);
@@ -198,6 +236,7 @@ public class ReservationServiceImpl implements ReservationService {
                         newReturnTicket = null;
                     }
                 }
+            // If return ticket is not changing, check if user is going to be changed so it can be changed in the return ticket as well
             } else if (oldUser != null && !oldUser.equals(existing.getUser())){
                 if (existing.getReturnTicket() != null) {
                     existing.getReturnTicket().setUser(existing.getUser());
@@ -220,10 +259,17 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public ResponseEntity<?> getAllReservations() {
+    public ResponseEntity<?> getAllReservations(ReservationFilter filter) {
         try {
             // Get all
-            Iterable<Reservation> reservations = reservationRepository.findAll();
+            List<ReservationResponseDto> reservations = new ArrayList<>();
+            reservationRepository.findAllUserReservationsByFilter(
+                    filter.getUserId(),
+                    filter.getFromDate() != null ? new Timestamp(filter.getFromDate()) : null,
+                    filter.getToDate() != null ? new Timestamp(filter.getToDate()) : null,
+                    filter.getFromAirportId(),
+                    filter.getToAirportId(),
+                    filter.getAirlineId()).forEach(reservation -> reservations.add(new ReservationResponseDto(reservation)));
 
             return ResponseEntity.ok(reservations);
         } catch (Exception e) {
@@ -242,7 +288,7 @@ public class ReservationServiceImpl implements ReservationService {
             // Get by id
             Reservation reservation = reservationRepository.findById(id).get();
 
-            return ResponseEntity.ok(reservation);
+            return ResponseEntity.ok(new ReservationResponseDto(reservation));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
         }
@@ -253,10 +299,19 @@ public class ReservationServiceImpl implements ReservationService {
         try {
             // Id check
             if (!reservationRepository.existsById(id)) {
-                return ResponseEntity.status(404).body("Reservation not found.");
+                return ResponseEntity.status(404).body("Reservation with provided id not found.");
             }
 
             // Delete
+            Reservation reservation = reservationRepository.findById(id).get();
+            Ticket departureTicket = reservation.getDepartureTicket();
+            Ticket returnTicket = reservation.getReturnTicket();
+            departureTicket.setUser(null);
+            ticketRepository.save(departureTicket);
+            if (returnTicket != null) {
+                returnTicket.setUser(null);
+                ticketRepository.save(returnTicket);
+            }
             reservationRepository.deleteById(id);
 
             return ResponseEntity.ok("Reservation deleted.");

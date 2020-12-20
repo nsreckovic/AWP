@@ -1,6 +1,6 @@
 package com.ns.awp.ticket.controller;
 
-import com.ns.awp.ticket.models.dto.Filter;
+import com.ns.awp.ticket.models.dto.TicketFilter;
 import com.ns.awp.ticket.models.dto.TicketSaveRequestDto;
 import com.ns.awp.ticket.service.TicketService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class TicketController {
     }
 
     @PostMapping("/all")
-    public ResponseEntity<?> getAllTickets(@RequestBody Filter filter) {
+    public ResponseEntity<?> getAllTickets(@RequestBody TicketFilter filter) {
         // TODO
         //  - admin check -> get all
         //  - regular check -> check if it's authenticated user in the filter
@@ -34,12 +34,12 @@ public class TicketController {
     }
 
     @PostMapping("/from")
-    public ResponseEntity<?> getAllAvailableFromTicketsByFilter(@RequestBody Filter filter) {
+    public ResponseEntity<?> getAllAvailableFromTicketsByFilter(@RequestBody TicketFilter filter) {
         return ticketService.getAllAvailableFromTicketsByFilter(filter);
     }
 
     @PostMapping("/return")
-    public ResponseEntity<?> getAllAvailableReturnTicketsByFilter(@RequestBody Filter filter) {
+    public ResponseEntity<?> getAllAvailableReturnTicketsByFilter(@RequestBody TicketFilter filter) {
         return ticketService.getAllAvailableReturnTicketsByFilter(filter);
     }
 

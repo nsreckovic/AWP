@@ -1,7 +1,6 @@
 package com.ns.awp.reservation.models.dto;
 
 import lombok.Data;
-import lombok.NonNull;
 
 @Data
 public class ReservationSaveRequestDto {

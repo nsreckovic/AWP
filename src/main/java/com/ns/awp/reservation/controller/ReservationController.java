@@ -1,5 +1,6 @@
 package com.ns.awp.reservation.controller;
 
+import com.ns.awp.reservation.models.dto.ReservationFilter;
 import com.ns.awp.reservation.models.dto.ReservationSaveRequestDto;
 import com.ns.awp.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,12 @@ public class ReservationController {
         return reservationService.updateReservation(reservation);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<?> getAllReservations() {
-        return reservationService.getAllReservations();
+    @PostMapping("/all")
+    public ResponseEntity<?> getAllReservations(@RequestBody ReservationFilter filter) {
+        // TODO
+        //  - admin check -> get all
+        //  - regular check -> check if it's authenticated user in the filter
+        return reservationService.getAllReservations(filter);
     }
 
     @GetMapping("/{id}")

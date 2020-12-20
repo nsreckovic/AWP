@@ -109,7 +109,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public ResponseEntity<?> getAllTickets(Filter filter) {
+    public ResponseEntity<?> getAllTickets(TicketFilter filter) {
         try {
             // Get filtered
             List<TicketResponseDto> tickets = new ArrayList<>();
@@ -129,7 +129,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public ResponseEntity<?> getAllAvailableFromTicketsByFilter(Filter filter) {
+    public ResponseEntity<?> getAllAvailableFromTicketsByFilter(TicketFilter filter) {
         try {
             // Get filtered
             List<TicketResponseDto> tickets = new ArrayList<>();
@@ -148,7 +148,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public ResponseEntity<?> getAllAvailableReturnTicketsByFilter(Filter filter) {
+    public ResponseEntity<?> getAllAvailableReturnTicketsByFilter(TicketFilter filter) {
         try {
             // From ticket check
             if (filter.getFromTicketId() == null) {

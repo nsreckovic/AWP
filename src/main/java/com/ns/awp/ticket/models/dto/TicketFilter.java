@@ -3,7 +3,7 @@ package com.ns.awp.ticket.models.dto;
 import lombok.Data;
 
 @Data
-public class Filter {
+public class TicketFilter {
     private Integer userId;          // For admin use only
     private Long fromDate;           // FROM
     private Long toDate;             // FROM, RETURN
