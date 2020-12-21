@@ -13,29 +13,31 @@ import org.springframework.web.bind.annotation.*;
 public class FlightController {
     private final FlightService flightService;
 
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
     public ResponseEntity<?> newFlight(@RequestBody FlightSaveRequestDto flight) {
         return flightService.newFlight(flight);
     }
 
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/")
     public ResponseEntity<?> updateFlight(@RequestBody FlightSaveRequestDto flight) {
         return flightService.updateFlight(flight);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @GetMapping("/all")
     public ResponseEntity<?> getAllFlights() {
         return flightService.getAllFlights();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getFlightByFlightId(@PathVariable("id") String id) {
         return flightService.getFlightByFlightId(id);
     }
 
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteFlightByFlightId(@PathVariable("id") String id) {
         return flightService.deleteFlightByFlightId(id);

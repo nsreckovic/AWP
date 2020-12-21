@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,7 @@ public class JwtUtil {
                 .claim("scope", authorities)
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3))
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(3)))
                 .compact();
     }
 

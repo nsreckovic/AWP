@@ -25,7 +25,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public BCryptPasswordEncoder encoder(){
+    public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -48,14 +48,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests()
                 .antMatchers(
-//                        "/api/users/register",
-//                        "/api/auth/generateToken",
-//                        "/api/userTypes/{id}",
-//                        "/api/userTypes/all",
-//                        "/api/userGroups/{id}",
-//                        "/api/userGroups/all",
-                        "/api/**"
-                        )
+                        "/api/users/register",
+                        "/api/auth/generateToken")
 
                 .permitAll()
                 .anyRequest()

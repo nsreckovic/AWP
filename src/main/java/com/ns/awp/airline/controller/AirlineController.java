@@ -13,29 +13,31 @@ import org.springframework.web.bind.annotation.*;
 public class AirlineController {
     private final AirlineService airlineService;
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
     public ResponseEntity<?> newAirline(@RequestBody Airline airline) {
         return airlineService.newAirline(airline);
     }
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/")
     public ResponseEntity<?> updateAirline(@RequestBody Airline airline) {
         return airlineService.updateAirline(airline);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @GetMapping("/all")
     public ResponseEntity<?> getAllAirlines() {
         return airlineService.getAllAirlines();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getAirlineById(@PathVariable("id") int id) {
         return airlineService.getAirlineById(id);
     }
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAirlineById(@PathVariable("id") int id) {
         return airlineService.deleteAirlineById(id);

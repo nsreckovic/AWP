@@ -14,17 +14,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,24 +34,39 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserTypeRepository userTypeRepository;
     private final JwtUtil jwtTokenUtil;
 
-     @Autowired
-     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public ResponseEntity<?> newUser(UserSaveRequestDto user) {
         try {
+            // Null check
+            if (user.getUsername() == null) {
+                return ResponseEntity.status(400).body("Username cannot be null.");
+            } else if (user.getName() == null) {
+                return ResponseEntity.status(400).body("Name cannot be null.");
+            } else if (user.getLastName() == null) {
+                return ResponseEntity.status(400).body("Last name cannot be null.");
+            } else if (user.getPassword() == null) {
+                return ResponseEntity.status(400).body("Password cannot be null.");
+            }
+
             // Username check
             if (userRepository.existsByUsername(user.getUsername())) {
                 return ResponseEntity.status(400).body("User with provided username already exists.");
             }
 
+            // Password check
+            if (user.getPassword().length() < 6 || !user.getPassword().matches(".*[0-9].*") || !user.getPassword().matches(".*[A-Za-z].*")) {
+                return ResponseEntity.status(400).body("Password must have at least 6 characters and contain letters and numbers.");
+            }
+
             // UserType check
             UserType userType;
-            if (!userTypeRepository.existsById(user.getUserType())) {
-                return ResponseEntity.status(400).body("User Type with provided id not found.");
-            } else userType = userTypeRepository.findById(user.getUserType()).get();
+            // Every new user is registered as a regular user
+            userType = userTypeRepository.findByName("REGULAR").get();
 
-            // Saving
+            // Save
             User saved = userRepository.save(new User(
                     -1,
                     user.getUsername(),
@@ -73,37 +89,63 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public ResponseEntity<?> updateUser(UserSaveRequestDto user) {
         try {
-            // Id check
-            if (user.getId() == null || !userRepository.existsById(user.getId())) {
-                return ResponseEntity.status(404).body("User with provided id not found.");
+            // JWT check
+            User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            if (hasRole("ROLE_REGULAR") && authenticated.getId() != user.getId()) {
+                return ResponseEntity.status(401).body("You cannot change another user's data.");
             }
-            User existing = userRepository.findById(user.getId()).get();
+
+            // Id check
+            User existing = authenticated;
+            if (hasRole("ROLE_ADMIN")) {
+                if (user.getId() == null || !userRepository.existsById(user.getId())) {
+                    return ResponseEntity.status(404).body("User with provided id not found.");
+                }
+                existing = userRepository.findById(user.getId()).get();
+            }
 
             // Password check
-            if (!bCryptPasswordEncoder.matches(user.getPassword(), existing.getPassword())) {
-                return ResponseEntity.status(401).body("Wrong password. Unauthorized update request.");
+            if (hasRole("ROLE_REGULAR")) {
+                if (user.getPassword() != null) {
+                    if (!bCryptPasswordEncoder.matches(user.getPassword(), existing.getPassword())) {
+                        return ResponseEntity.status(401).body("Wrong password. Unauthorized update request.");
+                    }
+                } else {
+                    return ResponseEntity.status(400).body("Password cannot be null.");
+                }
             }
 
             // Username check
-            if (!existing.getUsername().equals(user.getUsername()) && userRepository.existsByUsername(user.getUsername())) {
-                return ResponseEntity.status(400).body("User with provided username already exists.");
-            } else existing.setUsername(user.getUsername());
+            if (user.getUsername() != null) {
+                if (!existing.getUsername().equals(user.getUsername()) && userRepository.existsByUsername(user.getUsername())) {
+                    return ResponseEntity.status(400).body("User with provided username already exists.");
+                } else existing.setUsername(user.getUsername());
+            }
 
             // UserType check
-            if (!userTypeRepository.existsById(user.getUserType())) {
-                return ResponseEntity.status(400).body("User Type with provided id not found.");
-            } else existing.setUserType(userTypeRepository.findById(user.getUserType()).get());
+            if (user.getUserType() != null) {
+                if (hasRole("ROLE_ADMIN")) {
+                    if (!userTypeRepository.existsByName(user.getUserType())) {
+                        return ResponseEntity.status(404).body("User Type with provided name not found.");
+                    } else existing.setUserType(userTypeRepository.findByName(user.getUserType()).get());
+                } else {
+                    return ResponseEntity.status(400).body("You cannot change your user type.");
+                }
+            }
 
             // New Password check
             if (user.getNewPassword() != null) {
+                if (user.getNewPassword().length() < 6 || !user.getNewPassword().matches(".*[0-9].*") || !user.getNewPassword().matches(".*[A-Za-z].*")) {
+                    return ResponseEntity.status(400).body("New password must have at least 6 characters and contain letters and numbers.");
+                }
                 existing.setPassword(bCryptPasswordEncoder.encode(user.getNewPassword()));
             }
 
             // Name and LastName
-            existing.setName(user.getName());
-            existing.setLastName(user.getLastName());
+            if (user.getName() != null) existing.setName(user.getName());
+            if (user.getLastName() != null) existing.setLastName(user.getLastName());
 
-            // Updating
+            // Update
             userRepository.save(existing);
 
             final UserDetails userDetails = loadUserByUsername(existing.getUsername());
@@ -111,6 +153,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
             return ResponseEntity.ok(new UserWithJwtDto(new UserResponseDto(existing), new JwtDto(jwt)));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body("Internal Server Error.");
         }
     }
@@ -120,7 +163,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         try {
             List<UserResponseDto> users = new ArrayList<>();
 
-            // Getting all
+            // Get all
             userRepository.findAll().forEach(user -> users.add(new UserResponseDto(user)));
 
             return ResponseEntity.ok(users);
@@ -132,12 +175,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public ResponseEntity<?> getUserById(int id) {
         try {
+            // JWT check
+            User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            if (hasRole("ROLE_REGULAR") && authenticated.getId() != id) {
+                return ResponseEntity.status(401).body("You cannot see other users' data.");
+            }
+
             // Id check
             if (!userRepository.existsById(id)) {
                 return ResponseEntity.status(404).body("User not found.");
             }
 
-            // Getting by id
+            // Get by id
             User user = userRepository.findById(id).get();
 
             return ResponseEntity.ok(new UserResponseDto(user));
@@ -149,9 +198,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public ResponseEntity<?> deleteUserById(int id) {
         try {
+            // JWT check
+            User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            if (hasRole("ROLE_REGULAR") && authenticated.getId() != id) {
+                return ResponseEntity.status(401).body("You cannot delete other users' profile.");
+            }
+
             // Id check
-            if (!userRepository.existsById(id)) {
-                return ResponseEntity.status(404).body("User not found.");
+            if (hasRole("ROLE_ADMIN")) {
+                if (!userRepository.existsById(id)) {
+                    return ResponseEntity.status(404).body("User not found.");
+                }
             }
 
             // Deleting
@@ -176,4 +233,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return authorities;
     }
 
+    private boolean hasRole(String role) {
+        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        boolean hasRole = false;
+        for (GrantedAuthority authority : authorities) {
+            hasRole = authority.getAuthority().equals(role);
+            if (hasRole) {
+                break;
+            }
+        }
+        return hasRole;
+    }
 }

@@ -13,29 +13,31 @@ import org.springframework.web.bind.annotation.*;
 public class AirportController {
     private final AirportService airportService;
 
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
     public ResponseEntity<?> newAirport(@RequestBody Airport airport) {
         return airportService.newAirport(airport);
     }
 
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/")
     public ResponseEntity<?> updateAirport(@RequestBody Airport airport) {
         return airportService.updateAirport(airport);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @GetMapping("/all")
     public ResponseEntity<?> getAllAirports() {
         return airportService.getAllAirports();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getAirportById(@PathVariable("id") String id) {
         return airportService.getAirportByAirportId(id);
     }
 
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAirportById(@PathVariable("id") String id) {
         return airportService.deleteAirportByAirportId(id);

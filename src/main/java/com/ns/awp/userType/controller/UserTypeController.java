@@ -10,16 +10,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/userTypes")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class UserTypeController {
     private final UserTypeService userTypeService;
 
-    // @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
     public ResponseEntity<?> newUserType(@RequestBody UserType userType) {
         return userTypeService.newUserType(userType);
     }
 
-    // @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/")
     public ResponseEntity<?> updateUserType(@RequestBody UserType userType) {
         return userTypeService.updateUserType(userType);
@@ -35,7 +34,6 @@ public class UserTypeController {
         return userTypeService.getUserTypeById(id);
     }
 
-    // @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUserType(@PathVariable("id") int id) {
         return userTypeService.deleteUserTypeById(id);
