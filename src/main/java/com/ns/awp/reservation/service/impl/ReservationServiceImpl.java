@@ -14,6 +14,7 @@ import com.ns.awp.user.models.User;
 import com.ns.awp.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -121,17 +122,26 @@ public class ReservationServiceImpl implements ReservationService {
 
 
 
+            // JWT check
+            User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            if (jwtUtil.hasRole("ROLE_REGULAR") && authenticated.getId() != existing.getUser().getId()) {
+                return ResponseEntity.status(401).body("You cannot change another user's reservation.");
+            }
+
+
+
             // Reservation timestamp
             Timestamp updateTimestamp = new Timestamp(new Date().getTime());
 
 
 
             // Time check
-            // TODO enable first if for admins
-            if (updateTimestamp.after(existing.getDepartureTicket().getFlightInstance().getFlightDate())) {
-                return ResponseEntity.status(400).body("Past reservations cannot be changed.");
-            } else if (updateTimestamp.after(new Timestamp(existing.getDepartureTicket().getFlightInstance().getFlightDate().getTime() - TimeUnit.DAYS.toMillis(1)))) {
-                return ResponseEntity.status(400).body("Reservation cannot be updated 24 hours before the flight.");
+            if (jwtUtil.hasRole("ROLE_REGULAR")) {
+                if (updateTimestamp.after(existing.getDepartureTicket().getFlightInstance().getFlightDate())) {
+                    return ResponseEntity.status(400).body("Past reservations cannot be changed.");
+                } else if (updateTimestamp.after(new Timestamp(existing.getDepartureTicket().getFlightInstance().getFlightDate().getTime() - TimeUnit.DAYS.toMillis(1)))) {
+                    return ResponseEntity.status(400).body("Reservation cannot be updated 24 hours before the flight.");
+                }
             }
 
 
@@ -263,6 +273,16 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public ResponseEntity<?> getAllReservations(ReservationFilter filter) {
         try {
+            // JWT check
+            User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            if (filter.getUserId() != null) {
+                if (jwtUtil.hasRole("ROLE_REGULAR") && authenticated.getId() != filter.getUserId()) {
+                    return ResponseEntity.status(401).body("You cannot see another users' reservations.");
+                }
+            } else if (jwtUtil.hasRole("ROLE_REGULAR")) {
+                filter.setUserId(authenticated.getId());
+            }
+
             // Get all
             List<ReservationResponseDto> reservations = new ArrayList<>();
             reservationRepository.findAllUserReservationsByFilter(
@@ -290,6 +310,12 @@ public class ReservationServiceImpl implements ReservationService {
             // Get by id
             Reservation reservation = reservationRepository.findById(id).get();
 
+            // JWT check
+            User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            if (jwtUtil.hasRole("ROLE_REGULAR") && authenticated.getId() != reservation.getUser().getId()) {
+                return ResponseEntity.status(401).body("You cannot see another users' reservation.");
+            }
+
             return ResponseEntity.ok(new ReservationResponseDto(reservation));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
@@ -304,8 +330,16 @@ public class ReservationServiceImpl implements ReservationService {
                 return ResponseEntity.status(404).body("Reservation with provided id not found.");
             }
 
-            // Delete
+            // Get by id
             Reservation reservation = reservationRepository.findById(id).get();
+
+            // JWT check
+            User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            if (jwtUtil.hasRole("ROLE_REGULAR") && authenticated.getId() != reservation.getUser().getId()) {
+                return ResponseEntity.status(401).body("You cannot delete another user's reservation.");
+            }
+
+            // Delete
             Ticket departureTicket = reservation.getDepartureTicket();
             Ticket returnTicket = reservation.getReturnTicket();
             departureTicket.setUser(null);

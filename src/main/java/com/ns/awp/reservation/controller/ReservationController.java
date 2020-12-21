@@ -23,36 +23,24 @@ public class ReservationController {
     @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @PutMapping("/")
     public ResponseEntity<?> updateReservation(@RequestBody ReservationSaveRequestDto reservation) {
-        // TODO
-        //  - admin check -> update any
-        //  - regular check -> check if it's authenticated user in the reservation
         return reservationService.updateReservation(reservation);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @PostMapping("/all")
     public ResponseEntity<?> getAllReservations(@RequestBody ReservationFilter filter) {
-        // TODO
-        //  - admin check -> get all
-        //  - regular check -> check if it's authenticated user in the filter
         return reservationService.getAllReservations(filter);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getReservationById(@PathVariable("id") Integer id) {
-        // TODO
-        //  - admin check -> get
-        //  - regular check -> check if it's authenticated user in the requested reservation
         return reservationService.getReservationById(id);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteReservationById(@PathVariable("id") Integer id) {
-        // TODO
-        //  - admin check -> delete any
-        //  - regular check -> check if it's authenticated user in the requested reservation
         return reservationService.deleteReservationById(id);
     }
     
