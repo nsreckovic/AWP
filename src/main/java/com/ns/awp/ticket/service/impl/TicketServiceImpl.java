@@ -1,13 +1,17 @@
 package com.ns.awp.ticket.service.impl;
 
+import com.ns.awp.config.JwtUtil;
 import com.ns.awp.flightInstance.models.FlightInstance;
 import com.ns.awp.flightInstance.repository.FlightInstanceRepository;
 import com.ns.awp.ticket.models.Ticket;
 import com.ns.awp.ticket.models.dto.*;
 import com.ns.awp.ticket.repository.TicketRepository;
 import com.ns.awp.ticket.service.TicketService;
+import com.ns.awp.user.models.User;
+import com.ns.awp.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,6 +25,8 @@ import java.util.concurrent.TimeUnit;
 public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final FlightInstanceRepository flightInstanceRepository;
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @Override
     public ResponseEntity<?> newTicket(TicketSaveRequestDto ticket) {
@@ -111,6 +117,16 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public ResponseEntity<?> getAllTickets(TicketFilter filter) {
         try {
+            // JWT check
+            User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            if (filter.getUserId() != null) {
+                if (jwtUtil.hasRole("ROLE_REGULAR") && authenticated.getId() != filter.getUserId()) {
+                    return ResponseEntity.status(401).body("You cannot see another user's tickets.");
+                }
+            } else if (jwtUtil.hasRole("ROLE_REGULAR")) {
+                filter.setUserId(authenticated.getId());
+            }
+
             // Get filtered
             List<TicketResponseDto> tickets = new ArrayList<>();
             ticketRepository.findAllUserTicketsByFilter(
@@ -200,16 +216,21 @@ public class TicketServiceImpl implements TicketService {
             }
 
             // Get by id
-            TicketResponseDto ticket = new TicketResponseDto(ticketRepository.findById(id).get());
+            Ticket ticket = ticketRepository.findById(id).get();
 
-            return ResponseEntity.ok(ticket);
+            // JWT check
+            User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            if (jwtUtil.hasRole("ROLE_REGULAR") && authenticated.getId() != ticket.getUser().getId()) {
+                return ResponseEntity.status(401).body("You cannot see another users' ticket.");
+            }
+
+            return ResponseEntity.ok(new TicketResponseDto(ticket));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
         }
     }
 
     @Override
-    @Transactional
     public ResponseEntity<?> deleteTicketById(int id) {
         try {
             // Id check

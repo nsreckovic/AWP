@@ -14,11 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,7 +29,7 @@ import java.util.*;
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final UserTypeRepository userTypeRepository;
-    private final JwtUtil jwtTokenUtil;
+    private final JwtUtil jwtUtil;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -91,13 +88,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         try {
             // JWT check
             User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-            if (hasRole("ROLE_REGULAR") && authenticated.getId() != user.getId()) {
+            if (jwtUtil.hasRole("ROLE_REGULAR") && authenticated.getId() != user.getId()) {
                 return ResponseEntity.status(401).body("You cannot change another user's data.");
             }
 
             // Id check
             User existing = authenticated;
-            if (hasRole("ROLE_ADMIN")) {
+            if (jwtUtil.hasRole("ROLE_ADMIN")) {
                 if (user.getId() == null || !userRepository.existsById(user.getId())) {
                     return ResponseEntity.status(404).body("User with provided id not found.");
                 }
@@ -105,7 +102,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             }
 
             // Password check
-            if (hasRole("ROLE_REGULAR")) {
+            if (jwtUtil.hasRole("ROLE_REGULAR")) {
                 if (user.getPassword() != null) {
                     if (!bCryptPasswordEncoder.matches(user.getPassword(), existing.getPassword())) {
                         return ResponseEntity.status(401).body("Wrong password. Unauthorized update request.");
@@ -124,7 +121,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
             // UserType check
             if (user.getUserType() != null) {
-                if (hasRole("ROLE_ADMIN")) {
+                if (jwtUtil.hasRole("ROLE_ADMIN")) {
                     if (!userTypeRepository.existsByName(user.getUserType())) {
                         return ResponseEntity.status(404).body("User Type with provided name not found.");
                     } else existing.setUserType(userTypeRepository.findByName(user.getUserType()).get());
@@ -149,7 +146,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             userRepository.save(existing);
 
             final UserDetails userDetails = loadUserByUsername(existing.getUsername());
-            final String jwt = jwtTokenUtil.generateToken(userDetails);
+            final String jwt = jwtUtil.generateToken(userDetails);
 
             return ResponseEntity.ok(new UserWithJwtDto(new UserResponseDto(existing), new JwtDto(jwt)));
         } catch (Exception e) {
@@ -177,7 +174,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         try {
             // JWT check
             User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-            if (hasRole("ROLE_REGULAR") && authenticated.getId() != id) {
+            if (jwtUtil.hasRole("ROLE_REGULAR") && authenticated.getId() != id) {
                 return ResponseEntity.status(401).body("You cannot see other users' data.");
             }
 
@@ -200,12 +197,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         try {
             // JWT check
             User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-            if (hasRole("ROLE_REGULAR") && authenticated.getId() != id) {
+            if (jwtUtil.hasRole("ROLE_REGULAR") && authenticated.getId() != id) {
                 return ResponseEntity.status(401).body("You cannot delete other users' profile.");
             }
 
             // Id check
-            if (hasRole("ROLE_ADMIN")) {
+            if (jwtUtil.hasRole("ROLE_ADMIN")) {
                 if (!userRepository.existsById(id)) {
                     return ResponseEntity.status(404).body("User not found.");
                 }
@@ -231,17 +228,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserType().getName()));
         return authorities;
-    }
-
-    private boolean hasRole(String role) {
-        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        boolean hasRole = false;
-        for (GrantedAuthority authority : authorities) {
-            hasRole = authority.getAuthority().equals(role);
-            if (hasRole) {
-                break;
-            }
-        }
-        return hasRole;
     }
 }

@@ -1,5 +1,6 @@
 package com.ns.awp.reservation.service.impl;
 
+import com.ns.awp.config.JwtUtil;
 import com.ns.awp.reservation.models.Reservation;
 import com.ns.awp.reservation.models.dto.ReservationFilter;
 import com.ns.awp.reservation.models.dto.ReservationResponseDto;
@@ -27,6 +28,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @Override
     public ResponseEntity<?> newReservation(ReservationSaveRequestDto reservation) {

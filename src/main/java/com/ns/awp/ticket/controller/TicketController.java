@@ -29,9 +29,6 @@ public class TicketController {
     @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @PostMapping("/all")
     public ResponseEntity<?> getAllTickets(@RequestBody TicketFilter filter) {
-        // TODO
-        //  - admin check -> get all
-        //  - regular check -> check if it's authenticated user in the filter for userId attribute
         return ticketService.getAllTickets(filter);
     }
 
@@ -44,17 +41,11 @@ public class TicketController {
     @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @PostMapping("/return")
     public ResponseEntity<?> getAllAvailableReturnTicketsByFilter(@RequestBody TicketFilter filter) {
-        // TODO
-        //  - admin check -> get all
-        //  - regular check -> check if it's authenticated user in the filter's from ticket
         return ticketService.getAllAvailableReturnTicketsByFilter(filter);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTicketById(@PathVariable("id") int id) {
-        // TODO
-        //  - admin check -> get ticket
-        //  - regular check -> check if it's authenticated user in the ticket
         return ticketService.getTicketById(id);
     }
 
