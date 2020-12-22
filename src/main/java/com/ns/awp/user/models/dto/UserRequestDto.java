@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 @Data
-public class UserSaveRequestDto {
+public class UserRequestDto {
     private Integer id;
     private String username;
     private String password;

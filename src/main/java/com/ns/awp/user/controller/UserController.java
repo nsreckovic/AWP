@@ -1,18 +1,11 @@
 package com.ns.awp.user.controller;
 
-import com.ns.awp.user.models.dto.UserSaveRequestDto;
+import com.ns.awp.user.models.dto.UserRequestDto;
 import com.ns.awp.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import javax.management.relation.Role;
-import java.security.Principal;
-import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/users")
@@ -21,13 +14,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> newUser(@RequestBody UserSaveRequestDto user) {
+    public ResponseEntity<?> newUser(@RequestBody UserRequestDto user) {
         return userService.newUser(user);
     }
 
     @PreAuthorize("hasAnyRole('REGULAR', 'ADMIN')")
     @PutMapping("/")
-    public ResponseEntity<?> updateUser(@RequestBody UserSaveRequestDto user) {
+    public ResponseEntity<?> updateUser(@RequestBody UserRequestDto user) {
         return userService.updateUser(user);
     }
 

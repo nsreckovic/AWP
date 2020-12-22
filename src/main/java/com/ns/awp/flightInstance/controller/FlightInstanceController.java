@@ -1,6 +1,6 @@
 package com.ns.awp.flightInstance.controller;
 
-import com.ns.awp.flightInstance.models.dto.FlightInstanceSaveRequestDto;
+import com.ns.awp.flightInstance.models.dto.FlightInstanceRequestDto;
 import com.ns.awp.flightInstance.service.FlightInstanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +15,13 @@ public class FlightInstanceController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
-    public ResponseEntity<?> newFlightInstance(@RequestBody FlightInstanceSaveRequestDto flightInstance) {
+    public ResponseEntity<?> newFlightInstance(@RequestBody FlightInstanceRequestDto flightInstance) {
         return flightInstanceService.newFlightInstance(flightInstance);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/")
-    public ResponseEntity<?> updateFlightInstance(@RequestBody FlightInstanceSaveRequestDto flightInstance) {
+    public ResponseEntity<?> updateFlightInstance(@RequestBody FlightInstanceRequestDto flightInstance) {
         return flightInstanceService.updateFlightInstance(flightInstance);
     }
 

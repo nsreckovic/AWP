@@ -1,12 +1,12 @@
 package com.ns.awp.user.service;
 
-import com.ns.awp.user.models.dto.UserSaveRequestDto;
+import com.ns.awp.user.models.dto.UserRequestDto;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
-    ResponseEntity<?> newUser(UserSaveRequestDto user);
+    ResponseEntity<?> newUser(UserRequestDto user);
 
-    ResponseEntity<?> updateUser(UserSaveRequestDto user);
+    ResponseEntity<?> updateUser(UserRequestDto user);
 
     ResponseEntity<?> getAllUsers();
 

@@ -1,12 +1,12 @@
 package com.ns.awp.flightInstance.service;
 
-import com.ns.awp.flightInstance.models.dto.FlightInstanceSaveRequestDto;
+import com.ns.awp.flightInstance.models.dto.FlightInstanceRequestDto;
 import org.springframework.http.ResponseEntity;
 
 public interface FlightInstanceService {
-    ResponseEntity<?> newFlightInstance(FlightInstanceSaveRequestDto flightInstance);
+    ResponseEntity<?> newFlightInstance(FlightInstanceRequestDto flightInstance);
 
-    ResponseEntity<?> updateFlightInstance(FlightInstanceSaveRequestDto flightInstance);
+    ResponseEntity<?> updateFlightInstance(FlightInstanceRequestDto flightInstance);
 
     ResponseEntity<?> getAllFlightInstances();
 

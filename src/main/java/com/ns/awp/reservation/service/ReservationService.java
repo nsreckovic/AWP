@@ -1,13 +1,13 @@
 package com.ns.awp.reservation.service;
 
 import com.ns.awp.reservation.models.dto.ReservationFilter;
-import com.ns.awp.reservation.models.dto.ReservationSaveRequestDto;
+import com.ns.awp.reservation.models.dto.ReservationRequestDto;
 import org.springframework.http.ResponseEntity;
 
 public interface ReservationService {
-    ResponseEntity<?> newReservation(ReservationSaveRequestDto reservation);
+    ResponseEntity<?> newReservation(ReservationRequestDto reservation);
 
-    ResponseEntity<?> updateReservation(ReservationSaveRequestDto reservation);
+    ResponseEntity<?> updateReservation(ReservationRequestDto reservation);
 
     ResponseEntity<?> getAllReservations(ReservationFilter filter);
 

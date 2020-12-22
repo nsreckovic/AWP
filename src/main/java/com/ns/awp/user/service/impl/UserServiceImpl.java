@@ -2,10 +2,9 @@ package com.ns.awp.user.service.impl;
 
 import com.ns.awp.config.JwtUtil;
 import com.ns.awp.user.models.User;
-import com.ns.awp.user.models.dto.JwtDto;
-import com.ns.awp.user.models.dto.UserSaveRequestDto;
+import com.ns.awp.user.models.dto.UserRequestDto;
 import com.ns.awp.user.models.dto.UserResponseDto;
-import com.ns.awp.user.models.dto.UserWithJwtDto;
+import com.ns.awp.user.models.dto.UserWithJwtResponseDto;
 import com.ns.awp.user.repository.UserRepository;
 import com.ns.awp.user.service.UserService;
 import com.ns.awp.userType.models.UserType;
@@ -35,7 +34,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public ResponseEntity<?> newUser(UserSaveRequestDto user) {
+    public ResponseEntity<?> newUser(UserRequestDto user) {
         try {
             // Null check
             if (user.getUsername() == null) {
@@ -84,7 +83,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public ResponseEntity<?> updateUser(UserSaveRequestDto user) {
+    public ResponseEntity<?> updateUser(UserRequestDto user) {
         try {
             // JWT check
             User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -148,7 +147,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             final UserDetails userDetails = loadUserByUsername(existing.getUsername());
             final String jwt = jwtUtil.generateToken(userDetails);
 
-            return ResponseEntity.ok(new UserWithJwtDto(new UserResponseDto(existing), new JwtDto(jwt)));
+            return ResponseEntity.ok(new UserWithJwtResponseDto(new UserResponseDto(existing), jwt));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Internal Server Error.");

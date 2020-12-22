@@ -1,7 +1,7 @@
 package com.ns.awp.reservation.controller;
 
 import com.ns.awp.reservation.models.dto.ReservationFilter;
-import com.ns.awp.reservation.models.dto.ReservationSaveRequestDto;
+import com.ns.awp.reservation.models.dto.ReservationRequestDto;
 import com.ns.awp.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +16,13 @@ public class ReservationController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @PostMapping("/")
-    public ResponseEntity<?> newReservation(@RequestBody ReservationSaveRequestDto reservation) {
+    public ResponseEntity<?> newReservation(@RequestBody ReservationRequestDto reservation) {
         return reservationService.newReservation(reservation);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @PutMapping("/")
-    public ResponseEntity<?> updateReservation(@RequestBody ReservationSaveRequestDto reservation) {
+    public ResponseEntity<?> updateReservation(@RequestBody ReservationRequestDto reservation) {
         return reservationService.updateReservation(reservation);
     }
 

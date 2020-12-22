@@ -1,7 +1,7 @@
 package com.ns.awp.ticket.controller;
 
 import com.ns.awp.ticket.models.dto.TicketFilter;
-import com.ns.awp.ticket.models.dto.TicketSaveRequestDto;
+import com.ns.awp.ticket.models.dto.TicketRequestDto;
 import com.ns.awp.ticket.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +16,13 @@ public class TicketController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
-    public ResponseEntity<?> newTicket(@RequestBody TicketSaveRequestDto ticket) {
+    public ResponseEntity<?> newTicket(@RequestBody TicketRequestDto ticket) {
         return ticketService.newTicket(ticket);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/")
-    public ResponseEntity<?> updateTicket(@RequestBody TicketSaveRequestDto ticket) {
+    public ResponseEntity<?> updateTicket(@RequestBody TicketRequestDto ticket) {
         return ticketService.updateTicket(ticket);
     }
 

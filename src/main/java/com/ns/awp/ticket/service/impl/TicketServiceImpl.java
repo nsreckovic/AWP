@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,7 @@ public class TicketServiceImpl implements TicketService {
     private final JwtUtil jwtUtil;
 
     @Override
-    public ResponseEntity<?> newTicket(TicketSaveRequestDto ticket) {
+    public ResponseEntity<?> newTicket(TicketRequestDto ticket) {
         try {
             // Null check
             if (ticket.getFlightInstanceId() == null) {
@@ -69,7 +68,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public ResponseEntity<?> updateTicket(TicketSaveRequestDto ticket) {
+    public ResponseEntity<?> updateTicket(TicketRequestDto ticket) {
         try {
             // Ticket id check
             Ticket existing;

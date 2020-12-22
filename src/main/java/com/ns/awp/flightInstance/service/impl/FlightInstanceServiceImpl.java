@@ -4,7 +4,7 @@ import com.ns.awp.flight.models.Flight;
 import com.ns.awp.flight.repository.FlightRepository;
 import com.ns.awp.flightInstance.models.FlightInstance;
 import com.ns.awp.flightInstance.models.dto.FlightInstanceResponseDto;
-import com.ns.awp.flightInstance.models.dto.FlightInstanceSaveRequestDto;
+import com.ns.awp.flightInstance.models.dto.FlightInstanceRequestDto;
 import com.ns.awp.flightInstance.repository.FlightInstanceRepository;
 import com.ns.awp.flightInstance.service.FlightInstanceService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class FlightInstanceServiceImpl implements FlightInstanceService {
     private final FlightRepository flightRepository;
 
     @Override
-    public ResponseEntity<?> newFlightInstance(FlightInstanceSaveRequestDto flightInstance) {
+    public ResponseEntity<?> newFlightInstance(FlightInstanceRequestDto flightInstance) {
         try {
             // Null check
             if (flightInstance.getFlightId() == null) {
@@ -86,7 +85,7 @@ public class FlightInstanceServiceImpl implements FlightInstanceService {
     }
 
     @Override
-    public ResponseEntity<?> updateFlightInstance(FlightInstanceSaveRequestDto flightInstance) {
+    public ResponseEntity<?> updateFlightInstance(FlightInstanceRequestDto flightInstance) {
         try {
             // Id check
             FlightInstance existing;

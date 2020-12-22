@@ -1,12 +1,12 @@
 package com.ns.awp.flight.service;
 
-import com.ns.awp.flight.models.dto.FlightSaveRequestDto;
+import com.ns.awp.flight.models.dto.FlightRequestDto;
 import org.springframework.http.ResponseEntity;
 
 public interface FlightService {
-    ResponseEntity<?> newFlight(FlightSaveRequestDto flight);
+    ResponseEntity<?> newFlight(FlightRequestDto flight);
 
-    ResponseEntity<?> updateFlight(FlightSaveRequestDto flight);
+    ResponseEntity<?> updateFlight(FlightRequestDto flight);
 
     ResponseEntity<?> getAllFlights();
 

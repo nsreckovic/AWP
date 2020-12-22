@@ -4,11 +4,10 @@ import com.ns.awp.config.JwtUtil;
 import com.ns.awp.reservation.models.Reservation;
 import com.ns.awp.reservation.models.dto.ReservationFilter;
 import com.ns.awp.reservation.models.dto.ReservationResponseDto;
-import com.ns.awp.reservation.models.dto.ReservationSaveRequestDto;
+import com.ns.awp.reservation.models.dto.ReservationRequestDto;
 import com.ns.awp.reservation.repository.ReservationRepository;
 import com.ns.awp.reservation.service.ReservationService;
 import com.ns.awp.ticket.models.Ticket;
-import com.ns.awp.ticket.models.dto.TicketResponseDto;
 import com.ns.awp.ticket.repository.TicketRepository;
 import com.ns.awp.user.models.User;
 import com.ns.awp.user.repository.UserRepository;
@@ -32,7 +31,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final JwtUtil jwtUtil;
 
     @Override
-    public ResponseEntity<?> newReservation(ReservationSaveRequestDto reservation) {
+    public ResponseEntity<?> newReservation(ReservationRequestDto reservation) {
         try {
             // Null check
             if (reservation.getDepartureTicketId() == null) {
@@ -108,7 +107,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public ResponseEntity<?> updateReservation(ReservationSaveRequestDto reservation) {
+    public ResponseEntity<?> updateReservation(ReservationRequestDto reservation) {
         try {
             // Null check
             Reservation existing;

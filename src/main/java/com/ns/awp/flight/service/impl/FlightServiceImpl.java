@@ -5,18 +5,15 @@ import com.ns.awp.airline.repository.AirlineRepository;
 import com.ns.awp.airport.models.Airport;
 import com.ns.awp.airport.repository.AirportRepository;
 import com.ns.awp.flight.models.Flight;
-import com.ns.awp.flight.models.dto.FlightSaveRequestDto;
+import com.ns.awp.flight.models.dto.FlightRequestDto;
 import com.ns.awp.flight.repository.FlightRepository;
 import com.ns.awp.flight.service.FlightService;
-import com.ns.awp.flightInstance.models.FlightInstance;
 import com.ns.awp.flightInstance.repository.FlightInstanceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.text.SimpleDateFormat;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +24,7 @@ public class FlightServiceImpl implements FlightService {
     private final AirlineRepository airlineRepository;
 
     @Override
-    public ResponseEntity<?> newFlight(FlightSaveRequestDto flight) {
+    public ResponseEntity<?> newFlight(FlightRequestDto flight) {
         try {
             // Flight id check
             if (flightRepository.existsByFlightId(flight.getFlightId())) {
@@ -80,7 +77,7 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> updateFlight(FlightSaveRequestDto flight) {
+    public ResponseEntity<?> updateFlight(FlightRequestDto flight) {
         try {
             // Id check
             if (!flightRepository.existsById(flight.getId())) {

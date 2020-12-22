@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 @Data
-public class UserLoginDto {
+public class UserLoginRequestDto {
     @NonNull
     private String username;
 
