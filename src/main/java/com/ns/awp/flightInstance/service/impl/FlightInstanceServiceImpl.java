@@ -166,9 +166,9 @@ public class FlightInstanceServiceImpl implements FlightInstanceService {
             }
 
             // Get by id
-            FlightInstanceResponseDto flightInstance = new FlightInstanceResponseDto(flightInstanceRepository.findById(id).get());
+            FlightInstance flightInstance = flightInstanceRepository.findById(id).get();
 
-            return ResponseEntity.ok(flightInstance);
+            return ResponseEntity.ok(new FlightInstanceResponseDto(flightInstance));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
         }

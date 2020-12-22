@@ -28,35 +28,35 @@ public class TicketServiceImpl implements TicketService {
     private final JwtUtil jwtUtil;
 
     @Override
-    public ResponseEntity<?> newTicket(TicketRequestDto ticket) {
+    public ResponseEntity<?> newTicket(TicketRequestDto ticketRequest) {
         try {
             // Null check
-            if (ticket.getFlightInstanceId() == null) {
+            if (ticketRequest.getFlightInstanceId() == null) {
                 return ResponseEntity.status(400).body("Flight instance id cannot be null.");
             }
-            if (ticket.getTicketCount() == null || ticket.getTicketCount() < 1) {
+            if (ticketRequest.getTicketCount() == null || ticketRequest.getTicketCount() < 1) {
                 return ResponseEntity.status(400).body("Ticket count cannot be null and must be positive number.");
             }
 
             // Flight Instance check
             FlightInstance flightInstance;
-            if (!flightInstanceRepository.existsById(ticket.getFlightInstanceId())) {
+            if (!flightInstanceRepository.existsById(ticketRequest.getFlightInstanceId())) {
                 return ResponseEntity.status(404).body("Flight instance not found.");
             } else {
-                flightInstance = flightInstanceRepository.findById(ticket.getFlightInstanceId()).get();
+                flightInstance = flightInstanceRepository.findById(ticketRequest.getFlightInstanceId()).get();
             }
 
             // Count check
-            if (flightInstance.getCount() - ticket.getTicketCount() < 0) {
+            if (flightInstance.getCount() - ticketRequest.getTicketCount() < 0) {
                 return ResponseEntity.status(400).body("Requested number of tickets exceeds maximum capacity of flight's " + flightInstance.getCount() + " tickets.");
             } else {
-                flightInstance.bulkDecrementCount(ticket.getTicketCount());
+                flightInstance.bulkDecrementCount(ticketRequest.getTicketCount());
             }
 
             // Save
             flightInstanceRepository.save(flightInstance);
             List<TicketResponseDto> saved = new ArrayList<>();
-            for (int i = 0; i < ticket.getTicketCount(); i++) {
+            for (int i = 0; i < ticketRequest.getTicketCount(); i++) {
                 Ticket t = new Ticket(flightInstance);
                 saved.add(new TicketResponseDto(ticketRepository.save(t)));
             }

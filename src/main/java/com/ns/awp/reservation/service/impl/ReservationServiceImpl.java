@@ -255,12 +255,16 @@ public class ReservationServiceImpl implements ReservationService {
                 }
             }
 
+
+
             // Save
             if (oldDepartureTicket != null) ticketRepository.save(oldDepartureTicket);
             if (newDepartureTicket != null) ticketRepository.save(newDepartureTicket);
             if (oldReturnTicket != null) ticketRepository.save(oldReturnTicket);
             if (newReturnTicket != null) ticketRepository.save(newReturnTicket);
             existing = reservationRepository.save(existing);
+
+
 
             return ResponseEntity.ok(new ReservationResponseDto(existing));
         } catch (Exception e) {
