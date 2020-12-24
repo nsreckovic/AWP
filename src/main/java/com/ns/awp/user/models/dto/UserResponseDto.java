@@ -1,5 +1,6 @@
 package com.ns.awp.user.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ns.awp.reservation.models.dto.ReservationResponseDto;
 import com.ns.awp.ticket.models.dto.TicketWithoutUserResponseDto;
 import com.ns.awp.user.models.User;
@@ -18,7 +19,9 @@ public class UserResponseDto {
     private String name;
     private String lastName;
     private UserTypeResponseDto userType;
+    @JsonIgnore
     private List<ReservationResponseDto> reservations;
+    @JsonIgnore
     private List<TicketWithoutUserResponseDto> tickets;
 
     public UserResponseDto(User user) {

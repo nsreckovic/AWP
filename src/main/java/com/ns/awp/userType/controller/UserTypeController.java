@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/userTypes")
-@RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
+@RequiredArgsConstructor
 public class UserTypeController {
     private final UserTypeService userTypeService;
 
