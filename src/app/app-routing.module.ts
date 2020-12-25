@@ -13,6 +13,8 @@ import { AirlinesComponent } from './components/airlines/airlines/airlines.compo
 import { AirlineComponent } from './components/airlines/airline/airline.component';
 import { AirportsComponent } from './components/airports/airports/airports.component';
 import { AirportComponent } from './components/airports/airport/airport.component';
+import { FlightsComponent } from './components/flights/flights/flights.component';
+import { FlightComponent } from './components/flights/flight/flight.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -33,7 +35,9 @@ const routes: Routes = [
   { path: 'airports/:operation', component: AirportComponent, canActivate: [RouteGuardService] },
   { path: 'airports/:id/:operation', component: AirportComponent, canActivate: [RouteGuardService] },
 
-
+  { path: 'flights', component: FlightsComponent, canActivate: [RouteGuardService] },
+  { path: 'flights/:operation', component: FlightComponent, canActivate: [RouteGuardService] },
+  { path: 'flights/:id/:operation', component: FlightComponent, canActivate: [RouteGuardService] },
 
   { path: '**', component: ErrorComponent },
 ];

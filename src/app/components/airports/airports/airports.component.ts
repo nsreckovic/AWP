@@ -40,7 +40,7 @@ export class AirportsComponent implements OnInit {
   }
 
   editAirport(airport) {
-    this.router.navigate(['airports', airport.airportId, 'edit']);
+    this.router.navigate(['airports', airport.id, 'edit']);
   }
 
   deleteAirport(airport) {
@@ -49,7 +49,7 @@ export class AirportsComponent implements OnInit {
   }
 
   deleteAirportFinally() {
-    this.airportsService.deleteAirportById(this.airportForDelete.airportId).subscribe(
+    this.airportsService.deleteAirportById(this.airportForDelete.id).subscribe(
       (response) => {
         $('#deleteAirportModal').modal('hide');
         this.errorMessage = null;

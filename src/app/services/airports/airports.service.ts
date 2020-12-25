@@ -24,11 +24,11 @@ export class AirportsService {
     return this.httpClient.get<Airport[]>(`${this.airportsUrl}/all`);
   }
 
-  getAirportById(id: string) {
+  getAirportById(id: number) {
     return this.httpClient.get<Airport>(`${this.airportsUrl}/${id}`);
   }
 
-  deleteAirportById(id: string) {
+  deleteAirportById(id: number) {
     return this.httpClient.delete<JsonMessage>(`${this.airportsUrl}/${id}`);
   }
 }

@@ -20,6 +20,8 @@ import { AirlinesComponent } from './components/airlines/airlines/airlines.compo
 import { AirlineComponent } from './components/airlines/airline/airline.component';
 import { AirportComponent } from './components/airports/airport/airport.component';
 import { AirportsComponent } from './components/airports/airports/airports.component';
+import { FlightComponent } from './components/flights/flight/flight.component';
+import { FlightsComponent } from './components/flights/flights/flights.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +40,8 @@ import { AirportsComponent } from './components/airports/airports/airports.compo
     AirlineComponent,
     AirportComponent,
     AirportsComponent,
+    FlightComponent,
+    FlightsComponent,
   ],
   imports: [
     BrowserModule,

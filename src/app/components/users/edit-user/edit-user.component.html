@@ -20,10 +20,7 @@
     </div>
 
     <!-- User form -->
-    <form
-      [formGroup]="userForm"
-      (ngSubmit)="editUser(userForm.value)"
-    >
+    <form [formGroup]="userForm" (ngSubmit)="editUser(userForm.value)">
       <!-- Username -->
       <div class="form-group">
         <label for="username">Username</label>
@@ -31,7 +28,9 @@
           type="text"
           class="form-control"
           formControlName="username"
-          [class.is-invalid]="username.errors && (username.dirty || username.touched)"
+          [class.is-invalid]="
+            username.errors && (username.dirty || username.touched)
+          "
           placeholder="Enter your username here."
         />
         <div *ngIf="username.errors?.required" class="invalid-feedback">
@@ -84,16 +83,18 @@
       <div class="form-group mt-1" *ngIf="authService.isAdminLoggedIn()">
         <label for="userType">User type</label>
         <select
-              id="userTypeSelection"
-              formControlName="userType"
-              class="form-control"
-              [class.is-invalid]="userType.errors && (userType.dirty || userType.touched)"
-              placeholder="Choose user type here."
-            >
-              <option *ngFor="let ut of userTypes" [ngValue]="ut.name">
-                {{ ut.name }}
-              </option>
-            </select>
+          id="userTypeSelection"
+          formControlName="userType"
+          class="form-control"
+          [class.is-invalid]="
+            userType.errors && (userType.dirty || userType.touched)
+          "
+          placeholder="Choose user type here."
+        >
+          <option *ngFor="let ut of userTypes" [ngValue]="ut.name">
+            {{ ut.name }}
+          </option>
+        </select>
         <div *ngIf="userType.errors?.required" class="invalid-feedback">
           User type is required.
         </div>
@@ -148,7 +149,7 @@
       <!-- Save button -->
       <div class="text-center">
         <button
-          type='button'
+          type="button"
           class="btn btn-outline-secondary mt-3 mx-1"
           (click)="cancel()"
         >

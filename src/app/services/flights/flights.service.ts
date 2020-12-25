@@ -25,11 +25,11 @@ export class FlightsService {
     return this.httpClient.get<Flight[]>(`${this.flightsUrl}/all`);
   }
 
-  getFlightById(id: string) {
+  getFlightById(id: number) {
     return this.httpClient.get<Flight>(`${this.flightsUrl}/${id}`);
   }
 
-  deleteFlightById(id: string) {
+  deleteFlightById(id: number) {
     return this.httpClient.delete<JsonMessage>(`${this.flightsUrl}/${id}`);
   }
 }

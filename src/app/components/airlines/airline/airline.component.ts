@@ -27,8 +27,7 @@ export class AirlineComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this.authService.isUserLoggedIn()) this.router.navigate(['/login']);
-
+    if (!this.authService.isAdminLoggedIn()) this.router.navigate(['/']);
     this.initData();
     this.buildForm();
   }

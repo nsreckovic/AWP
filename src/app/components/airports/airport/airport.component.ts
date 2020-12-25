@@ -27,7 +27,7 @@ export class AirportComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this.authService.isUserLoggedIn()) this.router.navigate(['/login']);
+    if (!this.authService.isAdminLoggedIn()) this.router.navigate(['/']);
     this.initData();
     this.buildForm();
   }
@@ -35,7 +35,7 @@ export class AirportComponent implements OnInit {
   initData() {
     if (this.route.snapshot.params['operation'] === 'edit') {
       if (this.route.snapshot.params['id'] == null) this.router.navigate(['/airports']);
-      else this.airport.airportId = this.route.snapshot.params['id'];
+      else this.airport.id = this.route.snapshot.params['id'];
       this.editAirport = true;
       this.getAirport();
     
@@ -47,7 +47,7 @@ export class AirportComponent implements OnInit {
   }
 
   getAirport() {
-    this.airportsService.getAirportById(this.airport.airportId).subscribe(
+    this.airportsService.getAirportById(this.airport.id).subscribe(
       (response) => {
         this.airport = response
         this.newAirportForm.setValue({
@@ -117,5 +117,4 @@ export class AirportComponent implements OnInit {
   public get place() {
     return this.newAirportForm.get('place');
   }
-
 }

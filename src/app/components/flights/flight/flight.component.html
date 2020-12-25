@@ -1,0 +1,134 @@
+<div class="row">
+  <div class="col-md-1 col-lg-2"></div>
+  <div class="col-md-10 col-lg-8 container-lg">
+    <h1 class="text-center" *ngIf="!editFlight">New Flight</h1>
+    <h1 class="text-center" *ngIf="editFlight">Edit Flight</h1>
+
+    <!-- Error message -->
+    <div
+      class="alert alert-danger alert-dismissible fade show"
+      role="alert"
+      *ngIf="errorMessage"
+    >
+      {{ errorMessage }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+        (click)="dismissError()"
+      ></button>
+    </div>
+
+    <!-- Form -->
+    <form
+      [formGroup]="flightForm"
+      (ngSubmit)="saveFlight(flightForm.value)"
+    >
+      <!-- Flight Id -->
+      <div class="form-group mt-1">
+        <label for="flightId">Flight Id</label>
+        <input
+          type="url"
+          class="form-control"
+          formControlName="flightId"
+          [class.is-invalid]="flightId.errors && (flightId.dirty || flightId.touched)"
+          placeholder="Enter flight id here."
+        />
+        <div *ngIf="flightId.errors?.required" class="invalid-feedback">
+          Flight Id is required.
+        </div>
+        <div *ngIf="flightId.errors?.minlength" class="invalid-feedback">
+          Flight Id must be at least 2 characters long.
+        </div>
+      </div>
+
+      <!-- Departure airport -->
+      <div class="form-group mt-1">
+        <label for="departureAirportId">Departure airport</label>
+        <select
+              id="departureAirportIdSelection"
+              formControlName="departureAirportId"
+              class="form-control"
+              [class.is-invalid]="departureAirportId.errors && (departureAirportId.dirty || departureAirportId.touched)"
+              placeholder="Choose departure airport here."
+            >
+              <option *ngFor="let a of airports" [ngValue]="a.id">
+                {{ a.airportId }} - {{ a.place }}
+              </option>
+            </select>
+        <div *ngIf="departureAirportId.errors?.required" class="invalid-feedback">
+          Departure airport is required.
+        </div>
+        <div *ngIf="departureAirportId.errors?.sameAirports" class="invalid-feedback">
+          Departure and arrival airport cannot be the same.
+        </div>
+      </div>
+
+      <!-- Arrival airport -->
+      <div class="form-group mt-1">
+        <label for="arrivalAirportId">Arrival airport</label>
+        <select
+              id="arrivalAirportIdSelection"
+              formControlName="arrivalAirportId"
+              class="form-control"
+              [class.is-invalid]="arrivalAirportId.errors && (arrivalAirportId.dirty || arrivalAirportId.touched)"
+              placeholder="Choose arrival airport here."
+            >
+              <option *ngFor="let a of airports" [ngValue]="a.id">
+                {{ a.airportId }} - {{ a.place }}
+              </option>
+            </select>
+        <div *ngIf="arrivalAirportId.errors?.required" class="invalid-feedback">
+          Arrival airport is required.
+        </div>
+        <div *ngIf="arrivalAirportId.errors?.sameAirports" class="invalid-feedback">
+          Arrival and arrival airport cannot be the same.
+        </div>
+      </div>
+
+      <!-- Airline -->
+      <div class="form-group mt-1">
+        <label for="airlineId">Airline</label>
+        <select
+              id="airlineIdSelection"
+              formControlName="airlineId"
+              class="form-control"
+              [class.is-invalid]="airlineId.errors && (airlineId.dirty || airlineId.touched)"
+              placeholder="Choose airline here."
+            >
+              <option *ngFor="let a of airlines" [ngValue]="a.id">
+                {{ a.name }}
+              </option>
+            </select>
+        <div *ngIf="airlineId.errors?.required" class="invalid-feedback">
+          Airline is required.
+        </div>
+        <div *ngIf="airlineId.errors?.sameAirports" class="invalid-feedback">
+          Arrival and arrival airport cannot be the same.
+        </div>
+      </div>
+
+      <!-- Save button -->
+      <div class="text-center">
+        <button
+          type='button'
+          class="btn btn-outline-secondary mt-3 mx-1"
+          (click)="cancel()"
+          *ngIf="editFlight"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary mt-3 mx-1"
+          [disabled]="!flightForm.valid"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-1 col-lg-2"></div>
+</div>
+
