@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-1 col-lg-2"></div>
   <div class="col-md-10 col-lg-8 container-lg">
-    <h1>Airlines</h1>
+    <h1>Airports</h1>
 
     <!-- Error message -->
     <div
@@ -35,31 +35,35 @@
       ></button>
     </div>
 
-    <!-- Airlines table -->
+    <!-- Airports table -->
     <table class="table mt-3 table-hover">
       <thead>
         <tr>
           <th>Id</th>
-          <th>Airline</th>
+          <th>Airport</th>
+          <th>Place</th>
           <th>Edit</th>
           <th>Delete</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let airline of airlines">
+        <tr *ngFor="let airport of airports">
           <td>
-            <a href="{{airline.link}}" target="_blank" style="text-decoration:none; display:block;" class="text-dark">{{ airline.id }}</a>
+            {{ airport.airportId }}
           </td>
           <td>
-            <a href="{{airline.link}}" target="_blank" style="text-decoration:none; display:block;" class="text-dark">{{ airline.name }}</a>
+            {{ airport.name }}
           </td>
           <td>
-            <button (click)="editAirline(airline)" class="btn btn-sm btn-outline-secondary mr-1">
+            {{ airport.place }}
+          </td>
+          <td>
+            <button (click)="editAirport(airport)" class="btn btn-sm btn-outline-secondary mr-1">
               Edit
             </button>
           </td>
           <td>
-            <button (click)="deleteAirline(airline)" class="btn btn-sm btn-outline-danger">
+            <button (click)="deleteAirport(airport)" class="btn btn-sm btn-outline-danger">
               Delete
             </button>
           </td>
@@ -71,19 +75,19 @@
   <div class="col-md-1 col-lg-2"></div>
 </div>
 
-<div class="modal fade" id="deleteAirlineModal" tabindex="-1" aria-labelledby="deleteAirlineModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteAirportModal" tabindex="-1" aria-labelledby="deleteAirportModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content text-center">
       <div class="modal-body">
         <div class="text-center">
-          Are you sure you want to delete this airline?
+          Are you sure you want to delete this airport?
         </div>
 
         <div class="text-center mt-2">
           <button (click)="hideModal()" class="btn btn-sm btn-outline-secondary mx-1">
             Cancel
           </button>
-          <button (click)="deleteAirlineFinally()" class="btn btn-sm btn-danger mx-1">
+          <button (click)="deleteAirportFinally()" class="btn btn-sm btn-danger mx-1">
             Delete
           </button>
         </div>
@@ -91,4 +95,3 @@
     </div>
   </div>
 </div>
-

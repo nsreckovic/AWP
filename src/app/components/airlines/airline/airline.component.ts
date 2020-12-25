@@ -39,6 +39,7 @@ export class AirlineComponent implements OnInit {
       else this.airline.id = this.route.snapshot.params['id'];
       this.editAirline = true;
       this.getAirline();
+    
     } else if (this.route.snapshot.params['operation'] === 'new') {
 
     } else {

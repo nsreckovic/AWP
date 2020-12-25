@@ -39,10 +39,6 @@ export class AirlinesComponent implements OnInit {
     );
   }
 
-  airlineDetails(airline) {
-    this.router.navigate(['airlines', airline.id, 'details']);
-  }
-
   editAirline(airline) {
     this.router.navigate(['airlines', airline.id, 'edit']);
   }

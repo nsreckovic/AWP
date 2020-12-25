@@ -18,6 +18,8 @@ import { NavbarComponent } from './components/navigation/navbar/navbar.component
 import { EditUserComponent } from './components/users/edit-user/edit-user.component';
 import { AirlinesComponent } from './components/airlines/airlines/airlines.component';
 import { AirlineComponent } from './components/airlines/airline/airline.component';
+import { AirportComponent } from './components/airports/airport/airport.component';
+import { AirportsComponent } from './components/airports/airports/airports.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,8 @@ import { AirlineComponent } from './components/airlines/airline/airline.componen
     EditUserComponent,
     AirlinesComponent,
     AirlineComponent,
+    AirportComponent,
+    AirportsComponent,
   ],
   imports: [
     BrowserModule,

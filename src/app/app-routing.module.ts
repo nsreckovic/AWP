@@ -11,6 +11,8 @@ import { EditUserComponent } from './components/users/edit-user/edit-user.compon
 import { UserComponent } from './components/users/user/user.component';
 import { AirlinesComponent } from './components/airlines/airlines/airlines.component';
 import { AirlineComponent } from './components/airlines/airline/airline.component';
+import { AirportsComponent } from './components/airports/airports/airports.component';
+import { AirportComponent } from './components/airports/airport/airport.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -26,6 +28,10 @@ const routes: Routes = [
   { path: 'airlines', component: AirlinesComponent, canActivate: [RouteGuardService] },
   { path: 'airlines/:operation', component: AirlineComponent, canActivate: [RouteGuardService] },
   { path: 'airlines/:id/:operation', component: AirlineComponent, canActivate: [RouteGuardService] },
+  
+  { path: 'airports', component: AirportsComponent, canActivate: [RouteGuardService] },
+  { path: 'airports/:operation', component: AirportComponent, canActivate: [RouteGuardService] },
+  { path: 'airports/:id/:operation', component: AirportComponent, canActivate: [RouteGuardService] },
 
 
 
