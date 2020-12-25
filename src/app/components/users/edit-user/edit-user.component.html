@@ -123,16 +123,16 @@
       </div>
 
       <!-- New password -->
-      <div class="form-group mt-1" *ngIf="!authService.isAdminLoggedIn()">
+      <div class="form-group mt-1">
         <label for="newPassword">New password</label>
         <input
-          type="newPassword"
+          type="password"
           class="form-control"
           formControlName="newPassword"
           [class.is-invalid]="
             newPassword.errors && (newPassword.dirty || newPassword.touched)
           "
-          placeholder="Enter your newPassword here."
+          placeholder="Enter your new password here."
         />
         <div *ngIf="newPassword.errors?.required" class="invalid-feedback">
           Password is required.
@@ -148,8 +148,15 @@
       <!-- Save button -->
       <div class="text-center">
         <button
+          type='button'
+          class="btn btn-outline-secondary mt-3 mx-1"
+          (click)="cancel()"
+        >
+          Cancel
+        </button>
+        <button
           type="submit"
-          class="btn btn-primary mt-3"
+          class="btn btn-primary mt-3 mx-1"
           [disabled]="!userForm.valid"
         >
           Save

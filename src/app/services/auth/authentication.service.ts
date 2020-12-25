@@ -51,6 +51,14 @@ export class AuthenticationService {
     return localStorage.getItem('jwt');
   }
 
+  replaceUser(response: UserWithJwtResponseDto) {
+    localStorage.removeItem('user');
+    localStorage.removeItem('jwt');
+    
+    localStorage.setItem('user', JSON.stringify(response.user));
+    localStorage.setItem('jwt', response.jwt);
+  }
+
   logout() {
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');

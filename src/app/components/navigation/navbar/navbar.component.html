@@ -83,7 +83,7 @@
             <a class="nav-link" routerLink="/register" *ngIf="!authService.isUserLoggedIn()">Register</a>
           </li>
           <li class="nav-item my-auto" *ngIf="authService.isUserLoggedIn()">
-            <span class="navbar-text">{{ authService.getLoggedInUsername() }}</span>
+            <a class="nav-link" routerLink="/users/{{ authService.getLoggedInUserId() }}/details" *ngIf="authService.isUserLoggedIn()">{{ authService.getLoggedInUsername() }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" routerLink="/login" *ngIf="!authService.isUserLoggedIn()">Log In</a>

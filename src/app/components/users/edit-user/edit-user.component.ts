@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,35 +25,57 @@ export class EditUserComponent implements OnInit {
     public authService: AuthenticationService,
     private router: Router,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
+    this.initData();
+    this.buildForm();
+    this.setCustomValidators();
+  }
+
+  initData() {
     if (!this.authService.isUserLoggedIn()) this.router.navigate(['/login']);
 
-    if (this.route.snapshot.params['id'] === undefined)
-      this.router.navigate(['/users']);
+    if (this.route.snapshot.params['id'] === undefined) this.router.navigate(['/users']);
     else this.user.id = this.route.snapshot.params['id'];
 
     if (this.authService.isAdminLoggedIn()) this.getUserTypes();
     this.getUser();
+  }
 
+  buildForm() {
     if (this.authService.isAdminLoggedIn()) {
       this.userForm = this.formBuilder.group({
-        username: ['', [Validators.minLength(2), Validators.required]],
-        name: ['', [Validators.minLength(2), Validators.required]],
-        lastName: ['', [Validators.minLength(2), Validators.required]],
-        userType: ['', [Validators.required]],
+        username: [null, [Validators.minLength(2), Validators.required]],
+        name: [null, [Validators.minLength(2), Validators.required]],
+        lastName: [null, [Validators.minLength(2), Validators.required]],
+        userType: [null, [Validators.required]],
+        newPassword: [null, []],
       });
 
     } else {
       this.userForm = this.formBuilder.group({
-        username: ['', [Validators.minLength(2), Validators.required]],
-        name: ['', [Validators.minLength(2), Validators.required]],
-        lastName: ['', [Validators.minLength(2), Validators.required]],
-        password: ['', [Validators.minLength(6), Validators.pattern('.*[0-9].*'), Validators.pattern('.*[A-Za-z].*')]],
-        newPassword: ['', [Validators.minLength(6), Validators.pattern('.*[0-9].*'), Validators.pattern('.*[A-Za-z].*')]],
+        username: [null, [Validators.minLength(2), Validators.required]],
+        name: [null, [Validators.minLength(2), Validators.required]],
+        lastName: [null, [Validators.minLength(2), Validators.required]],
+        password: [null, [Validators.minLength(6), Validators.pattern('.*[0-9].*'), Validators.pattern('.*[A-Za-z].*')]],
+        newPassword: [null, [Validators.minLength(6), Validators.pattern('.*[0-9].*'), Validators.pattern('.*[A-Za-z].*')]],
       });
+    }
+  }
+
+  setCustomValidators() {
+    if (this.authService.isAdminLoggedIn()) {
+      const newPassword = this.userForm.get('newPassword');
+      this.userForm.get('newPassword').valueChanges.subscribe(np => {
+        if (np !== undefined) {
+          newPassword.setValidators([Validators.minLength(6), Validators.pattern('.*[0-9].*'), Validators.pattern('.*[A-Za-z].*')]);
+        } else {
+          newPassword.setValidators(null);
+        }
+      })
     }
   }
 
@@ -82,6 +105,7 @@ export class EditUserComponent implements OnInit {
             name: this.user.name,
             lastName: this.user.lastName,
             userType: this.user.userType,
+            newPassword: null
           });
 
         } else {
@@ -89,14 +113,12 @@ export class EditUserComponent implements OnInit {
             username: this.user.username,
             name: this.user.name,
             lastName: this.user.lastName,
-            userType: this.user.userType,
             password: null,
             newPassword: null,
           });
         }
-          
-        
       },
+
       (error) => {
         this.errorMessage = error.error;
       }
@@ -137,6 +159,9 @@ export class EditUserComponent implements OnInit {
 
     this.usersService.updateUser(this.user).subscribe(
       (response) => {
+        if (this.user.id === this.authService.getLoggedInUserId()) {
+          this.authService.replaceUser(response)
+        }
         this.router.navigate(['users']);
       },
       (error) => {
@@ -147,5 +172,9 @@ export class EditUserComponent implements OnInit {
 
   public dismissError() {
     this.errorMessage = null;
+  }
+
+  cancel() {
+    this.location.back();
   }
 }
