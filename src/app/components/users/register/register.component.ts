@@ -23,7 +23,9 @@ export class RegisterComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.authService.isUserLoggedIn()) this.router.navigate(['/']);
+    if (this.authService.isUserLoggedIn()) {
+      if (!this.authService.isAdminLoggedIn()) this.router.navigate(['/']);
+    }
 
     this.registerForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(2)]],
