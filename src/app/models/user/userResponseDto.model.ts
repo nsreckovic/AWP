@@ -1,6 +1,4 @@
-import ReservationResponseDto from '../reservation/reservationResponseDto.model';
-import TicketWithoutUserResponseDto from '../ticket/ticketWithoutUserResponseDto.model copy';
-import UserTypeResponseDto from '../userType/userTypeResponseDto.model';
+import UserType from '../userType/userType.model';
 
 export default class UserResponseDto {
   constructor(
@@ -8,8 +6,6 @@ export default class UserResponseDto {
     public username: string,
     public name: string,
     public lastName: string,
-    public userType: UserTypeResponseDto,
-    public reservations: ReservationResponseDto[],
-    public tickets: TicketWithoutUserResponseDto[]
+    public userType: UserType,
   ) {}
 }

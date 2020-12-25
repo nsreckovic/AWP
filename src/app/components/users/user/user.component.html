@@ -1,0 +1,114 @@
+<div class="row">
+  <div class="col-md-1 col-lg-2"></div>
+  <div
+    class="col-md-10 col-lg-8 bg-light position-relative"
+    style="border-radius: 25px"
+  >
+    <div class="p-1">
+      <h1 class="text-center">{{ user.name }}'s profile</h1>
+    </div>
+
+    <!-- Error message -->
+    <div
+      class="alert alert-danger alert-dismissible fade show"
+      role="alert"
+      *ngIf="errorMessage"
+    >
+      {{ errorMessage }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+        (click)="dismissError()"
+      ></button>
+    </div>
+
+    <div class="row mx-3 mt-3">
+      <div class="col-6">
+        <h5>
+          <span class="text-secondary">Name:</span
+          ><strong> {{ user.name }}</strong>
+        </h5>
+      </div>
+      <div class="col-6 d-flex flex-row-reverse">
+        <button (click)="deleteUser()" class="btn btn-sm btn-danger">
+          Delete
+        </button>
+        <button
+          (click)="editUser()"
+          class="btn btn-sm btn-outline-secondary mx-2"
+        >
+          Edit
+        </button>
+      </div>
+    </div>
+
+    <div class="row mx-3 my-1">
+      <div class="col-6">
+        <h5>
+          <span class="text-secondary">Last name:</span
+          ><strong> {{ user.lastName }}</strong>
+        </h5>
+      </div>
+      <div class="col-6"></div>
+    </div>
+
+    <div class="row mx-3 mb-3">
+      <div class="col-6">
+        <h5>
+          <span class="text-secondary">Username:</span
+          ><strong> {{ user.username }}</strong>
+        </h5>
+      </div>
+      <div class="col-6"></div>
+    </div>
+
+    <div class="collapse mt-2" id="collapseExample">
+      <div class="card card-body">
+        <div class="row">
+          <div class="col-1 pl-0">
+            <button
+              (click)="editUser()"
+              class="btn btn-outline-secondary btn-block"
+            >
+              Edit
+            </button>
+          </div>
+          <div class="col-1 px-0">
+            <button
+              (click)="deleteUser()"
+              class="btn btn-outline-danger btn-block"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-body">
+        <div class="text-center" *ngIf="!authService.isAdminLoggedIn()">
+          Are you sure you want to delete your profile?
+        </div>
+        <div class="text-center" *ngIf="authService.isAdminLoggedIn()">
+          Are you sure you want to delete this profile?
+        </div>
+
+        <div class="text-center mt-2">
+          <button (click)="hideModal()" class="btn btn-sm btn-outline-secondary mx-1">
+            Cancel
+          </button>
+          <button (click)="deleteUserFinally()" class="btn btn-sm btn-danger mx-1">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

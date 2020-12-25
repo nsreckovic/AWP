@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { API_URL } from 'src/app/app.constants';
 import { map } from 'rxjs/operators';
 import UserWithJwtResponseDto from 'src/app/models/user/userWithJwtResponseDto.model';
+import UserLoginRequestDto from 'src/app/models/user/userLoginRequestDto.model';
 
 @Injectable({
   providedIn: 'root',
@@ -12,33 +13,38 @@ export class AuthenticationService {
 
   authenticate(username, password) {
     return this.httpClient
-      .get<UserWithJwtResponseDto>(`${API_URL}/auth/generateToken`, {
-        params: {
-          username,
-          password,
-        },
-      })
+      .post<UserWithJwtResponseDto>(
+        `${API_URL}/auth/generateToken`,
+        new UserLoginRequestDto(username, password)
+      )
       .pipe(
         map((response) => {
-          localStorage.setItem('username', response.user.username);
-          localStorage.setItem('userId', response.user.id.toString());
+          localStorage.setItem('user', JSON.stringify(response.user));
           localStorage.setItem('jwt', response.jwt);
         })
       );
   }
 
   isUserLoggedIn() {
-    let user = localStorage.getItem('userId');
+    let user = localStorage.getItem('user');
     let jwt = localStorage.getItem('jwt');
     return user !== null && jwt !== null;
   }
 
   getLoggedInUsername() {
-    return localStorage.getItem('username');
+    var user = JSON.parse(localStorage.getItem('user'));
+    if (user) return user.username;
   }
 
   getLoggedInUserId() {
-    return localStorage.getItem('userId');
+    var user = JSON.parse(localStorage.getItem('user'));
+    return user.id;
+  }
+
+  isAdminLoggedIn() {
+    var user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.userType.name === 'ADMIN') return true;
+    else return false;
   }
 
   getLoggedInUserJwt() {
@@ -46,8 +52,7 @@ export class AuthenticationService {
   }
 
   logout() {
-    localStorage.removeItem('username');
-    localStorage.removeItem('userId');
+    localStorage.removeItem('user');
     localStorage.removeItem('jwt');
   }
 }

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { API_URL } from 'src/app/app.constants';
+import JsonMessage from 'src/app/models/JsonMessage.models';
 import UserRequestDto from 'src/app/models/user/userRequestDto.model';
 import UserResponseDto from 'src/app/models/user/userResponseDto.model';
 import UserWithJwtResponseDto from 'src/app/models/user/userWithJwtResponseDto.model';
@@ -14,7 +15,7 @@ export class UsersService {
   constructor(private httpClient: HttpClient) { }
 
   newUser(user: UserRequestDto) {
-    return this.httpClient.post<UserResponseDto>(`${this.usersUrl}`, user);
+    return this.httpClient.post<UserResponseDto>(`${this.usersUrl}/register`, user);
   }
 
   updateUser(user: UserRequestDto) {
@@ -30,6 +31,6 @@ export class UsersService {
   }
 
   deleteUserById(id: number) {
-    return this.httpClient.delete(`${this.usersUrl}/${id}`);
+    return this.httpClient.delete<JsonMessage>(`${this.usersUrl}/${id}`);
   }
 }

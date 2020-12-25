@@ -1,0 +1,161 @@
+<div class="row">
+  <div class="col-md-1 col-lg-2"></div>
+  <div class="col-md-10 col-lg-8 container-lg">
+    <h1 class="text-center">Edit Profile</h1>
+
+    <!-- Error message -->
+    <div
+      class="alert alert-danger alert-dismissible fade show"
+      role="alert"
+      *ngIf="errorMessage"
+    >
+      {{ errorMessage }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+        (click)="dismissError()"
+      ></button>
+    </div>
+
+    <!-- User form -->
+    <form
+      [formGroup]="userForm"
+      (ngSubmit)="editUser(userForm.value)"
+    >
+      <!-- Username -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="username"
+          [class.is-invalid]="username.errors && (username.dirty || username.touched)"
+          placeholder="Enter your username here."
+        />
+        <div *ngIf="username.errors?.required" class="invalid-feedback">
+          Username is required.
+        </div>
+        <div *ngIf="username.errors?.minlength" class="invalid-feedback">
+          Username must be at least 2 characters long.
+        </div>
+      </div>
+
+      <!-- Name -->
+      <div class="form-group mt-1">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="name"
+          [class.is-invalid]="name.errors && (name.dirty || name.touched)"
+          placeholder="Enter your name here."
+        />
+        <div *ngIf="name.errors?.required" class="invalid-feedback">
+          Name is required.
+        </div>
+        <div *ngIf="name.errors?.minlength" class="invalid-feedback">
+          Name must be at least 2 characters long.
+        </div>
+      </div>
+
+      <!-- Last Name -->
+      <div class="form-group mt-1">
+        <label for="lastName">Last name</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="lastName"
+          [class.is-invalid]="
+            lastName.errors && (lastName.dirty || lastName.touched)
+          "
+          placeholder="Enter your last name here."
+        />
+        <div *ngIf="lastName.errors?.required" class="invalid-feedback">
+          Last name is required.
+        </div>
+        <div *ngIf="lastName.errors?.minlength" class="invalid-feedback">
+          Last name must be at least 2 characters long.
+        </div>
+      </div>
+
+      <!-- User type -->
+      <div class="form-group mt-1" *ngIf="authService.isAdminLoggedIn()">
+        <label for="userType">User type</label>
+        <select
+              id="userTypeSelection"
+              formControlName="userType"
+              class="form-control"
+              [class.is-invalid]="userType.errors && (userType.dirty || userType.touched)"
+              placeholder="Choose user type here."
+            >
+              <option *ngFor="let ut of userTypes" [ngValue]="ut.name">
+                {{ ut.name }}
+              </option>
+            </select>
+        <div *ngIf="userType.errors?.required" class="invalid-feedback">
+          User type is required.
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group mt-1" *ngIf="!authService.isAdminLoggedIn()">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          formControlName="password"
+          [class.is-invalid]="
+            password.errors && (password.dirty || password.touched)
+          "
+          placeholder="Enter your password here."
+        />
+        <div *ngIf="password.errors?.required" class="invalid-feedback">
+          Password is required.
+        </div>
+        <div *ngIf="password.errors?.minlength" class="invalid-feedback">
+          Password must be at least 6 characters long.
+        </div>
+        <div *ngIf="password.errors?.pattern" class="invalid-feedback">
+          Password must contain both numbers and letters.
+        </div>
+      </div>
+
+      <!-- New password -->
+      <div class="form-group mt-1" *ngIf="!authService.isAdminLoggedIn()">
+        <label for="newPassword">New password</label>
+        <input
+          type="newPassword"
+          class="form-control"
+          formControlName="newPassword"
+          [class.is-invalid]="
+            newPassword.errors && (newPassword.dirty || newPassword.touched)
+          "
+          placeholder="Enter your newPassword here."
+        />
+        <div *ngIf="newPassword.errors?.required" class="invalid-feedback">
+          Password is required.
+        </div>
+        <div *ngIf="newPassword.errors?.minlength" class="invalid-feedback">
+          Password must be at least 6 characters long.
+        </div>
+        <div *ngIf="newPassword.errors?.pattern" class="invalid-feedback">
+          Password must contain both numbers and letters.
+        </div>
+      </div>
+
+      <!-- Save button -->
+      <div class="text-center">
+        <button
+          type="submit"
+          class="btn btn-primary mt-3"
+          [disabled]="!userForm.valid"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-1 col-lg-2"></div>
+</div>
