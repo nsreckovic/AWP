@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { API_URL } from 'src/app/app.constants';
+import JsonMessage from 'src/app/models/JsonMessage.models';
 import ReservationFilter from 'src/app/models/reservation/reservationFilter.model';
 import ReservationRequestDto from 'src/app/models/reservation/reservationRequestDto.model';
 import ReservationResponseDto from 'src/app/models/reservation/reservationResponseDto.model';
@@ -30,6 +31,6 @@ export class ReservationsService {
   }
 
   deleteReservationById(id: number) {
-    return this.httpClient.delete(`${this.reservationsUrl}/${id}`);
+    return this.httpClient.delete<JsonMessage>(`${this.reservationsUrl}/${id}`);
   }
 }

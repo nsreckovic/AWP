@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { API_URL } from 'src/app/app.constants';
 import Airport from 'src/app/models/airport/airport.model';
+import JsonMessage from 'src/app/models/JsonMessage.models';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,6 @@ export class AirportsService {
   }
 
   deleteAirportById(id: string) {
-    return this.httpClient.delete(`${this.airportsUrl}/${id}`);
+    return this.httpClient.delete<JsonMessage>(`${this.airportsUrl}/${id}`);
   }
 }

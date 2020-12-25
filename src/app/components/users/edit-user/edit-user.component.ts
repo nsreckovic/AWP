@@ -14,7 +14,7 @@ import { UserTypesService } from 'src/app/services/userTypes/user-types.service'
   styleUrls: ['./edit-user.component.css'],
 })
 export class EditUserComponent implements OnInit {
-  public userForm: FormGroup;
+  userForm: FormGroup;
   errorMessage: string = null;
   user = new UserRequestDto(-1, null, null, null, null, null, null);
   userTypes: UserType[];
@@ -30,14 +30,13 @@ export class EditUserComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (!this.authService.isUserLoggedIn()) this.router.navigate(['/login']);
+
     this.initData();
     this.buildForm();
-    this.setCustomValidators();
   }
 
   initData() {
-    if (!this.authService.isUserLoggedIn()) this.router.navigate(['/login']);
-
     if (this.route.snapshot.params['id'] === undefined) this.router.navigate(['/users']);
     else this.user.id = this.route.snapshot.params['id'];
 
@@ -64,6 +63,7 @@ export class EditUserComponent implements OnInit {
         newPassword: [null, [Validators.minLength(6), Validators.pattern('.*[0-9].*'), Validators.pattern('.*[A-Za-z].*')]],
       });
     }
+    this.setCustomValidators();
   }
 
   setCustomValidators() {
@@ -150,12 +150,12 @@ export class EditUserComponent implements OnInit {
   }
 
   editUser(userForm) {
-    this.user.username = userForm.username,
-    this.user.name = userForm.name,
-    this.user.lastName = userForm.lastName,
-    this.user.userType = userForm.userType,
-    this.user.password = userForm.password,
-    this.user.newPassword = userForm.newPassword,
+    this.user.username = userForm.username;
+    this.user.name = userForm.name;
+    this.user.lastName = userForm.lastName;
+    this.user.userType = userForm.userType;
+    this.user.password = userForm.password;
+    this.user.newPassword = userForm.newPassword;
 
     this.usersService.updateUser(this.user).subscribe(
       (response) => {

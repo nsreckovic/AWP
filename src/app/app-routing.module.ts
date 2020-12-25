@@ -9,6 +9,8 @@ import { RegisterComponent } from './components/users/register/register.componen
 import { UsersComponent } from './components/users/users/users.component';
 import { EditUserComponent } from './components/users/edit-user/edit-user.component';
 import { UserComponent } from './components/users/user/user.component';
+import { AirlinesComponent } from './components/airlines/airlines/airlines.component';
+import { AirlineComponent } from './components/airlines/airline/airline.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -20,6 +22,10 @@ const routes: Routes = [
   { path: 'users', component: UsersComponent, canActivate: [RouteGuardService] },
   { path: 'users/:id/edit', component: EditUserComponent, canActivate: [RouteGuardService] },
   { path: 'users/:id/details', component: UserComponent, canActivate: [RouteGuardService] },
+  
+  { path: 'airlines', component: AirlinesComponent, canActivate: [RouteGuardService] },
+  { path: 'airlines/:operation', component: AirlineComponent, canActivate: [RouteGuardService] },
+  { path: 'airlines/:id/:operation', component: AirlineComponent, canActivate: [RouteGuardService] },
 
 
 

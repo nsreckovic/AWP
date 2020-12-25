@@ -16,6 +16,8 @@ import { UserComponent } from './components/users/user/user.component';
 import { UsersComponent } from './components/users/users/users.component';
 import { NavbarComponent } from './components/navigation/navbar/navbar.component';
 import { EditUserComponent } from './components/users/edit-user/edit-user.component';
+import { AirlinesComponent } from './components/airlines/airlines/airlines.component';
+import { AirlineComponent } from './components/airlines/airline/airline.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,8 @@ import { EditUserComponent } from './components/users/edit-user/edit-user.compon
     UsersComponent,
     NavbarComponent,
     EditUserComponent,
+    AirlinesComponent,
+    AirlineComponent,
   ],
   imports: [
     BrowserModule,

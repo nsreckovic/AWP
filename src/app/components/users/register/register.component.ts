@@ -12,7 +12,7 @@ import { UsersService } from 'src/app/services/users/users.service';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent implements OnInit {
-  public registerForm: FormGroup;
+  registerForm: FormGroup;
   errorMessage: string = null;
 
   constructor(

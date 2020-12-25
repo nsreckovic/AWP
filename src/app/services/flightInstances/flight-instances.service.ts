@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { API_URL } from 'src/app/app.constants';
 import FlightInstanceRequestDto from 'src/app/models/flightInstance/flightInstanceRequestDto.model';
 import FlightInstanceResponseDto from 'src/app/models/flightInstance/flightInstanceResponseDto.model';
+import JsonMessage from 'src/app/models/JsonMessage.models';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,6 @@ export class FlightInstancesService {
   }
 
   deleteFlightInstanceById(id: string) {
-    return this.httpClient.delete(`${this.flightInstancesUrl}/${id}`);
+    return this.httpClient.delete<JsonMessage>(`${this.flightInstancesUrl}/${id}`);
   }
 }

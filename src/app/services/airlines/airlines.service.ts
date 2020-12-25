@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { API_URL } from 'src/app/app.constants';
 import Airline from 'src/app/models/airline/airline.model';
+import JsonMessage from 'src/app/models/JsonMessage.models';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +30,6 @@ export class AirlinesService {
   }
 
   deleteAirlineById(id: number) {
-    return this.httpClient.delete(`${this.airlinesUrl}/${id}`);
+    return this.httpClient.delete<JsonMessage>(`${this.airlinesUrl}/${id}`);
   }
 }
