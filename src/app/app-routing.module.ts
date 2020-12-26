@@ -15,6 +15,8 @@ import { AirportsComponent } from './components/airports/airports/airports.compo
 import { AirportComponent } from './components/airports/airport/airport.component';
 import { FlightsComponent } from './components/flights/flights/flights.component';
 import { FlightComponent } from './components/flights/flight/flight.component';
+import { FlightInstancesComponent } from './components/flightInstances/flight-instances/flight-instances.component';
+import { FlightInstanceComponent } from './components/flightInstances/flight-instance/flight-instance.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -38,6 +40,10 @@ const routes: Routes = [
   { path: 'flights', component: FlightsComponent, canActivate: [RouteGuardService] },
   { path: 'flights/:operation', component: FlightComponent, canActivate: [RouteGuardService] },
   { path: 'flights/:id/:operation', component: FlightComponent, canActivate: [RouteGuardService] },
+
+  { path: 'flightInstances', component: FlightInstancesComponent, canActivate: [RouteGuardService] },
+  { path: 'flightInstances/:operation', component: FlightInstanceComponent, canActivate: [RouteGuardService] },
+  { path: 'flightInstances/:id/:operation', component: FlightInstanceComponent, canActivate: [RouteGuardService] },
 
   { path: '**', component: ErrorComponent },
 ];

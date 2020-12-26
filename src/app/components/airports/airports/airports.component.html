@@ -36,46 +36,59 @@
     </div>
 
     <!-- Airports table -->
-    <table class="table mt-3 table-hover">
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>Airport</th>
-          <th>Place</th>
-          <th>Edit</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let airport of airports">
-          <td>
-            {{ airport.airportId }}
-          </td>
-          <td>
-            {{ airport.name }}
-          </td>
-          <td>
-            {{ airport.place }}
-          </td>
-          <td>
-            <button (click)="editAirport(airport)" class="btn btn-sm btn-outline-secondary mr-1">
-              Edit
-            </button>
-          </td>
-          <td>
-            <button (click)="deleteAirport(airport)" class="btn btn-sm btn-outline-danger">
-              Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
+    <div class="table-responsive">
+      <table class="table mt-3 table-hover">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Airport</th>
+            <th>Place</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let airport of airports">
+            <td>
+              {{ airport.airportId }}
+            </td>
+            <td>
+              {{ airport.name }}
+            </td>
+            <td>
+              {{ airport.place }}
+            </td>
+            <td>
+              <button
+                (click)="editAirport(airport)"
+                class="btn btn-sm btn-outline-secondary mr-1"
+              >
+                Edit
+              </button>
+            </td>
+            <td>
+              <button
+                (click)="deleteAirport(airport)"
+                class="btn btn-sm btn-outline-danger"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   <div class="col-md-1 col-lg-2"></div>
 </div>
 
-<div class="modal fade" id="deleteAirportModal" tabindex="-1" aria-labelledby="deleteAirportModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="deleteAirportModal"
+  tabindex="-1"
+  aria-labelledby="deleteAirportModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content text-center">
       <div class="modal-body">
@@ -84,10 +97,16 @@
         </div>
 
         <div class="text-center mt-2">
-          <button (click)="hideModal()" class="btn btn-sm btn-outline-secondary mx-1">
+          <button
+            (click)="hideModal()"
+            class="btn btn-sm btn-outline-secondary mx-1"
+          >
             Cancel
           </button>
-          <button (click)="deleteAirportFinally()" class="btn btn-sm btn-danger mx-1">
+          <button
+            (click)="deleteAirportFinally()"
+            class="btn btn-sm btn-danger mx-1"
+          >
             Delete
           </button>
         </div>

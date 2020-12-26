@@ -25,11 +25,11 @@ export class FlightInstancesService {
     return this.httpClient.get<FlightInstanceResponseDto[]>(`${this.flightInstancesUrl}/all`);
   }
 
-  getFlightInstanceById(id: string) {
+  getFlightInstanceById(id: number) {
     return this.httpClient.get<FlightInstanceResponseDto>(`${this.flightInstancesUrl}/${id}`);
   }
 
-  deleteFlightInstanceById(id: string) {
+  deleteFlightInstanceById(id: number) {
     return this.httpClient.delete<JsonMessage>(`${this.flightInstancesUrl}/${id}`);
   }
 }

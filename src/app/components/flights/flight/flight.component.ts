@@ -1,6 +1,12 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import Airline from 'src/app/models/airline/airline.model';
 import Airport from 'src/app/models/airport/airport.model';
@@ -14,15 +20,15 @@ import { FlightsService } from 'src/app/services/flights/flights.service';
 @Component({
   selector: 'app-flight',
   templateUrl: './flight.component.html',
-  styleUrls: ['./flight.component.css']
+  styleUrls: ['./flight.component.css'],
 })
 export class FlightComponent implements OnInit {
   editFlight = false;
   errorMessage: string = null;
   flightForm: FormGroup;
   flight = new FlightRequestDto(-1, null, null, null, null);
-  airlines: Airline[]
-  airports: Airport[]
+  airlines: Airline[];
+  airports: Airport[];
 
   constructor(
     public flightsService: FlightsService,
@@ -42,17 +48,16 @@ export class FlightComponent implements OnInit {
   }
 
   initData() {
-    this.getAirlines()
-    this.getAirports()
+    this.getAirlines();
+    this.getAirports();
 
     if (this.route.snapshot.params['operation'] === 'edit') {
-      if (this.route.snapshot.params['id'] == null) this.router.navigate(['/flights']);
+      if (this.route.snapshot.params['id'] == null)
+        this.router.navigate(['/flights']);
       else this.flight.id = this.route.snapshot.params['id'];
       this.editFlight = true;
       this.getFlight();
-    
     } else if (this.route.snapshot.params['operation'] === 'new') {
-
     } else {
       this.router.navigate(['/flights']);
     }
@@ -61,64 +66,72 @@ export class FlightComponent implements OnInit {
   getAirlines() {
     this.airlinesService.getAllAirlines().subscribe(
       (response) => {
-        this.airlines = response
+        this.airlines = response;
       },
       (error) => {
-        this.errorMessage = error.error
+        this.errorMessage = error.error;
       }
-    )
+    );
   }
 
   getAirports() {
     this.airportsService.getAllAirports().subscribe(
       (response) => {
-        this.airports = response
+        this.airports = response;
       },
       (error) => {
-        this.errorMessage = error.error
+        this.errorMessage = error.error;
       }
-    )
+    );
   }
 
   getFlight() {
     this.flightsService.getFlightById(this.flight.id).subscribe(
       (response) => {
-        this.flight.id = response.id
-        this.flight.flightId = response.flightId
-        this.flight.departureAirportId = response.departureAirport.id
-        this.flight.arrivalAirportId = response.arrivalAirport.id
-        this.flight.airlineId = response.airline.id
-        
+        this.flight.id = response.id;
+        this.flight.flightId = response.flightId;
+        this.flight.departureAirportId = response.departureAirport.id;
+        this.flight.arrivalAirportId = response.arrivalAirport.id;
+        this.flight.airlineId = response.airline.id;
+
         this.flightForm.setValue({
           flightId: this.flight.flightId,
           departureAirportId: this.flight.departureAirportId,
           arrivalAirportId: this.flight.arrivalAirportId,
-          airlineId: this.flight.airlineId
+          airlineId: this.flight.airlineId,
         });
       },
       (error) => {
         this.errorMessage = error.error;
       }
-    )
+    );
   }
 
   buildForm() {
-    this.flightForm = this.formBuilder.group({
-      flightId: [null, [Validators.required, Validators.minLength(2)]],
-      departureAirportId: [null, [Validators.required]],
-      arrivalAirportId: [null, [Validators.required]],
-      airlineId: [null, [Validators.required]],
-    });
+    this.flightForm = this.formBuilder.group(
+      {
+        flightId: [null, [Validators.required, Validators.minLength(2)]],
+        departureAirportId: [null, [Validators.required, this.departureAirportValidator]],
+        arrivalAirportId: [null, [Validators.required, this.arrivalAirportValidator]],
+        airlineId: [null, [Validators.required]],
+      }
+    );
   }
 
-  departureAirportValidation(control: AbstractControl): { [key: string]: boolean } | null {
-    if (control.value == this.flightForm.get('arrivalAirportId')) return { 'sameAirports': true };
-    else return null;
+  departureAirportValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    if (control.value != null && control.value == control.parent.get('arrivalAirportId').value) {
+      return { 'sameAirports': true };
+    } else {
+      return null;
+    }
   }
 
-  arrivalAirportValidation(control: AbstractControl): { [key: string]: boolean } | null {
-    if (control.value == this.flightForm.get('departureAirportId')) return { 'sameAirports': true };
-    else return null;
+  arrivalAirportValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    if (control.value != null && control.value == control.parent.get('departureAirportId').value) {
+      return { 'sameAirports': true };
+    } else {
+      return null;
+    }
   }
 
   saveFlight(newFlightForm) {
@@ -126,7 +139,7 @@ export class FlightComponent implements OnInit {
     this.flight.departureAirportId = newFlightForm.departureAirportId;
     this.flight.arrivalAirportId = newFlightForm.arrivalAirportId;
     this.flight.airlineId = newFlightForm.airlineId;
-    
+
     if (this.editFlight) {
       this.flightsService.updateFlight(this.flight).subscribe(
         (response) => {
@@ -136,7 +149,6 @@ export class FlightComponent implements OnInit {
           this.errorMessage = error.error;
         }
       );
-
     } else {
       this.flightsService.newFlight(this.flight).subscribe(
         (response) => {

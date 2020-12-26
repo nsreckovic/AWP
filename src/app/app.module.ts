@@ -22,6 +22,9 @@ import { AirportComponent } from './components/airports/airport/airport.componen
 import { AirportsComponent } from './components/airports/airports/airports.component';
 import { FlightComponent } from './components/flights/flight/flight.component';
 import { FlightsComponent } from './components/flights/flights/flights.component';
+import { FlightInstanceComponent } from './components/flightInstances/flight-instance/flight-instance.component';
+import { FlightInstancesComponent } from './components/flightInstances/flight-instances/flight-instances.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -42,6 +45,8 @@ import { FlightsComponent } from './components/flights/flights/flights.component
     AirportsComponent,
     FlightComponent,
     FlightsComponent,
+    FlightInstanceComponent,
+    FlightInstancesComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,6 +54,7 @@ import { FlightsComponent } from './components/flights/flights/flights.component
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    NgbModule,
   ],
   providers: [
     {
