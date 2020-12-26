@@ -39,6 +39,10 @@ export class FlightsComponent implements OnInit {
     );
   }
 
+  newFlight() {
+    this.router.navigate(['flights', 'new']);
+  }
+
   editFlight(flight) {
     this.router.navigate(['flights', flight.id, 'edit']);
   }

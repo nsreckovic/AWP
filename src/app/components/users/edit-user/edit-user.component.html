@@ -4,20 +4,13 @@
     <h1 class="text-center">Edit Profile</h1>
 
     <!-- Error message -->
-    <div
-      class="alert alert-danger alert-dismissible fade show"
-      role="alert"
+    <ngb-alert
       *ngIf="errorMessage"
-    >
-      {{ errorMessage }}
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Close"
-        (click)="dismissError()"
-      ></button>
-    </div>
+      [type]="'danger'"
+      (closed)="dismissErrorAlert()"
+      class="mt-2"
+      >{{ errorMessage }}
+    </ngb-alert>
 
     <!-- User form -->
     <form [formGroup]="userForm" (ngSubmit)="editUser(userForm.value)">

@@ -6,6 +6,14 @@
     <div class="col-6 text-right">
       <button
         type="button"
+        class="btn btn-primary mt-2 mr-2"
+        (click)="newTicket()"
+        *ngIf="authService.isAdminLoggedIn()"
+      >
+        New
+      </button>
+      <button
+        type="button"
         class="btn btn-outline-secondary mt-2"
         (click)="collapse.toggle()"
         [attr.aria-expanded]="!isCollapsed"
@@ -101,7 +109,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="row mt-3">
           <!-- Airline -->
           <div class="col-sm-6 col-md-3">
@@ -119,7 +127,7 @@
           </div>
 
           <!-- User -->
-          <div *ngIf="authService.isAdminLoggedIn" class="col-sm-6 col-md-3">
+          <div *ngIf="authService.isAdminLoggedIn()" class="col-sm-6 col-md-3">
             <label for="userId">User</label>
             <select
               id="userIdSelection"
@@ -133,7 +141,7 @@
             </select>
           </div>
         </div>
-        
+
         <div class="row mt-3">
           <div class="col-sm-12 col-md-6"></div>
           <div class="col-sm-12 col-md-6 text-right">
@@ -156,15 +164,15 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Error message -->
   <ngb-alert
     *ngIf="errorMessage"
     [type]="'danger'"
     (closed)="dismissErrorAlert()"
     class="mt-2"
-    >{{ errorMessage }}</ngb-alert
-  >
+    >{{ errorMessage }}
+  </ngb-alert>
 
   <!-- Success message -->
   <ngb-alert
@@ -172,8 +180,8 @@
     [type]="'success'"
     (closed)="dismissSuccessAlert()"
     class="mt-2"
-    >{{ successMessage }}</ngb-alert
-  >
+    >{{ successMessage }}
+  </ngb-alert>
 
   <!-- Tickets table -->
   <div class="table-responsive">

@@ -76,4 +76,8 @@ export class AirlinesComponent implements OnInit {
   public dismissSuccessAlert() {
     this.successMessage = null;
   }
+
+  newAirline() {
+    this.router.navigate(['airlines', 'new']);
+  }
 }

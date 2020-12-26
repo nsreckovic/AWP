@@ -151,6 +151,10 @@ export class TicketsComponent implements OnInit {
     );
   }
 
+  newTicket() {
+    this.router.navigate(['tickets', 'new']);
+  }
+
   editTicket(ticket) {
     if (!this.authService.isAdminLoggedIn()) this.router.navigate(['tickets'])
     this.router.navigate(['tickets', ticket.id, 'edit']);

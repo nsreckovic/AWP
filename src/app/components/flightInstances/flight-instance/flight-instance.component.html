@@ -5,20 +5,13 @@
     <h1 class="text-center" *ngIf="editFlightInstance">Edit Flight Instance</h1>
 
     <!-- Error message -->
-    <div
-      class="alert alert-danger alert-dismissible fade show"
-      role="alert"
+    <ngb-alert
       *ngIf="errorMessage"
-    >
-      {{ errorMessage }}
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Close"
-        (click)="dismissError()"
-      ></button>
-    </div>
+      [type]="'danger'"
+      (closed)="dismissErrorAlert()"
+      class="mt-2"
+      >{{ errorMessage }}
+    </ngb-alert>
 
     <!-- Form -->
     <form
@@ -165,9 +158,6 @@
         <div *ngIf="count.errors?.countInvalid" class="invalid-feedback">
           Ticket count must be greater than 0.
         </div>
-        <!-- <div *ngIf="count.errors?.sameAirports" class="invalid-feedback">
-              Arrival and arrival airport cannot be the same.
-            </div> -->
       </div>
 
       <!-- Save button -->
@@ -176,7 +166,6 @@
           type="button"
           class="btn btn-outline-secondary mt-3 mx-1"
           (click)="cancel()"
-          *ngIf="editFlightInstance"
         >
           Cancel
         </button>

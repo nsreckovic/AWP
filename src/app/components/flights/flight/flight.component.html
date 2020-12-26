@@ -5,26 +5,16 @@
     <h1 class="text-center" *ngIf="editFlight">Edit Flight</h1>
 
     <!-- Error message -->
-    <div
-      class="alert alert-danger alert-dismissible fade show"
-      role="alert"
+    <ngb-alert
       *ngIf="errorMessage"
-    >
-      {{ errorMessage }}
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Close"
-        (click)="dismissError()"
-      ></button>
-    </div>
+      [type]="'danger'"
+      (closed)="dismissErrorAlert()"
+      class="mt-2"
+      >{{ errorMessage }}
+    </ngb-alert>
 
     <!-- Form -->
-    <form
-      [formGroup]="flightForm"
-      (ngSubmit)="saveFlight(flightForm.value)"
-    >
+    <form [formGroup]="flightForm" (ngSubmit)="saveFlight(flightForm.value)">
       <!-- Flight Id -->
       <div class="form-group mt-1">
         <label for="flightId">Flight Id</label>
@@ -32,7 +22,9 @@
           type="url"
           class="form-control"
           formControlName="flightId"
-          [class.is-invalid]="flightId.errors && (flightId.dirty || flightId.touched)"
+          [class.is-invalid]="
+            flightId.errors && (flightId.dirty || flightId.touched)
+          "
           placeholder="Enter flight id here."
         />
         <div *ngIf="flightId.errors?.required" class="invalid-feedback">
@@ -47,20 +39,29 @@
       <div class="form-group mt-1">
         <label for="departureAirportId">Departure airport</label>
         <select
-              id="departureAirportIdSelection"
-              formControlName="departureAirportId"
-              class="form-control"
-              [class.is-invalid]="departureAirportId.errors && (departureAirportId.dirty || departureAirportId.touched)"
-              placeholder="Choose departure airport here."
-            >
-              <option *ngFor="let a of airports" [ngValue]="a.id">
-                {{ a.airportId }} - {{ a.place }}
-              </option>
-            </select>
-        <div *ngIf="departureAirportId.errors?.required" class="invalid-feedback">
+          id="departureAirportIdSelection"
+          formControlName="departureAirportId"
+          class="form-control"
+          [class.is-invalid]="
+            departureAirportId.errors &&
+            (departureAirportId.dirty || departureAirportId.touched)
+          "
+          placeholder="Choose departure airport here."
+        >
+          <option *ngFor="let a of airports" [ngValue]="a.id">
+            {{ a.airportId }} - {{ a.place }}
+          </option>
+        </select>
+        <div
+          *ngIf="departureAirportId.errors?.required"
+          class="invalid-feedback"
+        >
           Departure airport is required.
         </div>
-        <div *ngIf="departureAirportId.errors?.sameAirports" class="invalid-feedback">
+        <div
+          *ngIf="departureAirportId.errors?.sameAirports"
+          class="invalid-feedback"
+        >
           Departure and arrival airport cannot be the same.
         </div>
       </div>
@@ -69,20 +70,26 @@
       <div class="form-group mt-1">
         <label for="arrivalAirportId">Arrival airport</label>
         <select
-              id="arrivalAirportIdSelection"
-              formControlName="arrivalAirportId"
-              class="form-control"
-              [class.is-invalid]="arrivalAirportId.errors && (arrivalAirportId.dirty || arrivalAirportId.touched)"
-              placeholder="Choose arrival airport here."
-            >
-              <option *ngFor="let a of airports" [ngValue]="a.id">
-                {{ a.airportId }} - {{ a.place }}
-              </option>
-            </select>
+          id="arrivalAirportIdSelection"
+          formControlName="arrivalAirportId"
+          class="form-control"
+          [class.is-invalid]="
+            arrivalAirportId.errors &&
+            (arrivalAirportId.dirty || arrivalAirportId.touched)
+          "
+          placeholder="Choose arrival airport here."
+        >
+          <option *ngFor="let a of airports" [ngValue]="a.id">
+            {{ a.airportId }} - {{ a.place }}
+          </option>
+        </select>
         <div *ngIf="arrivalAirportId.errors?.required" class="invalid-feedback">
           Arrival airport is required.
         </div>
-        <div *ngIf="arrivalAirportId.errors?.sameAirports" class="invalid-feedback">
+        <div
+          *ngIf="arrivalAirportId.errors?.sameAirports"
+          class="invalid-feedback"
+        >
           Arrival and arrival airport cannot be the same.
         </div>
       </div>
@@ -91,16 +98,18 @@
       <div class="form-group mt-1">
         <label for="airlineId">Airline</label>
         <select
-              id="airlineIdSelection"
-              formControlName="airlineId"
-              class="form-control"
-              [class.is-invalid]="airlineId.errors && (airlineId.dirty || airlineId.touched)"
-              placeholder="Choose airline here."
-            >
-              <option *ngFor="let a of airlines" [ngValue]="a.id">
-                {{ a.name }}
-              </option>
-            </select>
+          id="airlineIdSelection"
+          formControlName="airlineId"
+          class="form-control"
+          [class.is-invalid]="
+            airlineId.errors && (airlineId.dirty || airlineId.touched)
+          "
+          placeholder="Choose airline here."
+        >
+          <option *ngFor="let a of airlines" [ngValue]="a.id">
+            {{ a.name }}
+          </option>
+        </select>
         <div *ngIf="airlineId.errors?.required" class="invalid-feedback">
           Airline is required.
         </div>
@@ -112,10 +121,9 @@
       <!-- Save button -->
       <div class="text-center">
         <button
-          type='button'
+          type="button"
           class="btn btn-outline-secondary mt-3 mx-1"
           (click)="cancel()"
-          *ngIf="editFlight"
         >
           Cancel
         </button>
@@ -131,4 +139,3 @@
   </div>
   <div class="col-md-1 col-lg-2"></div>
 </div>
-

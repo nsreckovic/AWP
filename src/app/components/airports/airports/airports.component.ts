@@ -64,6 +64,10 @@ export class AirportsComponent implements OnInit {
     );
   }
 
+  newAirport() {
+    this.router.navigate(['airports', 'new']);
+  }
+
   hideModal() {
     this.airportForDelete = null;
     $('#deleteAirportModal').modal('hide');

@@ -5,20 +5,13 @@
     <h1 class="text-center" *ngIf="editAirline">Edit Airline</h1>
 
     <!-- Error message -->
-    <div
-      class="alert alert-danger alert-dismissible fade show"
-      role="alert"
+    <ngb-alert
       *ngIf="errorMessage"
+      [type]="'danger'"
+      (closed)="dismissErrorAlert()"
+      class="mt-2"
+      >{{ errorMessage }}</ngb-alert
     >
-      {{ errorMessage }}
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Close"
-        (click)="dismissError()"
-      ></button>
-    </div>
 
     <!-- Form -->
     <form
@@ -64,10 +57,9 @@
       <!-- Save button -->
       <div class="text-center">
         <button
-          type='button'
+          type="button"
           class="btn btn-outline-secondary mt-3 mx-1"
           (click)="cancel()"
-          *ngIf="editAirline"
         >
           Cancel
         </button>
