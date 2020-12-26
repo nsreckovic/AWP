@@ -6,6 +6,7 @@ export default class TicketResponseDto {
     public id: number,
     public user: UserTicketResponseDto,
     public flight: Flight,
-    public flightDate: number
+    public flightDate: number,
+    public flightLengthInMinutes: number
   ) {}
 }

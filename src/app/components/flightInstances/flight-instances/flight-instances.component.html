@@ -38,13 +38,13 @@
     <table class="table mt-3 table-hover">
       <thead>
         <tr>
-          <th>Id</th>
+          <!-- <th>Id</th> -->
           <th>Flight Id</th>
           <th>Departure airport</th>
           <th>Arrival airport</th>
           <th>Airline</th>
           <th>Date</th>
-          <th>Duration</th>
+          <th>Duration (minutes)</th>
           <th>Max ticket count</th>
           <th>Current ticket count</th>
           <th>Edit</th>
@@ -53,7 +53,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let flightInstance of flightInstances">
-          <td>{{ flightInstance.id }}</td>
+          <!-- <td>{{ flightInstance.id }}</td> -->
           <td>{{ flightInstance.flight.flightId }}</td>
           <td>
             {{ flightInstance.flight.departureAirport.airportId }} -

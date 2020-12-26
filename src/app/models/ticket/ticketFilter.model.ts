@@ -3,8 +3,8 @@ export default class TicketFilter {
     public userId: number,
     public fromDate: number,
     public toDate: number,
-    public fromAirportId: string,
-    public toAirportId: string,
+    public fromAirportId: number,
+    public toAirportId: number,
     public airlineId: number,
     public fromTicketId: number
   ) {}
