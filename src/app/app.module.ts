@@ -25,8 +25,9 @@ import { FlightsComponent } from './components/flights/flights/flights.component
 import { FlightInstanceComponent } from './components/flightInstances/flight-instance/flight-instance.component';
 import { FlightInstancesComponent } from './components/flightInstances/flight-instances/flight-instances.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { TicketComponent } from './components/tickets/ticket/ticket.component';
 import { TicketsComponent } from './components/tickets/tickets/tickets.component';
+import { NewTicketComponent } from './components/tickets/new-ticket/new-ticket.component';
+import { EditTicketComponent } from './components/tickets/edit-ticket/edit-ticket.component';
 
 @NgModule({
   declarations: [
@@ -49,8 +50,9 @@ import { TicketsComponent } from './components/tickets/tickets/tickets.component
     FlightsComponent,
     FlightInstanceComponent,
     FlightInstancesComponent,
-    TicketComponent,
     TicketsComponent,
+    NewTicketComponent,
+    EditTicketComponent,
   ],
   imports: [
     BrowserModule,

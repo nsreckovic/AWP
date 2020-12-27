@@ -9,11 +9,11 @@ import { FlightInstancesService } from 'src/app/services/flightInstances/flight-
 import { TicketsService } from 'src/app/services/tickets/tickets.service';
 
 @Component({
-  selector: 'app-ticket',
-  templateUrl: './ticket.component.html',
-  styleUrls: ['./ticket.component.css']
+  selector: 'app-new-ticket',
+  templateUrl: './new-ticket.component.html',
+  styleUrls: ['./new-ticket.component.css']
 })
-export class TicketComponent implements OnInit {
+export class NewTicketComponent implements OnInit {
   editTicket = false;
   errorMessage: string = null;
   ticketForm: FormGroup;
@@ -38,9 +38,6 @@ export class TicketComponent implements OnInit {
 
   initData() {
     this.getFlightInstances();
-    if (this.route.snapshot.params['operation'] !== 'new') {
-      this.router.navigate(['/tickets']);
-    }
   }
 
   getFlightInstances() {
