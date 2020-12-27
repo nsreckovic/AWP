@@ -80,7 +80,7 @@ export class TicketsComponent implements OnInit {
     return true;
   }
 
-  dateInMillis(dateToValidate): number {
+  fromDateInMillis(dateToValidate): number {
     if (this.dateValidator(dateToValidate)) {
       if (dateToValidate == null) return null
       var date = new Date()
@@ -95,11 +95,26 @@ export class TicketsComponent implements OnInit {
     return null
   }
 
+  toDateInMillis(dateToValidate): number {
+    if (this.dateValidator(dateToValidate)) {
+      if (dateToValidate == null) return null
+      var date = new Date()
+      date.setFullYear(dateToValidate.year)
+      date.setMonth(dateToValidate.month - 1)
+      date.setDate(dateToValidate.day)
+      date.setHours(23)
+      date.setMinutes(59)
+      date.setSeconds(59)
+      return date.getTime()
+    }
+    return null
+  }
+
   getTickets() {
     var from = this.filter.fromDate
     var to = this.filter.toDate
-    this.filter.fromDate = this.dateInMillis(this.filter.fromDate)
-    this.filter.toDate = this.dateInMillis(this.filter.toDate)
+    this.filter.fromDate = this.fromDateInMillis(this.filter.fromDate)
+    this.filter.toDate = this.toDateInMillis(this.filter.toDate)
     this.tickets = [];
     this.ticketsService.getAllTickets(this.filter).subscribe(
       (response) => {

@@ -3,14 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import Airline from 'src/app/models/airline/airline.model';
 import Airport from 'src/app/models/airport/airport.model';
-import Flight from 'src/app/models/flight/flight.model';
 import FlightRequestDto from 'src/app/models/flight/flightRequestDto.model';
 import { AirlinesService } from 'src/app/services/airlines/airlines.service';
 import { AirportsService } from 'src/app/services/airports/airports.service';

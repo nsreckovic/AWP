@@ -1,1 +1,81 @@
-<p>ticket works!</p>
+<div class="row">
+  <div class="col-md-1 col-lg-2"></div>
+  <div class="col-md-10 col-lg-8 container-lg">
+    <h1 class="text-center">New Ticket</h1>
+
+    <!-- Error message -->
+    <ngb-alert
+      *ngIf="errorMessage"
+      [type]="'danger'"
+      (closed)="dismissErrorAlert()"
+      class="mt-2"
+      >{{ errorMessage }}
+    </ngb-alert>
+
+    <!-- Form -->
+    <form [formGroup]="ticketForm" (ngSubmit)="saveTicket(ticketForm.value)">
+      <!-- Flight instance -->
+      <div class="form-group mt-1">
+        <label for="flightInstanceId">Flight Instance</label>
+        <select
+          id="flightInstanceIdSelection"
+          formControlName="flightInstanceId"
+          class="form-control"
+          [class.is-invalid]="
+            flightInstanceId.errors &&
+            (flightInstanceId.dirty || flightInstanceId.touched)
+          "
+          placeholder="Choose flight instance."
+        >
+          <option *ngFor="let fi of flightInstances" [ngValue]="fi.id" class="text-monospace">
+            {{ fi.flight.departureAirport.airportId }} -> {{ fi.flight.arrivalAirport.airportId }} | {{ fi.flightDate | date: "yyyy-MM-dd : HH:mm" }} | {{ fi.flight.flightId }}
+          </option>
+        </select>
+        <div
+          *ngIf="flightInstanceId.errors?.required"
+          class="invalid-feedback"
+        >
+          Flight instance is required.
+        </div>
+      </div>
+
+      <!-- Ticket count -->
+      <div class="form-group mt-1">
+        <label for="ticketCount">Ticket Count</label>
+        <input
+          type="number"
+          class="form-control"
+          formControlName="ticketCount"
+          [class.is-invalid]="ticketCount.errors && (ticketCount.dirty || ticketCount.touched)"
+          placeholder="Enter number of tickets you want to make here."
+        />
+        <div *ngIf="ticketCount.errors?.required" class="invalid-feedback">
+          Ticket count is required.
+        </div>
+        <div *ngIf="ticketCount.errors?.countInvalid" class="invalid-feedback">
+          Ticket count must be greater than 0.
+        </div>
+      </div>
+
+      <!-- Save button -->
+      <div class="text-center">
+        <button
+          type="button"
+          class="btn btn-outline-secondary mt-3 mx-1"
+          (click)="cancel()"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary mt-3 mx-1"
+          [disabled]="!ticketForm.valid"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-1 col-lg-2"></div>
+</div>
+
