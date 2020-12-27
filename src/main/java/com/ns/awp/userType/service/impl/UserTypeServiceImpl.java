@@ -1,5 +1,6 @@
 package com.ns.awp.userType.service.impl;
 
+import com.ns.awp.config.JsonMessage;
 import com.ns.awp.userType.models.UserType;
 import com.ns.awp.userType.repository.UserTypeRepository;
 import com.ns.awp.userType.service.UserTypeService;
@@ -88,7 +89,7 @@ public class UserTypeServiceImpl implements UserTypeService {
             // Deleting
             userTypeRepository.deleteById(id);
 
-            return ResponseEntity.ok("User Type deleted.");
+            return ResponseEntity.ok(new JsonMessage("User Type deleted."));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
         }

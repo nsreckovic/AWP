@@ -1,5 +1,6 @@
 package com.ns.awp.ticket.service.impl;
 
+import com.ns.awp.config.JsonMessage;
 import com.ns.awp.config.JwtUtil;
 import com.ns.awp.flightInstance.models.FlightInstance;
 import com.ns.awp.flightInstance.repository.FlightInstanceRepository;
@@ -138,7 +139,6 @@ public class TicketServiceImpl implements TicketService {
 
             return ResponseEntity.ok(tickets);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(500).body("Internal Server Error.");
         }
     }
@@ -188,8 +188,8 @@ public class TicketServiceImpl implements TicketService {
             );
 
             // Set airports for filter query
-            String departureAirportId = fromTicket.getFlightInstance().getFlight().getArrivalAirport().getAirportId();
-            String arrivalAirportId = fromTicket.getFlightInstance().getFlight().getDepartureAirport().getAirportId();
+            Integer departureAirportId = fromTicket.getFlightInstance().getFlight().getArrivalAirport().getId();
+            Integer arrivalAirportId = fromTicket.getFlightInstance().getFlight().getDepartureAirport().getId();
 
             // Get filtered tickets
             List<TicketResponseDto> tickets = new ArrayList<>();
@@ -243,7 +243,7 @@ public class TicketServiceImpl implements TicketService {
             flightInstanceRepository.save(ticket.getFlightInstance());
             ticketRepository.deleteById(id);
 
-            return ResponseEntity.ok("Ticket deleted.");
+            return ResponseEntity.ok(new JsonMessage("Ticket deleted."));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
         }

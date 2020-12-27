@@ -3,6 +3,7 @@ package com.ns.awp.airline.service.impl;
 import com.ns.awp.airline.models.Airline;
 import com.ns.awp.airline.repository.AirlineRepository;
 import com.ns.awp.airline.service.AirlineService;
+import com.ns.awp.config.JsonMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -96,7 +97,7 @@ public class AirlineServiceImpl implements AirlineService {
             // Delete
             airlineRepository.deleteById(id);
 
-            return ResponseEntity.ok("Airline deleted.");
+            return ResponseEntity.ok(new JsonMessage("Airline deleted."));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
         }

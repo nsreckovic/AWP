@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserTypeController {
     private final UserTypeService userTypeService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> newUserType(@RequestBody UserType userType) {
         return userTypeService.newUserType(userType);
     }
 
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<?> updateUserType(@RequestBody UserType userType) {
         return userTypeService.updateUserType(userType);
     }

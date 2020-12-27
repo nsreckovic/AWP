@@ -14,13 +14,13 @@ public class FlightController {
     private final FlightService flightService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> newFlight(@RequestBody FlightRequestDto flight) {
         return flightService.newFlight(flight);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<?> updateFlight(@RequestBody FlightRequestDto flight) {
         return flightService.updateFlight(flight);
     }
@@ -33,13 +33,13 @@ public class FlightController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @GetMapping("/{id}")
-    public ResponseEntity<?> getFlightByFlightId(@PathVariable("id") String id) {
+    public ResponseEntity<?> getFlightById(@PathVariable("id") Integer id) {
         return flightService.getFlightByFlightId(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteFlightByFlightId(@PathVariable("id") String id) {
+    public ResponseEntity<?> deleteFlightById(@PathVariable("id") Integer id) {
         return flightService.deleteFlightByFlightId(id);
     }
 }

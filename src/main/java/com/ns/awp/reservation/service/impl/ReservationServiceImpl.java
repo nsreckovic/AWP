@@ -1,5 +1,6 @@
 package com.ns.awp.reservation.service.impl;
 
+import com.ns.awp.config.JsonMessage;
 import com.ns.awp.config.JwtUtil;
 import com.ns.awp.reservation.models.Reservation;
 import com.ns.awp.reservation.models.dto.ReservationFilter;
@@ -353,7 +354,7 @@ public class ReservationServiceImpl implements ReservationService {
             }
             reservationRepository.deleteById(id);
 
-            return ResponseEntity.ok("Reservation deleted.");
+            return ResponseEntity.ok(new JsonMessage("Reservation deleted."));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
         }

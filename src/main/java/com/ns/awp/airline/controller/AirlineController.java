@@ -14,13 +14,13 @@ public class AirlineController {
     private final AirlineService airlineService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> newAirline(@RequestBody Airline airline) {
         return airlineService.newAirline(airline);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<?> updateAirline(@RequestBody Airline airline) {
         return airlineService.updateAirline(airline);
     }

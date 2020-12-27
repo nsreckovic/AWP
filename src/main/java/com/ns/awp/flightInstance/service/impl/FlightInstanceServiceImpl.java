@@ -1,5 +1,6 @@
 package com.ns.awp.flightInstance.service.impl;
 
+import com.ns.awp.config.JsonMessage;
 import com.ns.awp.flight.models.Flight;
 import com.ns.awp.flight.repository.FlightRepository;
 import com.ns.awp.flightInstance.models.FlightInstance;
@@ -49,10 +50,10 @@ public class FlightInstanceServiceImpl implements FlightInstanceService {
 
             // Flight check
             Flight flight;
-            if (!flightRepository.existsByFlightId(flightInstance.getFlightId())) {
+            if (!flightRepository.existsById(flightInstance.getFlightId())) {
                 return ResponseEntity.status(404).body("Flight with provided id not found.");
             } else {
-                flight = flightRepository.findByFlightId(flightInstance.getFlightId()).get();
+                flight = flightRepository.findById(flightInstance.getFlightId()).get();
             }
 
             // Count check
@@ -97,10 +98,10 @@ public class FlightInstanceServiceImpl implements FlightInstanceService {
 
             // New flight check
             if (flightInstance.getFlightId() != null) {
-                if (!flightRepository.existsByFlightId(flightInstance.getFlightId())) {
+                if (!flightRepository.existsById(flightInstance.getFlightId())) {
                     return ResponseEntity.status(404).body("Flight with provided id not found.");
                 } else {
-                    existing.setFlight(flightRepository.findByFlightId(flightInstance.getFlightId()).get());
+                    existing.setFlight(flightRepository.findById(flightInstance.getFlightId()).get());
                 }
             }
 
@@ -186,7 +187,7 @@ public class FlightInstanceServiceImpl implements FlightInstanceService {
             // Delete
             flightInstanceRepository.deleteById(id);
 
-            return ResponseEntity.ok("Flight Instance deleted.");
+            return ResponseEntity.ok(new JsonMessage("Flight Instance deleted."));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
         }

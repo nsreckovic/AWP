@@ -15,13 +15,13 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> newReservation(@RequestBody ReservationRequestDto reservation) {
         return reservationService.newReservation(reservation);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<?> updateReservation(@RequestBody ReservationRequestDto reservation) {
         return reservationService.updateReservation(reservation);
     }

@@ -10,7 +10,7 @@ public interface AirportService {
 
     ResponseEntity<?> getAllAirports();
 
-    ResponseEntity<?> getAirportByAirportId(String id);
+    ResponseEntity<?> getAirportByAirportId(Integer id);
 
-    ResponseEntity<?> deleteAirportByAirportId(String id);
+    ResponseEntity<?> deleteAirportByAirportId(Integer id);
 }

@@ -1,5 +1,6 @@
 package com.ns.awp.userType.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ns.awp.user.models.User;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ public class UserType {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @JsonIgnore
     @OneToMany(orphanRemoval = true, mappedBy = "userType")
     private List<User> users;
 }

@@ -14,13 +14,13 @@ public class AirportController {
     private final AirportService airportService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> newAirport(@RequestBody Airport airport) {
         return airportService.newAirport(airport);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<?> updateAirport(@RequestBody Airport airport) {
         return airportService.updateAirport(airport);
     }
@@ -33,13 +33,13 @@ public class AirportController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAirportById(@PathVariable("id") String id) {
+    public ResponseEntity<?> getAirportById(@PathVariable("id") Integer id) {
         return airportService.getAirportByAirportId(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAirportById(@PathVariable("id") String id) {
+    public ResponseEntity<?> deleteAirportById(@PathVariable("id") Integer id) {
         return airportService.deleteAirportByAirportId(id);
     }
 }

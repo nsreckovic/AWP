@@ -19,7 +19,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('REGULAR', 'ADMIN')")
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<?> updateUser(@RequestBody UserRequestDto user) {
         return userService.updateUser(user);
     }
@@ -39,7 +39,6 @@ public class UserController {
     @PreAuthorize("hasAnyRole('REGULAR', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") int id) {
-        // TODO if user is regular, compare requested id with authenticated one
         return userService.deleteUserById(id);
     }
 }

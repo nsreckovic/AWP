@@ -16,14 +16,14 @@ public interface TicketRepository extends CrudRepository<Ticket, Integer> {
             "(u.id IS NULL) AND " +
             "((:fromDate IS NULL OR :fromDate <= fi.flightDate) AND " +
             "(:toDate IS NULL OR :toDate >= fi.flightDate)) AND " +
-            "(:fromAirportId IS NULL OR :fromAirportId = f.departureAirport.airportId) AND " +
-            "(:toAirportId IS NULL OR :toAirportId = f.arrivalAirport.airportId) AND " +
+            "(:fromAirportId IS NULL OR :fromAirportId = f.departureAirport.id) AND " +
+            "(:toAirportId IS NULL OR :toAirportId = f.arrivalAirport.id) AND " +
             "(:airlineId IS NULL OR :airlineId = f.airline.id)")
     Iterable<Ticket> findAllAvailableTicketsByFilter(
             @Param("fromDate") Timestamp fromDate,
             @Param("toDate") Timestamp toDate,
-            @Param("fromAirportId") String fromAirportId,
-            @Param("toAirportId") String toAirportId,
+            @Param("fromAirportId") Integer fromAirportId,
+            @Param("toAirportId") Integer toAirportId,
             @Param("airlineId") Integer airlineId);
 
 
@@ -35,14 +35,14 @@ public interface TicketRepository extends CrudRepository<Ticket, Integer> {
             "(:userId IS NULL OR :userId = u.id) AND " +
             "((:fromDate IS NULL OR :fromDate <= fi.flightDate) AND " +
             "(:toDate IS NULL OR :toDate >= fi.flightDate)) AND " +
-            "(:fromAirportId IS NULL OR :fromAirportId = f.departureAirport.airportId) AND " +
-            "(:toAirportId IS NULL OR :toAirportId = f.arrivalAirport.airportId) AND " +
+            "(:fromAirportId IS NULL OR :fromAirportId = f.departureAirport.id) AND " +
+            "(:toAirportId IS NULL OR :toAirportId = f.arrivalAirport.id) AND " +
             "(:airlineId IS NULL OR :airlineId = f.airline.id)")
     Iterable<Ticket> findAllUserTicketsByFilter(
             @Param("userId") Integer userId,
             @Param("fromDate") Timestamp fromDate,
             @Param("toDate") Timestamp toDate,
-            @Param("fromAirportId") String fromAirportId,
-            @Param("toAirportId") String toAirportId,
+            @Param("fromAirportId") Integer fromAirportId,
+            @Param("toAirportId") Integer toAirportId,
             @Param("airlineId") Integer airlineId);
 }

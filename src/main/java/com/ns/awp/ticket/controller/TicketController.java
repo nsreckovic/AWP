@@ -15,13 +15,13 @@ public class TicketController {
     private final TicketService ticketService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> newTicket(@RequestBody TicketRequestDto ticket) {
         return ticketService.newTicket(ticket);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<?> updateTicket(@RequestBody TicketRequestDto ticket) {
         return ticketService.updateTicket(ticket);
     }

@@ -14,13 +14,13 @@ public class FlightInstanceController {
     private final FlightInstanceService flightInstanceService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> newFlightInstance(@RequestBody FlightInstanceRequestDto flightInstance) {
         return flightInstanceService.newFlightInstance(flightInstance);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<?> updateFlightInstance(@RequestBody FlightInstanceRequestDto flightInstance) {
         return flightInstanceService.updateFlightInstance(flightInstance);
     }

@@ -10,7 +10,7 @@ public interface FlightService {
 
     ResponseEntity<?> getAllFlights();
 
-    ResponseEntity<?> getFlightByFlightId(String id);
+    ResponseEntity<?> getFlightByFlightId(Integer id);
 
-    ResponseEntity<?> deleteFlightByFlightId(String id);
+    ResponseEntity<?> deleteFlightByFlightId(Integer id);
 }

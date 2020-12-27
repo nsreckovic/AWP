@@ -1,5 +1,9 @@
 package com.ns.awp.user.service.impl;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonFactoryBuilder;
+import com.fasterxml.jackson.databind.util.JSONWrappedObject;
+import com.ns.awp.config.JsonMessage;
 import com.ns.awp.config.JwtUtil;
 import com.ns.awp.user.models.User;
 import com.ns.awp.user.models.dto.UserRequestDto;
@@ -11,6 +15,7 @@ import com.ns.awp.userType.models.UserType;
 import com.ns.awp.userType.repository.UserTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jackson.JsonObjectSerializer;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -37,14 +42,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public ResponseEntity<?> newUser(UserRequestDto user) {
         try {
             // Null check
-            if (user.getUsername() == null) {
-                return ResponseEntity.status(400).body("Username cannot be null.");
-            } else if (user.getName() == null) {
-                return ResponseEntity.status(400).body("Name cannot be null.");
-            } else if (user.getLastName() == null) {
-                return ResponseEntity.status(400).body("Last name cannot be null.");
-            } else if (user.getPassword() == null) {
-                return ResponseEntity.status(400).body("Password cannot be null.");
+            if (user.getUsername() == null || user.getUsername().isBlank()) {
+                return ResponseEntity.status(400).body("Username cannot be null or blank.");
+            } else if (user.getName() == null || user.getName().isBlank()) {
+                return ResponseEntity.status(400).body("Name cannot be null or blank.");
+            } else if (user.getLastName() == null || user.getLastName().isBlank()) {
+                return ResponseEntity.status(400).body("Last name cannot be null or blank.");
+            } else if (user.getPassword() == null || user.getPassword().isBlank()) {
+                return ResponseEntity.status(400).body("Password cannot be null or blank.");
             }
 
             // Username check
@@ -89,6 +94,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
             if (jwtUtil.hasRole("ROLE_REGULAR") && authenticated.getId() != user.getId()) {
                 return ResponseEntity.status(401).body("You cannot change another user's data.");
+            }
+
+            // Blank check
+            if (user.getUsername().isBlank()) {
+                return ResponseEntity.status(400).body("Username cannot be blank.");
+            } else if (user.getName().isBlank()) {
+                return ResponseEntity.status(400).body("Name cannot be blank.");
+            } else if (user.getLastName().isBlank()) {
+                return ResponseEntity.status(400).body("Last name cannot be blank.");
+            }
+            if (jwtUtil.hasRole("ROLE_ADMIN")) {
+                if (user.getUserType().isBlank()) {
+                    return ResponseEntity.status(400).body("User type cannot be blank.");
+                }
+            } else {
+                if (user.getPassword().isBlank()) {
+                    return ResponseEntity.status(400).body("Password cannot be blank.");
+                } else if (user.getNewPassword().isBlank()) {
+                    return ResponseEntity.status(400).body("New password cannot be blank.");
+                }
             }
 
             // Id check
@@ -203,14 +228,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             // Id check
             if (jwtUtil.hasRole("ROLE_ADMIN")) {
                 if (!userRepository.existsById(id)) {
-                    return ResponseEntity.status(404).body("User not found.");
+                    return ResponseEntity.status(404).body("User with provided id not found.");
                 }
             }
 
             // Deleting
             userRepository.deleteById(id);
 
-            return ResponseEntity.ok("User deleted.");
+            return ResponseEntity.ok(new JsonMessage("User deleted."));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
         }

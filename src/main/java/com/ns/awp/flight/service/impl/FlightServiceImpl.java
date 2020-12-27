@@ -4,6 +4,7 @@ import com.ns.awp.airline.models.Airline;
 import com.ns.awp.airline.repository.AirlineRepository;
 import com.ns.awp.airport.models.Airport;
 import com.ns.awp.airport.repository.AirportRepository;
+import com.ns.awp.config.JsonMessage;
 import com.ns.awp.flight.models.Flight;
 import com.ns.awp.flight.models.dto.FlightRequestDto;
 import com.ns.awp.flight.repository.FlightRepository;
@@ -33,18 +34,18 @@ public class FlightServiceImpl implements FlightService {
 
             // Departure airport check
             Airport departureAirport;
-            if (!airportRepository.existsByAirportId(flight.getDepartureAirportId())) {
+            if (!airportRepository.existsById(flight.getDepartureAirportId())) {
                 return ResponseEntity.status(404).body("Departure airport with provided id not found.");
             } else {
-                departureAirport = airportRepository.findByAirportId(flight.getDepartureAirportId()).get();
+                departureAirport = airportRepository.findById(flight.getDepartureAirportId()).get();
             }
 
             // Arrival airport check
             Airport arrivalAirport;
-            if (!airportRepository.existsByAirportId(flight.getArrivalAirportId())) {
+            if (!airportRepository.existsById(flight.getArrivalAirportId())) {
                 return ResponseEntity.status(404).body("Arrival airport with provided id not found.");
             } else {
-                arrivalAirport = airportRepository.findByAirportId(flight.getArrivalAirportId()).get();
+                arrivalAirport = airportRepository.findById(flight.getArrivalAirportId()).get();
             }
 
             // Both airports check
@@ -96,19 +97,19 @@ public class FlightServiceImpl implements FlightService {
 
             // Departure airport check
             if (flight.getDepartureAirportId() != null) {
-                if (!airportRepository.existsByAirportId(flight.getDepartureAirportId())) {
+                if (!airportRepository.existsById(flight.getDepartureAirportId())) {
                     return ResponseEntity.status(404).body("Departure airport with provided id not found.");
                 } else {
-                    existing.setDepartureAirport(airportRepository.findByAirportId(flight.getDepartureAirportId()).get());
+                    existing.setDepartureAirport(airportRepository.findById(flight.getDepartureAirportId()).get());
                 }
             }
 
             // Arrival airport check
             if (flight.getArrivalAirportId() != null) {
-                if (!airportRepository.existsByAirportId(flight.getArrivalAirportId())) {
+                if (!airportRepository.existsById(flight.getArrivalAirportId())) {
                     return ResponseEntity.status(404).body("Arrival airport with provided id not found.");
                 } else {
-                    existing.setArrivalAirport(airportRepository.findByAirportId(flight.getArrivalAirportId()).get());
+                    existing.setArrivalAirport(airportRepository.findById(flight.getArrivalAirportId()).get());
                 }
             }
 
@@ -147,15 +148,15 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
-    public ResponseEntity<?> getFlightByFlightId(String id) {
+    public ResponseEntity<?> getFlightByFlightId(Integer id) {
         try {
             // Id check
-            if (!flightRepository.existsByFlightId(id)) {
+            if (!flightRepository.existsById(id)) {
                 return ResponseEntity.status(404).body("Flight not found.");
             }
 
             // Getting by id
-            Flight flight = flightRepository.findByFlightId(id).get();
+            Flight flight = flightRepository.findById(id).get();
 
             return ResponseEntity.ok(flight);
         } catch (Exception e) {
@@ -164,18 +165,17 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
-    @Transactional
-    public ResponseEntity<?> deleteFlightByFlightId(String id) {
+    public ResponseEntity<?> deleteFlightByFlightId(Integer id) {
         try {
             // Id check
-            if (!flightRepository.existsByFlightId(id)) {
+            if (!flightRepository.existsById(id)) {
                 return ResponseEntity.status(404).body("Flight not found.");
             }
 
             // Deleting
-            flightRepository.deleteByFlightId(id);
+            flightRepository.deleteById(id);
 
-            return ResponseEntity.ok("Flight deleted.");
+            return ResponseEntity.ok(new JsonMessage("Flight deleted."));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Internal Server Error.");

@@ -6,7 +6,7 @@ import lombok.Data;
 public class FlightRequestDto {
     private Integer id;
     private String flightId;
-    private String departureAirportId;
-    private String arrivalAirportId;
+    private Integer departureAirportId;
+    private Integer arrivalAirportId;
     private Integer airlineId;
 }
