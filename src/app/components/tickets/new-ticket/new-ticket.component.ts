@@ -14,7 +14,6 @@ import { TicketsService } from 'src/app/services/tickets/tickets.service';
   styleUrls: ['./new-ticket.component.css']
 })
 export class NewTicketComponent implements OnInit {
-  editTicket = false;
   errorMessage: string = null;
   ticketForm: FormGroup;
   ticket = new TicketRequestDto(-1, null, null);
@@ -25,7 +24,6 @@ export class NewTicketComponent implements OnInit {
     public flightInstancesService: FlightInstancesService,
     public authService: AuthenticationService,
     private router: Router,
-    private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private location: Location
   ) {}

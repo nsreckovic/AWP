@@ -205,24 +205,24 @@
         <tr *ngFor="let ticket of tickets; index as i">
           <th>{{ i + 1 }}</th>
           <td>{{ ticket.id }}</td>
-          <td>{{ ticket.flight.flightId }}</td>
+          <td>{{ ticket.flightInstance.flight.flightId }}</td>
           <td>
-            {{ ticket.flight.departureAirport.airportId }}<br />
-            {{ ticket.flight.departureAirport.place }}
+            {{ ticket.flightInstance.flight.departureAirport.airportId }}<br />
+            {{ ticket.flightInstance.flight.departureAirport.place }}
           </td>
           <td>
-            {{ ticket.flight.arrivalAirport.airportId }}<br />
-            {{ ticket.flight.arrivalAirport.place }}
+            {{ ticket.flightInstance.flight.arrivalAirport.airportId }}<br />
+            {{ ticket.flightInstance.flight.arrivalAirport.place }}
           </td>
           <td>
-            {{ ticket.flight.airline.name }}
+            {{ ticket.flightInstance.flight.airline.name }}
           </td>
           <td>
-            {{ ticket.flightDate | date: "yyyy-MM-dd" }}<br />
-            {{ ticket.flightDate | date: "HH:mm" }}
+            {{ ticket.flightInstance.flightDate | date: "yyyy-MM-dd" }}<br />
+            {{ ticket.flightInstance.flightDate | date: "HH:mm" }}
           </td>
           <td>
-            {{ ticket.flightLengthInMinutes }}
+            {{ ticket.flightInstance.flightLengthInMinutes }}
           </td>
           <td *ngIf="authService.isAdminLoggedIn()">
             <span *ngIf="ticket.user">{{ ticket.user.username }}</span>

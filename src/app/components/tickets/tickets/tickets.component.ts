@@ -59,12 +59,6 @@ export class TicketsComponent implements OnInit {
     if (this.authService.isAdminLoggedIn()) this.getUsers();
   }
 
-  validateDates() {
-    if (this.filter.fromDate != null && this.filter.fromDate != "") {
-      var fromDate = this.dateValidator(this.filter.fromDate)
-    }
-  }
-
   dateValidator(dateStr): boolean {
     if (dateStr && typeof dateStr === 'string') {
       let match = dateStr.match(
@@ -76,7 +70,6 @@ export class TicketsComponent implements OnInit {
         return false;
       }
     }
-
     return true;
   }
 
