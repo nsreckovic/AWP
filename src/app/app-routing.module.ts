@@ -20,6 +20,8 @@ import { FlightInstanceComponent } from './components/flightInstances/flight-ins
 import { TicketsComponent } from './components/tickets/tickets/tickets.component';
 import { NewTicketComponent } from './components/tickets/new-ticket/new-ticket.component';
 import { EditTicketComponent } from './components/tickets/edit-ticket/edit-ticket.component';
+import { ReservationsComponent } from './components/reservations/reservations/reservations.component';
+import { ReservationComponent } from './components/reservations/reservation/reservation.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [RouteGuardService] },
@@ -51,6 +53,10 @@ const routes: Routes = [
   { path: 'tickets', component: TicketsComponent, canActivate: [RouteGuardService] },
   { path: 'tickets/new', component: NewTicketComponent, canActivate: [RouteGuardService] },
   { path: 'tickets/:id/edit', component: EditTicketComponent, canActivate: [RouteGuardService] },
+
+  { path: 'reservations', component: ReservationsComponent, canActivate: [RouteGuardService] },
+  { path: 'reservations/:operation', component: ReservationComponent, canActivate: [RouteGuardService] },
+  { path: 'reservations/:id/:operation', component: ReservationComponent, canActivate: [RouteGuardService] },
 
   { path: '**', component: ErrorComponent },
 ];

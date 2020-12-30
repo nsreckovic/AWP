@@ -101,7 +101,6 @@ export class FlightInstanceComponent implements OnInit {
             count: this.flightInstance.count,
           });
 
-          console.log(this.flightDate.value)
         },
         (error) => {
           this.errorMessage = error.error;
@@ -159,14 +158,17 @@ export class FlightInstanceComponent implements OnInit {
   saveFlightInstance(newFlightInstanceForm) {
     this.flightInstance.flightId = newFlightInstanceForm.flightId;
     
-    var flightDate = new Date()
-    flightDate.setFullYear(newFlightInstanceForm.flightDate.year)
-    flightDate.setMonth(newFlightInstanceForm.flightDate.month - 1)
-    flightDate.setDate(newFlightInstanceForm.flightDate.day)
-    flightDate.setHours(newFlightInstanceForm.flightTime.hour)
-    flightDate.setMinutes(newFlightInstanceForm.flightTime.minute)
-    flightDate.setSeconds(0)
-    this.flightInstance.flightDate = flightDate.getTime();
+    var fd = new Date()
+    fd.setFullYear(newFlightInstanceForm.flightDate.year)
+    fd.setDate(newFlightInstanceForm.flightDate.day)
+    fd.setMonth(newFlightInstanceForm.flightDate.month - 1)
+    fd.setHours(newFlightInstanceForm.flightTime.hour)
+    fd.setMinutes(newFlightInstanceForm.flightTime.minute)
+    fd.setSeconds(1)
+    this.flightInstance.flightDate = fd.getTime();
+    console.log(newFlightInstanceForm.flightDate.month)
+    console.log(this.flightInstance.flightDate)
+    //console.log(fd)
 
     this.flightInstance.flightLengthInMinutes = newFlightInstanceForm.flightLengthInMinutes.hour * 60 + newFlightInstanceForm.flightLengthInMinutes.minute;
     this.flightInstance.count = newFlightInstanceForm.count;

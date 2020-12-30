@@ -2,35 +2,33 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import Airline from 'src/app/models/airline/airline.model';
 import Airport from 'src/app/models/airport/airport.model';
-import TicketFilter from 'src/app/models/ticket/ticketFilter.model';
-import TicketResponseDto from 'src/app/models/ticket/ticketResponseDto.model';
+import ReservationResponseDto from 'src/app/models/reservation/reservationResponseDto.model';
 import UserResponseDto from 'src/app/models/user/userResponseDto.model';
 import { AirlinesService } from 'src/app/services/airlines/airlines.service';
 import { AirportsService } from 'src/app/services/airports/airports.service';
 import { AuthenticationService } from 'src/app/services/auth/authentication.service';
-import { TicketsService } from 'src/app/services/tickets/tickets.service';
+import { ReservationsService } from 'src/app/services/reservations/reservations.service';
 import { UsersService } from 'src/app/services/users/users.service';
 
 declare var $: any;
 
 @Component({
-  selector: 'app-tickets',
-  templateUrl: './tickets.component.html',
-  styleUrls: ['./tickets.component.css']
+  selector: 'app-reservations',
+  templateUrl: './reservations.component.html',
+  styleUrls: ['./reservations.component.css']
 })
-export class TicketsComponent implements OnInit {
-  tickets: TicketResponseDto[];
+export class ReservationsComponent implements OnInit {
+  reservations: ReservationResponseDto[];
   errorMessage: string = null;
   successMessage: string = null;
-  private ticketForDelete = null;
+  private reservationForDelete = null;
   filter = {
     userId: null,
     fromDate: null,
     toDate: null,
     fromAirportId: null,
     toAirportId: null,
-    airlineId: null,
-    fromTicketId: null
+    airlineId: null
   }
   isCollapsed = true;
   airports: Airport[]
@@ -40,7 +38,7 @@ export class TicketsComponent implements OnInit {
   constructor(
     public authService: AuthenticationService,
     private router: Router,
-    private ticketsService: TicketsService,
+    private reservationsService: ReservationsService,
     private airlinesService: AirlinesService,
     private airportsService: AirportsService,
     private usersService: UsersService,
@@ -53,7 +51,7 @@ export class TicketsComponent implements OnInit {
   }
 
   initData() {
-    this.getTickets();
+    this.getReservations();
     this.getAirlines();
     this.getAirports();
     if (this.authService.isAdminLoggedIn()) this.getUsers();
@@ -103,17 +101,18 @@ export class TicketsComponent implements OnInit {
     return null
   }
 
-  getTickets() {
+  getReservations() {
     var from = this.filter.fromDate
     var to = this.filter.toDate
     this.filter.fromDate = this.fromDateInMillis(this.filter.fromDate)
     this.filter.toDate = this.toDateInMillis(this.filter.toDate)
-    this.tickets = [];
-    this.ticketsService.getAllTickets(this.filter).subscribe(
+    console.log(this.filter.toDate)
+    this.reservations = [];
+    this.reservationsService.getAllReservations(this.filter).subscribe(
       (response) => {
         this.filter.fromDate = from
         this.filter.toDate = to
-        this.tickets = response;
+        this.reservations = response;
       },
       (error) => {
         this.filter.fromDate = from
@@ -159,31 +158,31 @@ export class TicketsComponent implements OnInit {
     );
   }
 
-  newTicket() {
-    this.router.navigate(['tickets', 'new']);
+  newReservation() {
+    this.router.navigate(['reservations', 'new']);
   }
 
-  editTicket(ticket) {
-    if (!this.authService.isAdminLoggedIn()) this.router.navigate(['tickets'])
-    this.router.navigate(['tickets', ticket.id, 'edit']);
+  editReservation(reservation) {
+    if (!this.authService.isAdminLoggedIn()) this.router.navigate(['reservations'])
+    this.router.navigate(['reservations', reservation.id, 'edit']);
   }
 
-  deleteTicket(ticket) {
-    if (!this.authService.isAdminLoggedIn()) this.router.navigate(['tickets'])
-    $('#deleteTicketModal').modal('show');
-    this.ticketForDelete = ticket;
+  deleteReservation(reservation) {
+    if (!this.authService.isAdminLoggedIn()) this.router.navigate(['reservations'])
+    $('#deleteReservationModal').modal('show');
+    this.reservationForDelete = reservation;
   }
 
-  deleteTicketFinally() {
-    this.ticketsService.deleteTicketById(this.ticketForDelete.id).subscribe(
+  deleteReservationFinally() {
+    this.reservationsService.deleteReservationById(this.reservationForDelete.id).subscribe(
       (response) => {
-        $('#deleteTicketModal').modal('hide');
+        $('#deleteReservationModal').modal('hide');
         this.errorMessage = null;
         this.successMessage = response.message;
-        this.getTickets();
+        this.getReservations();
       },
       (error) => {
-        $('#deleteTicketModal').modal('hide');
+        $('#deleteReservationModal').modal('hide');
         this.successMessage = null;
         this.errorMessage = error.error;
       }
@@ -191,8 +190,8 @@ export class TicketsComponent implements OnInit {
   }
 
   hideModal() {
-    this.ticketForDelete = null;
-    $('#deleteTicketModal').modal('hide');
+    this.reservationForDelete = null;
+    $('#deleteReservationModal').modal('hide');
   }
 
   resetFilter() {
@@ -202,8 +201,7 @@ export class TicketsComponent implements OnInit {
       toDate: null,
       fromAirportId: null,
       toAirportId: null,
-      airlineId: null,
-      fromTicketId: null
+      airlineId: null
     }
   }
 

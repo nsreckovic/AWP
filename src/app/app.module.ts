@@ -28,6 +28,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TicketsComponent } from './components/tickets/tickets/tickets.component';
 import { NewTicketComponent } from './components/tickets/new-ticket/new-ticket.component';
 import { EditTicketComponent } from './components/tickets/edit-ticket/edit-ticket.component';
+import { ReservationComponent } from './components/reservations/reservation/reservation.component';
+import { ReservationsComponent } from './components/reservations/reservations/reservations.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +55,8 @@ import { EditTicketComponent } from './components/tickets/edit-ticket/edit-ticke
     TicketsComponent,
     NewTicketComponent,
     EditTicketComponent,
+    ReservationComponent,
+    ReservationsComponent,
   ],
   imports: [
     BrowserModule,
