@@ -30,7 +30,7 @@ public class UserResponseDto {
         this.name = user.getName();
         this.lastName = user.getLastName();
         this.userType = user.getUserType();
-        this.reservations = user.getReservations() != null ? user.getReservations().stream().map(ReservationResponseDto::new).collect(Collectors.toList()) : null;
-        this.tickets = user.getTickets() != null ? user.getTickets().stream().map(TicketWithoutUserResponseDto::new).collect(Collectors.toList()) : null;
+        //this.reservations = user.getReservations() != null ? user.getReservations().stream().map(ReservationResponseDto::new).collect(Collectors.toList()) : null;
+        //this.tickets = user.getTickets() != null ? user.getTickets().stream().map(TicketWithoutUserResponseDto::new).collect(Collectors.toList()) : null;
     }
 }

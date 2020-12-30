@@ -19,16 +19,16 @@ public interface ReservationRepository extends CrudRepository<Reservation, Integ
             "WHERE " +
             "(:userId IS NULL OR :userId = u.id) AND " +
             "((:fromDate IS NULL OR :fromDate <= dfi.flightDate) AND " +
-            "(:toDate IS NULL OR :toDate >= dfi.flightDate) AND " +
-            "(rt IS NULL OR (:toDate IS NULL OR :toDate >= rfi.flightDate))) AND " +
-            "(:fromAirportId IS NULL OR :fromAirportId = df.departureAirport.airportId) AND " +
-            "(:toAirportId IS NULL OR :toAirportId = df.arrivalAirport.airportId) AND " +
+            "(rt IS NULL OR (:toDate IS NULL OR :toDate >= rfi.flightDate)) AND " +
+            "(:toDate IS NULL OR :toDate >= dfi.flightDate)) AND " +
+            "(:fromAirportId IS NULL OR :fromAirportId = df.departureAirport.id) AND " +
+            "(:toAirportId IS NULL OR :toAirportId = df.arrivalAirport.id) AND " +
             "(:airlineId IS NULL OR :airlineId = df.airline.id OR :airlineId = rf.airline.id)")
     Iterable<Reservation> findAllUserReservationsByFilter(
             @Param("userId") Integer userId,
             @Param("fromDate") Timestamp fromDate,
             @Param("toDate") Timestamp toDate,
-            @Param("fromAirportId") String fromAirportId,
-            @Param("toAirportId") String toAirportId,
+            @Param("fromAirportId") Integer fromAirportId,
+            @Param("toAirportId") Integer toAirportId,
             @Param("airlineId") Integer airlineId);
 }

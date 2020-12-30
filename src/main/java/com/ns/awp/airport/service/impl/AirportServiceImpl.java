@@ -19,6 +19,19 @@ public class AirportServiceImpl implements AirportService {
     @Override
     public ResponseEntity<?> newAirport(Airport airport) {
         try {
+            // Null check
+            if (airport.getAirportId() == null) {
+                return ResponseEntity.status(400).body("Airport id cannot be null.");
+            } else {
+                airport.setAirportId(airport.getAirportId().toUpperCase());
+            }
+            if (airport.getName() == null) {
+                return ResponseEntity.status(400).body("Airport name cannot be null.");
+            }
+            if (airport.getPlace() == null) {
+                return ResponseEntity.status(400).body("Airport place cannot be null.");
+            }
+
             // Airport id check
             if (airportRepository.existsByAirportId(airport.getAirportId())) {
                 return ResponseEntity.status(400).body("Airport with provided airport id already exists.");
