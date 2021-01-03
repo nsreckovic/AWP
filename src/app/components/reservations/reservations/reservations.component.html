@@ -10,8 +10,7 @@
         <button
           type="button"
           class="btn btn-primary mt-2"
-          (click)="newReservation()"
-          *ngIf="authService.isAdminLoggedIn()">
+          (click)="newReservation()">
           New
         </button>
       </div>
@@ -198,8 +197,8 @@
           <th>Return flight</th>
           <th>Return date</th>
           <th *ngIf="authService.isAdminLoggedIn()">User</th>
-          <th *ngIf="authService.isAdminLoggedIn()">Edit</th>
-          <th *ngIf="authService.isAdminLoggedIn()">Delete</th>
+          <th>Edit</th>
+          <th>Delete</th>
         </tr>
       </thead>
       <tbody>
@@ -232,27 +231,32 @@
             {{ reservation.departureTicket.flightInstance.flightDate | date: "HH:mm" }}
           </td>
           <td>
-            {{ reservation.returnTicket.id }}
+            <span *ngIf="reservation.returnTicket">{{ reservation.returnTicket.id }}</span>
+            <span *ngIf="!reservation.returnTicket">N/A</span>
           </td>
           <td>
-            {{ reservation.returnTicket.flightInstance.flight.flightId }}
+            <span *ngIf="reservation.returnTicket">{{ reservation.returnTicket.flightInstance.flight.flightId }}</span>
+            <span *ngIf="!reservation.returnTicket">N/A</span>
           </td>
           <td>
-            {{ reservation.returnTicket.flightInstance.flightDate | date: "yyyy-MM-dd" }}<br />
-            {{ reservation.returnTicket.flightInstance.flightDate | date: "HH:mm" }}
+            <span *ngIf="reservation.returnTicket">
+              {{ reservation.returnTicket.flightInstance.flightDate | date: "yyyy-MM-dd" }}<br />
+              {{ reservation.returnTicket.flightInstance.flightDate | date: "HH:mm" }}
+            </span>
+            <span *ngIf="!reservation.returnTicket">N/A</span>
           </td>
           <td *ngIf="authService.isAdminLoggedIn()">
             <span *ngIf="reservation.user">{{ reservation.user.username }}</span>
             <span *ngIf="!reservation.user">N/A</span>
           </td>
-          <td *ngIf="authService.isAdminLoggedIn()">
+          <td>
             <button
               (click)="editReservation(reservation)"
               class="btn btn-sm btn-outline-secondary mr-1">
               Edit
             </button>
           </td>
-          <td *ngIf="authService.isAdminLoggedIn()">
+          <td>
             <button
               (click)="deleteReservation(reservation)"
               class="btn btn-sm btn-outline-danger">
