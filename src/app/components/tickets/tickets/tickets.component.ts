@@ -205,6 +205,7 @@ export class TicketsComponent implements OnInit {
       airlineId: null,
       fromTicketId: null
     }
+    this.getTickets()
   }
 
   public dismissErrorAlert() {

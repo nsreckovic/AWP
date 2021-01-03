@@ -3,7 +3,8 @@
   <div class="col-md-8 col-lg-6 col-xl-4">
     <div class="row">
       <div class="col-9">
-       <h1>New Reservation</h1>
+       <h1 *ngIf="!editReservation">New Reservation</h1>
+       <h1 *ngIf="editReservation">Edit Reservation</h1>
       </div>
       <div class="col-3 text-right">
         <button
@@ -186,6 +187,7 @@
           [class.is-invalid]="returnTicketId.errors && (returnTicketId.dirty || returnTicketId.touched)"
           placeholder="Choose return ticket.">
           <option [ngValue]="null" class="text-monospace">- Please Choose -</option>
+          <option *ngIf="editReservation" [ngValue]="-1" class="text-monospace">No return ticket</option>
           <option *ngFor="let t of returnTickets" [ngValue]="t.id" class="text-monospace">
             {{ t.flightInstance.flight.departureAirport.airportId }} -> {{ t.flightInstance.flight.arrivalAirport.airportId }} | {{ t.flightInstance.flightDate | date: "yyyy-MM-dd : HH:mm" }} | {{ t.flightInstance.flight.flightId }} 
           </option>

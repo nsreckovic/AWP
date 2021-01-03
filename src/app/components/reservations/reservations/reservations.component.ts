@@ -106,7 +106,6 @@ export class ReservationsComponent implements OnInit {
     var to = this.filter.toDate
     this.filter.fromDate = this.fromDateInMillis(this.filter.fromDate)
     this.filter.toDate = this.toDateInMillis(this.filter.toDate)
-    console.log(this.filter.toDate)
     this.reservations = [];
     this.reservationsService.getAllReservations(this.filter).subscribe(
       (response) => {
@@ -203,6 +202,7 @@ export class ReservationsComponent implements OnInit {
       toAirportId: null,
       airlineId: null
     }
+    this.getReservations()
   }
 
   public dismissErrorAlert() {

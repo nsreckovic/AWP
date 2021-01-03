@@ -81,7 +81,6 @@ export class FlightInstanceComponent implements OnInit {
           this.flightInstance.count = response.count;
 
           var flightDate = new Date(this.flightInstance.flightDate)
-          console.log(flightDate)
 
           this.flightInstanceForm.setValue({
             flightId: this.flightInstance.flightId,
@@ -166,9 +165,6 @@ export class FlightInstanceComponent implements OnInit {
     fd.setMinutes(newFlightInstanceForm.flightTime.minute)
     fd.setSeconds(1)
     this.flightInstance.flightDate = fd.getTime();
-    console.log(newFlightInstanceForm.flightDate.month)
-    console.log(this.flightInstance.flightDate)
-    //console.log(fd)
 
     this.flightInstance.flightLengthInMinutes = newFlightInstanceForm.flightLengthInMinutes.hour * 60 + newFlightInstanceForm.flightLengthInMinutes.minute;
     this.flightInstance.count = newFlightInstanceForm.count;

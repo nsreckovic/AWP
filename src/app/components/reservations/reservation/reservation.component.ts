@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import Airline from 'src/app/models/airline/airline.model';
 import Airport from 'src/app/models/airport/airport.model';
 import ReservationRequestDto from 'src/app/models/reservation/reservationRequestDto.model';
@@ -18,19 +18,31 @@ import { UsersService } from 'src/app/services/users/users.service';
 @Component({
   selector: 'app-reservation',
   templateUrl: './reservation.component.html',
-  styleUrls: ['./reservation.component.css']
+  styleUrls: ['./reservation.component.css'],
 })
 export class ReservationComponent implements OnInit {
   errorMessage: string = null;
+  editReservation = false;
   isCollapsed = true;
   reservationForm: FormGroup;
   reservation = new ReservationRequestDto(-1, null, null, null);
-  airports: Airport[]
-  airlines: Airline[]
-  users: UserResponseDto[]
+  oldDepartureTicket: TicketWithoutUserResponseDto;
+  oldReturnTicket: TicketWithoutUserResponseDto;
+  oldUser: UserResponseDto;
+  airports: Airport[];
+  airlines: Airline[];
+  users: UserResponseDto[];
   fromTickets: TicketWithoutUserResponseDto[];
   returnTickets: TicketWithoutUserResponseDto[];
-  filter: TicketFilter = new TicketFilter(null, null, null, null, null, null, null)
+  filter: TicketFilter = new TicketFilter(
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  );
 
   constructor(
     public airportsService: AirportsService,
@@ -40,6 +52,7 @@ export class ReservationComponent implements OnInit {
     public usersService: UsersService,
     public authService: AuthenticationService,
     private router: Router,
+    private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private location: Location
   ) {}
@@ -50,6 +63,14 @@ export class ReservationComponent implements OnInit {
     this.initData();
   }
 
+  buildForm() {
+    this.reservationForm = this.formBuilder.group({
+      departureTicketId: [null, [Validators.required]],
+      returnTicketId: [null, []],
+      userId: [null, [Validators.required]],
+    });
+  }
+
   initData() {
     this.getAirports();
     this.getAirlines();
@@ -57,7 +78,18 @@ export class ReservationComponent implements OnInit {
     if (this.authService.isAdminLoggedIn()) this.getUsers();
     else this.userId.setValue(this.authService.getLoggedInUserId());
 
-    this.getFromTickets();
+    if (this.route.snapshot.params['operation'] === 'edit') {
+      if (this.route.snapshot.params['id'] == null)
+        this.router.navigate(['/reservations']);
+      else this.reservation.id = this.route.snapshot.params['id'];
+      this.editReservation = true;
+      this.getReservation();
+    } else if (this.route.snapshot.params['operation'] === 'new') {
+    } else {
+      this.router.navigate(['/reservations']);
+    }
+
+    if (!this.editReservation) this.getFromTickets();
   }
 
   getAirports() {
@@ -70,7 +102,7 @@ export class ReservationComponent implements OnInit {
         this.errorMessage = error.error;
       }
     );
-  } 
+  }
 
   getAirlines() {
     this.airlines = [];
@@ -96,6 +128,33 @@ export class ReservationComponent implements OnInit {
     );
   }
 
+  getReservation() {
+    this.reservationsService.getReservationById(this.reservation.id).subscribe(
+      (response) => {
+        this.oldDepartureTicket = new TicketWithoutUserResponseDto(
+          response.departureTicket.id,
+          response.departureTicket.flightInstance
+        );
+        
+
+        if (response.returnTicket) {
+          this.oldReturnTicket = new TicketWithoutUserResponseDto(
+            response.returnTicket.id,
+            response.returnTicket.flightInstance
+          );
+        }
+
+        this.oldUser = response.user;
+        this.userId.setValue(this.oldUser.id);
+
+        this.getFromTickets()
+      },
+      (error) => {
+        this.errorMessage = error.error;
+      }
+    );
+  }
+
   dateValidator(dateStr): boolean {
     if (dateStr && typeof dateStr === 'string') {
       let match = dateStr.match(
@@ -112,89 +171,115 @@ export class ReservationComponent implements OnInit {
 
   fromDateInMillis(dateToValidate): number {
     if (this.dateValidator(dateToValidate)) {
-      if (dateToValidate == null) return null
-      var date = new Date()
-      date.setFullYear(dateToValidate.year)
-      date.setDate(dateToValidate.day)
-      date.setMonth(dateToValidate.month - 1)
-      date.setHours(0)
-      date.setMinutes(0)
-      date.setSeconds(0)
-      return date.getTime()
+      if (dateToValidate == null) return null;
+      var date = new Date();
+      date.setFullYear(dateToValidate.year);
+      date.setDate(dateToValidate.day);
+      date.setMonth(dateToValidate.month - 1);
+      date.setHours(0);
+      date.setMinutes(0);
+      date.setSeconds(0);
+      return date.getTime();
     }
-    return null
+    return null;
   }
 
   toDateInMillis(dateToValidate): number {
     if (this.dateValidator(dateToValidate)) {
-      if (dateToValidate == null) return null
-      var date = new Date()
-      date.setFullYear(dateToValidate.year)
-      date.setDate(dateToValidate.day)
-      date.setMonth(dateToValidate.month - 1)
-      date.setHours(23)
-      date.setMinutes(59)
-      date.setSeconds(59)
-      return date.getTime()
+      if (dateToValidate == null) return null;
+      var date = new Date();
+      date.setFullYear(dateToValidate.year);
+      date.setDate(dateToValidate.day);
+      date.setMonth(dateToValidate.month - 1);
+      date.setHours(23);
+      date.setMinutes(59);
+      date.setSeconds(59);
+      return date.getTime();
     }
-    return null
+    return null;
   }
 
   getFromTickets() {
-    this.departureTicketId.setValue(null);
-    this.returnTicketId.setValue(null);
-    var from = this.filter.fromDate
-    var to = this.filter.toDate
-    this.filter.fromDate = this.fromDateInMillis(this.filter.fromDate)
-    this.filter.toDate = this.toDateInMillis(this.filter.toDate)
     this.fromTickets = [];
     this.returnTickets = [];
-    this.ticketsService.getAllAvailableFromTicketsByFilter(this.filter).subscribe(
-      (response) => {
-        this.filter.fromDate = from
-        this.filter.toDate = to
-        this.fromTickets = response;
-      },
-      (error) => {
-        this.filter.fromDate = from
-        this.filter.toDate = to
-        this.errorMessage = error.error;
+
+    if (this.editReservation) {
+      this.fromTickets.push(this.oldDepartureTicket);
+      this.departureTicketId.setValue(this.oldDepartureTicket.id);
+      if (this.oldReturnTicket) {
+        this.returnTickets.push(this.oldReturnTicket);
+        this.returnTicketId.setValue(this.oldReturnTicket.id);
       }
-    );
+      
+    } else {
+      this.departureTicketId.setValue(null);
+      this.returnTicketId.setValue(null);
+    }
+
+    var from = this.filter.fromDate;
+    var to = this.filter.toDate;
+    this.filter.fromDate = this.fromDateInMillis(this.filter.fromDate);
+    this.filter.toDate = this.toDateInMillis(this.filter.toDate);
+
+    this.ticketsService
+      .getAllAvailableFromTicketsByFilter(this.filter)
+      .subscribe(
+        (response) => {
+          this.filter.fromDate = from;
+          this.filter.toDate = to;
+          response.forEach(r => {
+            if (this.editReservation && r.flightInstance.id == this.oldDepartureTicket.flightInstance.id) {
+              return;            
+            } else {
+              this.fromTickets.push(r);
+            }
+          })
+          if (this.editReservation) this.getReturnTickets();
+        },
+        (error) => {
+          this.filter.fromDate = from;
+          this.filter.toDate = to;
+          this.errorMessage = error.error;
+        }
+      );
   }
 
   getReturnTickets() {
     this.returnTicketId.setValue(null);
     if (this.departureTicketId.value != null) {
-      var from = this.filter.fromDate
-      var to = this.filter.toDate
-      this.filter.fromDate = this.fromDateInMillis(this.filter.fromDate)
-      this.filter.toDate = this.toDateInMillis(this.filter.toDate)
+      var from = this.filter.fromDate;
+      var to = this.filter.toDate;
+      this.filter.fromDate = this.fromDateInMillis(this.filter.fromDate);
+      this.filter.toDate = this.toDateInMillis(this.filter.toDate);
       this.filter.fromTicketId = this.departureTicketId.value;
       this.returnTickets = [];
-      this.ticketsService.getAllAvailableReturnTicketsByFilter(this.filter).subscribe(
-        (response) => {
-          this.filter.fromDate = from
-          this.filter.toDate = to
-          this.returnTickets = response;
-        },
-        (error) => {
-          this.filter.fromDate = from
-          this.filter.toDate = to
-          this.errorMessage = error.error;
-        }
-      );
-    }
-  }
 
-  buildForm() {
-    this.reservationForm = this.formBuilder.group(
-      {
-        departureTicketId: [null, [Validators.required]],
-        returnTicketId: [null, []],
-        userId: [null, [Validators.required]],
+      if (this.oldReturnTicket) {
+        this.returnTickets.push(this.oldReturnTicket);
+        this.returnTicketId.setValue(this.oldReturnTicket.id);
       }
-    );
+
+      this.ticketsService
+        .getAllAvailableReturnTicketsByFilter(this.filter)
+        .subscribe(
+          (response) => {
+            this.filter.fromDate = from;
+            this.filter.toDate = to;
+            response.forEach(r => {
+              if (this.editReservation && this.oldReturnTicket && r.flightInstance.id == this.oldReturnTicket.flightInstance.id) {
+                return;            
+              } else {
+                this.returnTickets.push(r);
+              }
+            })
+          },
+          (error) => {
+            this.filter.fromDate = from;
+            this.filter.toDate = to;
+            this.errorMessage = error.error;
+          }
+        );
+    }
   }
 
   saveReservation(newReservationForm) {
@@ -202,14 +287,33 @@ export class ReservationComponent implements OnInit {
     this.reservation.returnTicketId = newReservationForm.returnTicketId;
     this.reservation.userId = newReservationForm.userId;
 
-    this.reservationsService.newReservation(this.reservation).subscribe(
-      (response) => {
-        this.router.navigate(['reservations']);
-      },
-      (error) => {
-        this.errorMessage = error.error;
-      }
-    );
+    if (!this.editReservation) {
+      this.reservationsService.newReservation(this.reservation).subscribe(
+        (response) => {
+          this.router.navigate(['reservations']);
+        },
+        (error) => {
+          this.errorMessage = error.error;
+        }
+      );
+    } else {
+      if (this.reservation.departureTicketId == this.oldDepartureTicket.id) this.reservation.departureTicketId = null
+      if (this.oldReturnTicket && this.reservation.returnTicketId == this.oldReturnTicket.id) this.reservation.returnTicketId = null
+      if (this.reservation.userId == this.oldUser.id) this.reservation.userId = null
+
+      this.reservationsService.updateReservation(this.reservation).subscribe(
+        (response) => {
+          this.router.navigate(['reservations']);
+        },
+        (error) => {
+          this.errorMessage = error.error;
+        }
+      );
+    }
+
+    
+
+    
   }
 
   public dismissError() {
@@ -228,8 +332,8 @@ export class ReservationComponent implements OnInit {
       fromAirportId: null,
       toAirportId: null,
       airlineId: null,
-      fromTicketId: null
-    }
+      fromTicketId: null,
+    };
     this.getFromTickets();
     //this.getReturnTickets();
   }
