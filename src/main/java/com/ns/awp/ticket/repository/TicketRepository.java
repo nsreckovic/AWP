@@ -18,7 +18,10 @@ public interface TicketRepository extends CrudRepository<Ticket, Integer> {
             "(:toDate IS NULL OR :toDate >= fi.flightDate)) AND " +
             "(:fromAirportId IS NULL OR :fromAirportId = f.departureAirport.id) AND " +
             "(:toAirportId IS NULL OR :toAirportId = f.arrivalAirport.id) AND " +
-            "(:airlineId IS NULL OR :airlineId = f.airline.id)")
+            "(:airlineId IS NULL OR :airlineId = f.airline.id) " +
+            "ORDER BY " +
+            "fi.flightDate ASC, f.departureAirport.airportId ASC, f.arrivalAirport.airportId ASC, " +
+            "f.airline.name ASC, fi.flightLengthInMinutes ASC")
     Iterable<Ticket> findAllAvailableTicketsByFilter(
             @Param("fromDate") Timestamp fromDate,
             @Param("toDate") Timestamp toDate,
@@ -37,7 +40,10 @@ public interface TicketRepository extends CrudRepository<Ticket, Integer> {
             "(:toDate IS NULL OR :toDate >= fi.flightDate)) AND " +
             "(:fromAirportId IS NULL OR :fromAirportId = f.departureAirport.id) AND " +
             "(:toAirportId IS NULL OR :toAirportId = f.arrivalAirport.id) AND " +
-            "(:airlineId IS NULL OR :airlineId = f.airline.id)")
+            "(:airlineId IS NULL OR :airlineId = f.airline.id) " +
+            "ORDER BY " +
+            "fi.flightDate ASC, f.departureAirport.airportId ASC, f.arrivalAirport.airportId ASC, " +
+            "f.airline.name ASC, fi.flightLengthInMinutes ASC")
     Iterable<Ticket> findAllUserTicketsByFilter(
             @Param("userId") Integer userId,
             @Param("fromDate") Timestamp fromDate,

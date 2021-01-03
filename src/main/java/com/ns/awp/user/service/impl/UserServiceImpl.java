@@ -1,8 +1,5 @@
 package com.ns.awp.user.service.impl;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonFactoryBuilder;
-import com.fasterxml.jackson.databind.util.JSONWrappedObject;
 import com.ns.awp.config.JsonMessage;
 import com.ns.awp.config.JwtUtil;
 import com.ns.awp.user.models.User;
@@ -15,7 +12,6 @@ import com.ns.awp.userType.models.UserType;
 import com.ns.awp.userType.repository.UserTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jackson.JsonObjectSerializer;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -185,7 +181,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             List<UserResponseDto> users = new ArrayList<>();
 
             // Get all
-            userRepository.findAll().forEach(user -> users.add(new UserResponseDto(user)));
+            userRepository.findAllSorted().forEach(user -> users.add(new UserResponseDto(user)));
 
             return ResponseEntity.ok(users);
         } catch (Exception e) {

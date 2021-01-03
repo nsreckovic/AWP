@@ -23,7 +23,12 @@ public interface ReservationRepository extends CrudRepository<Reservation, Integ
             "(:toDate IS NULL OR :toDate >= dfi.flightDate)) AND " +
             "(:fromAirportId IS NULL OR :fromAirportId = df.departureAirport.id) AND " +
             "(:toAirportId IS NULL OR :toAirportId = df.arrivalAirport.id) AND " +
-            "(:airlineId IS NULL OR :airlineId = df.airline.id OR :airlineId = rf.airline.id)")
+            "(:airlineId IS NULL OR :airlineId = df.airline.id OR :airlineId = rf.airline.id) " +
+            "ORDER BY " +
+            "dfi.flightDate ASC, " +
+            "df.departureAirport.airportId ASC, df.arrivalAirport.airportId ASC, " +
+            "df.airline.name ASC, dfi.flightLengthInMinutes ASC, " +
+            "u.username ASC")
     Iterable<Reservation> findAllUserReservationsByFilter(
             @Param("userId") Integer userId,
             @Param("fromDate") Timestamp fromDate,

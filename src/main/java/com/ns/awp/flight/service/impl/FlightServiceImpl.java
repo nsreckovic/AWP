@@ -139,7 +139,7 @@ public class FlightServiceImpl implements FlightService {
     public ResponseEntity<?> getAllFlights() {
         try {
             // Getting all
-            Iterable<Flight> flights = flightRepository.findAll();
+            Iterable<Flight> flights = flightRepository.findAllSorted();
 
             return ResponseEntity.ok(flights);
         } catch (Exception e) {

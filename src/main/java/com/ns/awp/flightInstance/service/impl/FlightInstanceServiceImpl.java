@@ -150,7 +150,7 @@ public class FlightInstanceServiceImpl implements FlightInstanceService {
         try {
             // Get all
             List<FlightInstanceResponseDto> flightInstances = new ArrayList<>();
-            flightInstanceRepository.findAll().forEach(flightInstance -> flightInstances.add(new FlightInstanceResponseDto(flightInstance)));
+            flightInstanceRepository.findAllSorted().forEach(flightInstance -> flightInstances.add(new FlightInstanceResponseDto(flightInstance)));
 
             return ResponseEntity.ok(flightInstances);
         } catch (Exception e) {

@@ -66,7 +66,7 @@ public class AirlineServiceImpl implements AirlineService {
     public ResponseEntity<?> getAllAirlines() {
         try {
             // Get all
-            Iterable<Airline> airlines = airlineRepository.findAll();
+            Iterable<Airline> airlines = airlineRepository.findAllSorted();
 
             return ResponseEntity.ok(airlines);
         } catch (Exception e) {

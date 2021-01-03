@@ -94,7 +94,7 @@ public class AirportServiceImpl implements AirportService {
     public ResponseEntity<?> getAllAirports() {
         try {
             // Get all
-            Iterable<Airport> airports = airportRepository.findAll();
+            Iterable<Airport> airports = airportRepository.findAllSorted();
 
             return ResponseEntity.ok(airports);
         } catch (Exception e) {
