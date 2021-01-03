@@ -1,6 +1,6 @@
 <div class="row">
-  <div class="col-md-1 col-lg-2"></div>
-  <div class="col-md-10 col-lg-8 container-lg">
+  <div class="col-md-3 col-lg-4"></div>
+  <div class="col-md-6 col-lg-4 container-lg">
     <h1 class="text-center" *ngIf="!editAirport">New Airport</h1>
     <h1 class="text-center" *ngIf="editAirport">Edit Airport</h1>
 
@@ -9,27 +9,26 @@
       *ngIf="errorMessage"
       [type]="'danger'"
       (closed)="dismissErrorAlert()"
-      class="mt-2"
-      >{{ errorMessage }}
+      class="mt-2">
+      {{ errorMessage }}
     </ngb-alert>
 
     <!-- Form -->
     <form
       [formGroup]="newAirportForm"
-      (ngSubmit)="saveAirport(newAirportForm.value)"
-    >
+      (ngSubmit)="saveAirport(newAirportForm.value)">
+
       <!-- AirportId -->
       <div class="form-group mt-1">
         <label for="airportId">Airport Id</label>
+        
         <input
           type="url"
           class="form-control"
           formControlName="airportId"
-          [class.is-invalid]="
-            airportId.errors && (airportId.dirty || airportId.touched)
-          "
-          placeholder="Enter airport id here."
-        />
+          [class.is-invalid]="airportId.errors && (airportId.dirty || airportId.touched)"
+          placeholder="Enter the airport id here."/>
+
         <div *ngIf="airportId.errors?.required" class="invalid-feedback">
           Airport id is required.
         </div>
@@ -41,13 +40,14 @@
       <!-- Name -->
       <div class="form-group mt-1">
         <label for="name">Name</label>
+        
         <input
           type="url"
           class="form-control"
           formControlName="name"
           [class.is-invalid]="name.errors && (name.dirty || name.touched)"
-          placeholder="Enter name here."
-        />
+          placeholder="Enter the airport name here."/>
+
         <div *ngIf="name.errors?.required" class="invalid-feedback">
           Name is required.
         </div>
@@ -59,13 +59,14 @@
       <!-- Place -->
       <div class="form-group mt-1">
         <label for="place">Place</label>
+
         <input
           type="text"
           class="form-control"
           formControlName="place"
           [class.is-invalid]="place.errors && (place.dirty || place.touched)"
-          placeholder="Enter place here."
-        />
+          placeholder="Enter the place where airport is here."/>
+
         <div *ngIf="place.errors?.required" class="invalid-feedback">
           Place is required.
         </div>
@@ -79,19 +80,18 @@
         <button
           type="button"
           class="btn btn-outline-secondary mt-3 mx-1"
-          (click)="cancel()"
-        >
+          (click)="cancel()">
           Cancel
         </button>
         <button
           type="submit"
           class="btn btn-primary mt-3 mx-1"
-          [disabled]="!newAirportForm.valid"
-        >
+          [disabled]="!newAirportForm.valid">
           Save
         </button>
       </div>
     </form>
   </div>
-  <div class="col-md-1 col-lg-2"></div>
+  
+  <div class="col-md-3 col-lg-4"></div>
 </div>

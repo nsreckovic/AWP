@@ -1,4 +1,6 @@
-<div class="container-lg">
+<div class="container">
+  
+  <!-- Name, New and Filter button -->
   <div class="row">
     <div class="col-6">
       <h1>Tickets</h1>
@@ -8,8 +10,7 @@
         type="button"
         class="btn btn-primary mt-2 mr-2"
         (click)="newTicket()"
-        *ngIf="authService.isAdminLoggedIn()"
-      >
+        *ngIf="authService.isAdminLoggedIn()">
         New
       </button>
       <button
@@ -17,8 +18,7 @@
         class="btn btn-outline-secondary mt-2"
         (click)="collapse.toggle()"
         [attr.aria-expanded]="!isCollapsed"
-        aria-controls="collapseExample"
-      >
+        aria-controls="collapseExample">
         Filter
       </button>
     </div>
@@ -29,16 +29,16 @@
     <div class="card">
       <div class="card-body p-4">
         <div class="row">
+          
           <!-- From airport -->
           <div class="col-sm-6 col-md-3">
             <label for="fromAirportId">From airport</label>
             <select
               id="fromAirportIdSelection"
               class="form-control"
-              [(ngModel)]="filter.fromAirportId"
-            >
-              <option [ngValue]="null">- Please Choose -</option>
-              <option *ngFor="let a of airports" [ngValue]="a.id">
+              [(ngModel)]="filter.fromAirportId">
+              <option [ngValue]="null" class="text-monospace">- Please Choose -</option>
+              <option *ngFor="let a of airports" [ngValue]="a.id" class="text-monospace">
                 {{ a.airportId }} - {{ a.place }}
               </option>
             </select>
@@ -50,10 +50,9 @@
             <select
               id="toAirportIdSelection"
               class="form-control"
-              [(ngModel)]="filter.toAirportId"
-            >
-              <option [ngValue]="null">- Please Choose -</option>
-              <option *ngFor="let a of airports" [ngValue]="a.id">
+              [(ngModel)]="filter.toAirportId">
+              <option [ngValue]="null" class="text-monospace">- Please Choose -</option>
+              <option *ngFor="let a of airports" [ngValue]="a.id" class="text-monospace">
                 {{ a.airportId }} - {{ a.place }}
               </option>
             </select>
@@ -70,14 +69,12 @@
                 name="dp"
                 ngbDatepicker
                 #fd="ngbDatepicker"
-                [(ngModel)]="filter.fromDate"
-              />
+                [(ngModel)]="filter.fromDate"/>
               <div class="input-group-append">
                 <button
                   class="btn btn-outline-secondary p-0"
                   (click)="fd.toggle()"
-                  type="button"
-                >
+                  type="button">
                   <i class="las la-calendar m-1" style="font-size: x-large"></i>
                 </button>
               </div>
@@ -95,14 +92,12 @@
                 name="dp"
                 ngbDatepicker
                 #td="ngbDatepicker"
-                [(ngModel)]="filter.toDate"
-              />
+                [(ngModel)]="filter.toDate"/>
               <div class="input-group-append">
                 <button
                   class="btn btn-outline-secondary p-0"
                   (click)="td.toggle()"
-                  type="button"
-                >
+                  type="button">
                   <i class="las la-calendar m-1" style="font-size: x-large"></i>
                 </button>
               </div>
@@ -111,14 +106,14 @@
         </div>
 
         <div class="row mt-3">
+          
           <!-- Airline -->
           <div class="col-sm-6 col-md-3">
             <label for="airlineId">Airline</label>
             <select
               id="airlineIdSelection"
               class="form-control"
-              [(ngModel)]="filter.airlineId"
-            >
+              [(ngModel)]="filter.airlineId">
               <option [ngValue]="null">- Please Choose -</option>
               <option *ngFor="let a of airlines" [ngValue]="a.id">
                 {{ a.name }}
@@ -132,8 +127,7 @@
             <select
               id="userIdSelection"
               class="form-control"
-              [(ngModel)]="filter.userId"
-            >
+              [(ngModel)]="filter.userId">
               <option [ngValue]="null">- Please Choose -</option>
               <option *ngFor="let u of users" [ngValue]="u.id">
                 {{ u.username }}
@@ -142,25 +136,25 @@
           </div>
         </div>
 
+        <!-- Buttons -->
         <div class="row mt-3">
           <div class="col-sm-12 col-md-6"></div>
           <div class="col-sm-12 col-md-6 text-right">
             <button
               type="button"
               class="btn btn-outline-secondary mr-2"
-              (click)="resetFilter()"
-            >
+              (click)="resetFilter()">
               Reset
             </button>
             <button
               type="button"
               class="btn btn-secondary"
-              (click)="getTickets()"
-            >
+              (click)="getTickets()">
               Filter
             </button>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -170,8 +164,8 @@
     *ngIf="errorMessage"
     [type]="'danger'"
     (closed)="dismissErrorAlert()"
-    class="mt-2"
-    >{{ errorMessage }}
+    class="mt-2">
+    {{ errorMessage }}
   </ngb-alert>
 
   <!-- Success message -->
@@ -179,22 +173,22 @@
     *ngIf="successMessage"
     [type]="'success'"
     (closed)="dismissSuccessAlert()"
-    class="mt-2"
-    >{{ successMessage }}
+    class="mt-2">
+    {{ successMessage }}
   </ngb-alert>
 
   <!-- Tickets table -->
   <div class="table-responsive">
-    <table class="table mt-2 table-hover text-center">
+    <table class="table mt-2 table-hover text-center whole-word">
       <thead>
         <tr>
           <th>#</th>
           <th>Id</th>
+          <th>Date</th>
           <th>Flight Id</th>
           <th>Departure airport</th>
           <th>Arrival airport</th>
           <th>Airline</th>
-          <th>Date</th>
           <th>Duration (minutes)</th>
           <th *ngIf="authService.isAdminLoggedIn()">User</th>
           <th *ngIf="authService.isAdminLoggedIn()">Edit</th>
@@ -205,21 +199,19 @@
         <tr *ngFor="let ticket of tickets; index as i">
           <th>{{ i + 1 }}</th>
           <td>{{ ticket.id }}</td>
-          <td>{{ ticket.flightInstance.flight.flightId }}</td>
-          <td>
-            {{ ticket.flightInstance.flight.departureAirport.airportId }}<br />
-            {{ ticket.flightInstance.flight.departureAirport.place }}
-          </td>
-          <td>
-            {{ ticket.flightInstance.flight.arrivalAirport.airportId }}<br />
-            {{ ticket.flightInstance.flight.arrivalAirport.place }}
-          </td>
-          <td>
-            {{ ticket.flightInstance.flight.airline.name }}
-          </td>
           <td>
             {{ ticket.flightInstance.flightDate | date: "yyyy-MM-dd" }}<br />
             {{ ticket.flightInstance.flightDate | date: "HH:mm" }}
+          </td>
+          <td>{{ ticket.flightInstance.flight.flightId }}</td>
+          <td>
+            {{ ticket.flightInstance.flight.departureAirport.airportId }} - {{ ticket.flightInstance.flight.departureAirport.place }}
+          </td>
+          <td>
+            {{ ticket.flightInstance.flight.arrivalAirport.airportId }} - {{ ticket.flightInstance.flight.arrivalAirport.place }}
+          </td>
+          <td>
+            {{ ticket.flightInstance.flight.airline.name }}
           </td>
           <td>
             {{ ticket.flightInstance.flightLengthInMinutes }}
