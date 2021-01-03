@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -147,13 +149,13 @@ public class TicketServiceImpl implements TicketService {
     public ResponseEntity<?> getAllAvailableFromTicketsByFilter(TicketFilter filter) {
         try {
             // Get filtered
-            List<TicketResponseDto> tickets = new ArrayList<>();
+            Set<TicketWithoutUserResponseDto> tickets = new HashSet<>();
             ticketRepository.findAllAvailableTicketsByFilter(
                     filter.getFromDate() != null ? new Timestamp(filter.getFromDate()) : null,
                     filter.getToDate() != null ? new Timestamp(filter.getToDate()) : null,
                     filter.getFromAirportId(),
                     filter.getToAirportId(),
-                    filter.getAirlineId()).forEach(ticket -> tickets.add(new TicketResponseDto(ticket)));
+                    filter.getAirlineId()).forEach(ticket -> tickets.add(new TicketWithoutUserResponseDto(ticket)));
 
             return ResponseEntity.ok(tickets);
         } catch (Exception e) {
@@ -192,13 +194,13 @@ public class TicketServiceImpl implements TicketService {
             Integer arrivalAirportId = fromTicket.getFlightInstance().getFlight().getDepartureAirport().getId();
 
             // Get filtered tickets
-            List<TicketResponseDto> tickets = new ArrayList<>();
+            Set<TicketWithoutUserResponseDto> tickets = new HashSet<>();
             ticketRepository.findAllAvailableTicketsByFilter(
                     fromTimestamp,
                     filter.getToDate() != null ? new Timestamp(filter.getToDate()) : null,
                     departureAirportId,
                     arrivalAirportId,
-                    filter.getAirlineId()).forEach(ticket -> tickets.add(new TicketResponseDto(ticket)));
+                    filter.getAirlineId()).forEach(ticket -> tickets.add(new TicketWithoutUserResponseDto(ticket)));
 
             return ResponseEntity.ok(tickets);
         } catch (Exception e) {
