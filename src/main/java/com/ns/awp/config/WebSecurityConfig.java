@@ -60,6 +60,18 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+        String[] AUTH_WHITELIST = {
+                // Register and token generation
+                "/api/users/register",
+                "/api/auth/generateToken",
+
+                // Swagger ui
+                "/swagger-resources/**",
+                "/swagger-ui.html",
+                "/v2/api-docs",
+                "/webjars/**"
+        };
+
         httpSecurity
                 .cors()
                 .and()
@@ -67,9 +79,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
 
                 .authorizeRequests()
-                .antMatchers(
-                        "/api/users/register",
-                        "/api/auth/generateToken")
+                .antMatchers(AUTH_WHITELIST)
 
                 .permitAll()
                 .anyRequest()
