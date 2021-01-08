@@ -2,7 +2,7 @@ package com.ns.awp.airline.service;
 
 import com.ns.awp.airline.models.Airline;
 import com.ns.awp.airline.repository.AirlineRepository;
-import com.ns.awp.config.JsonMessage;
+import com.ns.awp.config.security.JsonMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,12 +11,25 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AirlineService {
     private final AirlineRepository airlineRepository;
+    private final String alphanumericRegex = "^[a-zA-Z0-9 ]+$";
+    private final String linkRegex = "^(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$";
 
     public ResponseEntity<?> newAirline(Airline airline) {
         try {
-            // Name check
-            if (airlineRepository.existsByName(airline.getName())) {
+            // Name
+            if (airline.getName() == null || airline.getName().isBlank()) {
+                return ResponseEntity.status(400).body("Airline name cannot be null or empty.");
+            } else if (!airline.getName().matches(alphanumericRegex)) {
+                return ResponseEntity.status(400).body("Airline name must consist of alphanumeric characters only.");
+            } else if (airlineRepository.existsByName(airline.getName())) {
                 return ResponseEntity.status(400).body("Airline with provided name already exists.");
+            }
+
+            // Link
+            if (airline.getLink() == null || airline.getLink().isBlank()) {
+                return ResponseEntity.status(400).body("Airline link cannot be null or empty.");
+            } else if (!airline.getLink().matches(linkRegex)) {
+                return ResponseEntity.status(400).body("Airline link must be valid.");
             }
 
             // Save
@@ -26,27 +39,38 @@ public class AirlineService {
 
             return ResponseEntity.ok(airline);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body("Internal Server Error.");
         }
     }
 
     public ResponseEntity<?> updateAirline(Airline airline) {
         try {
-            // Id check
-            if (!airlineRepository.existsById(airline.getId())) {
+            // Validation
+            Airline existing;
+            if (airline.getId() != null && airlineRepository.existsById(airline.getId())) {
+                existing = airlineRepository.findById(airline.getId()).get();
+            } else {
                 return ResponseEntity.status(404).body("Airline with provided id not found.");
             }
-            Airline existing = airlineRepository.findById(airline.getId()).get();
 
-            // Name check
-            if (!existing.getName().equals(airline.getName()) && airlineRepository.existsByName(airline.getName())) {
-                return ResponseEntity.status(400).body("Airline with provided new name already exists.");
-            } else {
-                existing.setName(airline.getName());
+            // Name
+            if (airline.getName() != null && !airline.getName().isBlank()) {
+                if (!airline.getName().matches(alphanumericRegex)) {
+                    return ResponseEntity.status(400).body("Airline name must consist of alphanumeric characters only.");
+                }
+                if (!existing.getName().equals(airline.getName()) && airlineRepository.existsByName(airline.getName())) {
+                    return ResponseEntity.status(400).body("Airline with provided new name already exists.");
+                } else {
+                    existing.setName(airline.getName());
+                }
             }
 
-            // Set new link
-            if (airline.getLink() != null) {
+            // Link
+            if (airline.getLink() != null && !airline.getLink().isBlank()) {
+                if (!airline.getLink().matches(linkRegex)) {
+                    return ResponseEntity.status(400).body("Airline link must be valid.");
+                }
                 existing.setLink(airline.getLink());
             }
 
@@ -72,18 +96,23 @@ public class AirlineService {
 
     public ResponseEntity<?> getAirlineById(int id) {
         try {
+            // Validation
+            if (!airlineRepository.existsById(id)) {
+                return ResponseEntity.status(404).body("Airline with provided id not found.");
+            }
+
             // Get by id
             Airline airline = airlineRepository.findById(id).get();
 
             return ResponseEntity.ok(airline);
         } catch (Exception e) {
-            return ResponseEntity.status(404).body("Airline with provided id not found.");
+            return ResponseEntity.status(500).body("Internal Server Error.");
         }
     }
 
     public ResponseEntity<?> deleteAirlineById(int id) {
         try {
-            // Id check
+            // Validation
             if (!airlineRepository.existsById(id)) {
                 return ResponseEntity.status(404).body("Airline with provided id not found.");
             }

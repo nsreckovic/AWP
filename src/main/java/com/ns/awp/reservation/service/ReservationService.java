@@ -1,7 +1,7 @@
 package com.ns.awp.reservation.service;
 
-import com.ns.awp.config.JsonMessage;
-import com.ns.awp.config.JwtUtil;
+import com.ns.awp.config.security.JsonMessage;
+import com.ns.awp.config.security.JwtUtil;
 import com.ns.awp.reservation.models.Reservation;
 import com.ns.awp.reservation.models.dto.ReservationFilter;
 import com.ns.awp.reservation.models.dto.ReservationResponseDto;
@@ -32,17 +32,13 @@ public class ReservationService {
 
     public ResponseEntity<?> newReservation(ReservationRequestDto reservation) {
         try {
-            // Null check
-            if (reservation.getDepartureTicketId() == null) {
-                return ResponseEntity.status(400).body("Departure ticket id cannot be null.");
-            } else if (reservation.getUserId() == null) {
-                return ResponseEntity.status(400).body("User id cannot be null.");
-            }
-
             // Reservation timestamp
             Timestamp reservationTimestamp = new Timestamp(new Date().getTime());
 
-            // User check
+            // User
+            if (reservation.getUserId() == null) {
+                return ResponseEntity.status(400).body("User id cannot be null.");
+            }
             User user;
             if (!userRepository.existsById(reservation.getUserId())) {
                 return ResponseEntity.status(404).body("User with provided id not found.");
@@ -51,6 +47,9 @@ public class ReservationService {
             }
 
             // Departure ticket
+            if (reservation.getDepartureTicketId() == null) {
+                return ResponseEntity.status(400).body("Departure ticket id cannot be null.");
+            }
             Ticket departureTicket;
             if (!ticketRepository.existsById(reservation.getDepartureTicketId())) {
                 return ResponseEntity.status(404).body("Ticket not found.");
@@ -107,7 +106,7 @@ public class ReservationService {
 
     public ResponseEntity<?> updateReservation(ReservationRequestDto reservation) {
         try {
-            // Null check
+            // Validation
             Reservation existing;
             if (reservation.getId() == null) {
                 return ResponseEntity.status(400).body("Reservation id cannot be null.");
@@ -301,7 +300,7 @@ public class ReservationService {
 
     public ResponseEntity<?> getReservationById(int id) {
         try {
-            // Id check
+            // Validation
             if (!reservationRepository.existsById(id)) {
                 return ResponseEntity.status(404).body("Reservation not found.");
             }
@@ -323,7 +322,7 @@ public class ReservationService {
 
     public ResponseEntity<?> deleteReservationById(int id) {
         try {
-            // Id check
+            // Validation
             if (!reservationRepository.existsById(id)) {
                 return ResponseEntity.status(404).body("Reservation with provided id not found.");
             }

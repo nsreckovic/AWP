@@ -1,4 +1,4 @@
-package com.ns.awp.config;
+package com.ns.awp.config.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

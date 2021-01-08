@@ -1,4 +1,4 @@
-package com.ns.awp.config;
+package com.ns.awp.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

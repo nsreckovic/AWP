@@ -1,4 +1,4 @@
-package com.ns.awp.config;
+package com.ns.awp.config.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

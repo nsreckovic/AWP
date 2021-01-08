@@ -1,7 +1,7 @@
 package com.ns.awp.ticket.service;
 
-import com.ns.awp.config.JsonMessage;
-import com.ns.awp.config.JwtUtil;
+import com.ns.awp.config.security.JsonMessage;
+import com.ns.awp.config.security.JwtUtil;
 import com.ns.awp.flightInstance.models.FlightInstance;
 import com.ns.awp.flightInstance.repository.FlightInstanceRepository;
 import com.ns.awp.ticket.models.Ticket;
@@ -31,15 +31,10 @@ public class TicketService {
 
     public ResponseEntity<?> newTicket(TicketRequestDto ticketRequest) {
         try {
-            // Null check
+            // Flight instance
             if (ticketRequest.getFlightInstanceId() == null) {
                 return ResponseEntity.status(400).body("Flight instance id cannot be null.");
             }
-            if (ticketRequest.getTicketCount() == null || ticketRequest.getTicketCount() < 1) {
-                return ResponseEntity.status(400).body("Ticket count cannot be null and must be positive number.");
-            }
-
-            // Flight Instance check
             FlightInstance flightInstance;
             if (!flightInstanceRepository.existsById(ticketRequest.getFlightInstanceId())) {
                 return ResponseEntity.status(404).body("Flight instance not found.");
@@ -47,7 +42,10 @@ public class TicketService {
                 flightInstance = flightInstanceRepository.findById(ticketRequest.getFlightInstanceId()).get();
             }
 
-            // Count check
+            // Count
+            if (ticketRequest.getTicketCount() == null || ticketRequest.getTicketCount() < 1) {
+                return ResponseEntity.status(400).body("Ticket count cannot be null and less than 1.");
+            }
             if (flightInstance.getCount() - ticketRequest.getTicketCount() < 0) {
                 return ResponseEntity.status(400).body("Requested number of tickets exceeds maximum capacity of flight's " + flightInstance.getCount() + " tickets.");
             } else {
@@ -70,17 +68,15 @@ public class TicketService {
 
     public ResponseEntity<?> updateTicket(TicketRequestDto ticket) {
         try {
-            // Ticket id check
+            // Validation
             Ticket existing;
-            if (ticket.getId() == null) {
-                return ResponseEntity.status(400).body("Ticket id cannot be null.");
-            } else if (!ticketRepository.existsById(ticket.getId())) {
-                return ResponseEntity.status(404).body("Ticket with provided id not found.");
-            } else {
+            if (ticket.getId() != null && ticketRepository.existsById(ticket.getId())) {
                 existing = ticketRepository.findById(ticket.getId()).get();
+            } else {
+                return ResponseEntity.status(404).body("Ticket with provided id not found.");
             }
 
-            // Flight Instance check
+            // Flight instance
             FlightInstance oldFlightInstance = null, newFlightInstance = null;
             if (ticket.getFlightInstanceId() != null && ticket.getFlightInstanceId() != existing.getFlightInstance().getId()) {
                 if (!flightInstanceRepository.existsById(ticket.getFlightInstanceId())) {
@@ -92,7 +88,7 @@ public class TicketService {
                 }
             }
 
-            // Count check
+            // Count
             if (newFlightInstance != null) {
                 if (newFlightInstance.getCount() < 1) {
                     return ResponseEntity.status(400).body("Flight instance with the requested id already has the maximum number of tickets.");
@@ -161,15 +157,12 @@ public class TicketService {
 
     public ResponseEntity<?> getAllAvailableReturnTicketsByFilter(TicketFilter filter) {
         try {
-            // From ticket check
-            if (filter.getFromTicketId() == null) {
-                return ResponseEntity.status(400).body("You must provide from ticket id.");
-            }
+            // From ticket validation
             Ticket fromTicket;
-            if (!ticketRepository.existsById(filter.getFromTicketId())) {
-                return ResponseEntity.status(404).body("Ticket not found.");
-            } else {
+            if (filter.getFromTicketId() != null && ticketRepository.existsById(filter.getFromTicketId())) {
                 fromTicket = ticketRepository.findById(filter.getFromTicketId()).get();
+            } else {
+                return ResponseEntity.status(404).body("Ticket not found.");
             }
 
             // Set fromDate (timestamp) for filter query
@@ -194,7 +187,8 @@ public class TicketService {
                     filter.getToDate() != null ? new Timestamp(filter.getToDate()) : null,
                     departureAirportId,
                     arrivalAirportId,
-                    filter.getAirlineId()).forEach(ticket -> tickets.add(new TicketWithoutUserResponseDto(ticket)));
+                    filter.getAirlineId()).forEach(ticket -> tickets.add(new TicketWithoutUserResponseDto(ticket))
+            );
 
             return ResponseEntity.ok(tickets);
         } catch (Exception e) {
@@ -204,7 +198,7 @@ public class TicketService {
 
     public ResponseEntity<?> getTicketById(int id) {
         try {
-            // Id check
+            // Validation
             if (!ticketRepository.existsById(id)) {
                 return ResponseEntity.status(404).body("Ticket not found.");
             }
@@ -226,7 +220,7 @@ public class TicketService {
 
     public ResponseEntity<?> deleteTicketById(int id) {
         try {
-            // Id check
+            // Validation
             if (!ticketRepository.existsById(id)) {
                 return ResponseEntity.status(404).body("Ticket not found.");
             }

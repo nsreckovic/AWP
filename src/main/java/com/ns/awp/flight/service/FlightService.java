@@ -4,11 +4,10 @@ import com.ns.awp.airline.models.Airline;
 import com.ns.awp.airline.repository.AirlineRepository;
 import com.ns.awp.airport.models.Airport;
 import com.ns.awp.airport.repository.AirportRepository;
-import com.ns.awp.config.JsonMessage;
+import com.ns.awp.config.security.JsonMessage;
 import com.ns.awp.flight.models.Flight;
 import com.ns.awp.flight.models.dto.FlightRequestDto;
 import com.ns.awp.flight.repository.FlightRepository;
-import com.ns.awp.flightInstance.repository.FlightInstanceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,18 +16,28 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FlightService {
     private final FlightRepository flightRepository;
-    private final FlightInstanceRepository flightInstanceRepository;
     private final AirportRepository airportRepository;
     private final AirlineRepository airlineRepository;
+    private final String alphanumericRegexWithSpace = "^[a-zA-Z0-9 ]+$";
 
     public ResponseEntity<?> newFlight(FlightRequestDto flight) {
         try {
-            // Flight id check
-            if (flightRepository.existsByFlightId(flight.getFlightId())) {
-                return ResponseEntity.status(400).body("Flight with provided flight id already exists.");
+            // Flight Id
+            if (flight.getFlightId() == null || flight.getFlightId().isBlank()) {
+                return ResponseEntity.status(400).body("Flight id cannot be null or empty.");
+            } else if (!flight.getFlightId().matches(alphanumericRegexWithSpace)) {
+                return ResponseEntity.status(400).body("Flight id must consist of alphanumeric characters only.");
+            } else {
+                flight.setFlightId(flight.getFlightId().toUpperCase());
+                if (flightRepository.existsByFlightId(flight.getFlightId())) {
+                    return ResponseEntity.status(400).body("Flight with provided flight id already exists.");
+                }
             }
 
-            // Departure airport check
+            // Departure airport
+            if (flight.getDepartureAirportId() == null) {
+                return ResponseEntity.status(400).body("Departure airport id cannot be null.");
+            }
             Airport departureAirport;
             if (!airportRepository.existsById(flight.getDepartureAirportId())) {
                 return ResponseEntity.status(404).body("Departure airport with provided id not found.");
@@ -36,7 +45,10 @@ public class FlightService {
                 departureAirport = airportRepository.findById(flight.getDepartureAirportId()).get();
             }
 
-            // Arrival airport check
+            // Arrival airport
+            if (flight.getArrivalAirportId() == null) {
+                return ResponseEntity.status(400).body("Arrival airport id cannot be null.");
+            }
             Airport arrivalAirport;
             if (!airportRepository.existsById(flight.getArrivalAirportId())) {
                 return ResponseEntity.status(404).body("Arrival airport with provided id not found.");
@@ -44,12 +56,15 @@ public class FlightService {
                 arrivalAirport = airportRepository.findById(flight.getArrivalAirportId()).get();
             }
 
-            // Both airports check
+            // Airports validation
             if (flight.getDepartureAirportId().equals(flight.getArrivalAirportId())) {
                 return ResponseEntity.status(400).body("Departure and arrival airport cannot be the same.");
             }
 
-            // Airline check
+            // Airline
+            if (flight.getAirlineId() == null) {
+                return ResponseEntity.status(400).body("Airline id cannot be null.");
+            }
             Airline airline;
             if (!airlineRepository.existsById(flight.getAirlineId())) {
                 return ResponseEntity.status(404).body("Airline with provided id not found.");
@@ -57,6 +72,7 @@ public class FlightService {
                 airline = airlineRepository.findById(flight.getAirlineId()).get();
             }
 
+            // Save
             Flight saved = flightRepository.save(new Flight(
                     -1,
                     flight.getFlightId(),
@@ -74,14 +90,19 @@ public class FlightService {
 
     public ResponseEntity<?> updateFlight(FlightRequestDto flight) {
         try {
-            // Id check
-            if (!flightRepository.existsById(flight.getId())) {
+            // Validation
+            Flight existing;
+            if (flight.getId() != null && flightRepository.existsById(flight.getId())) {
+                existing = flightRepository.findById(flight.getId()).get();
+            } else {
                 return ResponseEntity.status(404).body("Flight with provided id not found.");
             }
-            Flight existing = flightRepository.findById(flight.getId()).get();
 
-            // Flight id check
-            if (flight.getFlightId() != null) {
+            // Flight Id
+            if (flight.getFlightId() != null && !flight.getFlightId().isBlank()) {
+                if (!flight.getFlightId().matches(alphanumericRegexWithSpace)) {
+                    return ResponseEntity.status(400).body("Flight id must consist of alphanumeric characters only.");
+                }
                 if (!existing.getFlightId().equals(flight.getFlightId()) && flightRepository.existsByFlightId(flight.getFlightId())) {
                     return ResponseEntity.status(400).body("Flight with provided flight id already exists.");
                 } else {
@@ -89,8 +110,8 @@ public class FlightService {
                 }
             }
 
-            // Departure airport check
-            if (flight.getDepartureAirportId() != null) {
+            // Departure airport
+            if (flight.getDepartureAirportId() != null && flight.getDepartureAirportId() != existing.getDepartureAirport().getId()) {
                 if (!airportRepository.existsById(flight.getDepartureAirportId())) {
                     return ResponseEntity.status(404).body("Departure airport with provided id not found.");
                 } else {
@@ -98,8 +119,8 @@ public class FlightService {
                 }
             }
 
-            // Arrival airport check
-            if (flight.getArrivalAirportId() != null) {
+            // Arrival airport
+            if (flight.getArrivalAirportId() != null && flight.getArrivalAirportId() != existing.getArrivalAirport().getId()) {
                 if (!airportRepository.existsById(flight.getArrivalAirportId())) {
                     return ResponseEntity.status(404).body("Arrival airport with provided id not found.");
                 } else {
@@ -107,20 +128,21 @@ public class FlightService {
                 }
             }
 
-            // Both airports check
+            // Airports validation
             if (existing.getDepartureAirport().equals(existing.getArrivalAirport())) {
                 return ResponseEntity.status(400).body("Departure and arrival airport cannot be the same.");
             }
 
-            // Airline check
-            if (!airlineRepository.existsById(flight.getAirlineId())) {
-                return ResponseEntity.status(404).body("Airline with provided id not found.");
-            } else {
-                existing.setAirline(airlineRepository.findById(flight.getAirlineId()).get());
+            // Airline
+            if (flight.getAirlineId() != null && flight.getAirlineId() != existing.getAirline().getId()) {
+                if (!airlineRepository.existsById(flight.getAirlineId())) {
+                    return ResponseEntity.status(404).body("Airline with provided id not found.");
+                } else {
+                    existing.setAirline(airlineRepository.findById(flight.getAirlineId()).get());
+                }
             }
 
-            // Update flight instance id
-
+            // Save
             existing = flightRepository.save(existing);
 
             return ResponseEntity.ok(existing);
@@ -131,7 +153,7 @@ public class FlightService {
 
     public ResponseEntity<?> getAllFlights() {
         try {
-            // Getting all
+            // Get all
             Iterable<Flight> flights = flightRepository.findAllSorted();
 
             return ResponseEntity.ok(flights);
@@ -142,12 +164,12 @@ public class FlightService {
 
     public ResponseEntity<?> getFlightByFlightId(Integer id) {
         try {
-            // Id check
+            // Validation
             if (!flightRepository.existsById(id)) {
                 return ResponseEntity.status(404).body("Flight not found.");
             }
 
-            // Getting by id
+            // Get by id
             Flight flight = flightRepository.findById(id).get();
 
             return ResponseEntity.ok(flight);
@@ -158,12 +180,12 @@ public class FlightService {
 
     public ResponseEntity<?> deleteFlightByFlightId(Integer id) {
         try {
-            // Id check
+            // Validation
             if (!flightRepository.existsById(id)) {
                 return ResponseEntity.status(404).body("Flight not found.");
             }
 
-            // Deleting
+            // Delete
             flightRepository.deleteById(id);
 
             return ResponseEntity.ok(new JsonMessage("Flight deleted."));

@@ -1,4 +1,4 @@
-package com.ns.awp.config;
+package com.ns.awp.config.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

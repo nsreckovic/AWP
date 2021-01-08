@@ -36,16 +36,15 @@ public class FlightInstance {
     @OneToMany(orphanRemoval = true, mappedBy = "flightInstance")
     private List<Ticket> tickets;
 
-    public Integer decrementCount() {
-        return --this.count;
+    public void incrementCount() {
+        ++this.count;
     }
 
-    public Integer bulkDecrementCount(int count) {
+    public void decrementCount() {
+        --this.count;
+    }
+
+    public void bulkDecrementCount(int count) {
         this.count -= count;
-        return this.count;
-    }
-
-    public Integer incrementCount() {
-        return ++this.count;
     }
 }

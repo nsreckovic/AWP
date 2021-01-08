@@ -1,6 +1,6 @@
 package com.ns.awp.userType.service;
 
-import com.ns.awp.config.JsonMessage;
+import com.ns.awp.config.security.JsonMessage;
 import com.ns.awp.userType.models.UserType;
 import com.ns.awp.userType.repository.UserTypeRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ public class UserTypeService {
 
     public ResponseEntity<?> newUserType(UserType userType) {
         try {
+            // Name
             userType.setName(userType.getName().toUpperCase());
 
             // Save
@@ -30,18 +31,18 @@ public class UserTypeService {
 
     public ResponseEntity<?> updateUserType(UserType userType) {
         try {
-            // Id check
+            // Validation
             if (!userTypeRepository.existsById(userType.getId())) {
                 return ResponseEntity.status(404).body("User Type with provided id not found.");
             }
             UserType existingUserType = userTypeRepository.findById(userType.getId()).get();
 
-            // Name check
+            // Name
             if (userTypeRepository.existsByName(userType.getName())) {
                 return ResponseEntity.status(400).body("User Type with provided name already exists.");
             }
 
-            // Update
+            // Save
             existingUserType.setName(userType.getName().toUpperCase());
             userTypeRepository.save(existingUserType);
 
@@ -75,7 +76,7 @@ public class UserTypeService {
 
     public ResponseEntity<?> deleteUserTypeById(int id) {
         try {
-            // Id check
+            // Validation
             if (!userTypeRepository.existsById(id)) {
                 ResponseEntity.status(404).body("User Type with provided id not found.");
             }

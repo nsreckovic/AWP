@@ -1,6 +1,6 @@
 package com.ns.awp.user.controller;
 
-import com.ns.awp.config.JwtUtil;
+import com.ns.awp.config.security.JwtUtil;
 import com.ns.awp.user.models.User;
 import com.ns.awp.user.models.dto.UserLoginRequestDto;
 import com.ns.awp.user.models.dto.UserResponseDto;

@@ -1,7 +1,7 @@
 package com.ns.awp.user.service;
 
-import com.ns.awp.config.JsonMessage;
-import com.ns.awp.config.JwtUtil;
+import com.ns.awp.config.security.JsonMessage;
+import com.ns.awp.config.security.JwtUtil;
 import com.ns.awp.user.models.User;
 import com.ns.awp.user.models.dto.UserRequestDto;
 import com.ns.awp.user.models.dto.UserResponseDto;
@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
 
     public ResponseEntity<?> newUser(UserRequestDto user) {
         try {
-            // Null check
+            // Validation
             if (user.getUsername() == null || user.getUsername().isBlank()) {
                 return ResponseEntity.status(400).body("Username cannot be null or blank.");
             } else if (user.getName() == null || user.getName().isBlank()) {
@@ -46,17 +46,17 @@ public class UserService implements UserDetailsService {
                 return ResponseEntity.status(400).body("Password cannot be null or blank.");
             }
 
-            // Username check
+            // Username
             if (userRepository.existsByUsername(user.getUsername())) {
                 return ResponseEntity.status(400).body("User with provided username already exists.");
             }
 
-            // Password check
+            // Password
             if (user.getPassword().length() < 6 || !user.getPassword().matches(".*[0-9].*") || !user.getPassword().matches(".*[A-Za-z].*")) {
                 return ResponseEntity.status(400).body("Password must have at least 6 characters and contain letters and numbers.");
             }
 
-            // UserType check
+            // UserType
             UserType userType;
             // Every new user is registered as a regular user
             userType = userTypeRepository.findByName("REGULAR").get();
@@ -89,39 +89,18 @@ public class UserService implements UserDetailsService {
                 return ResponseEntity.status(401).body("You cannot change another user's data.");
             }
 
-            // Blank check
-            if (user.getUsername().isBlank()) {
-                return ResponseEntity.status(400).body("Username cannot be blank.");
-            } else if (user.getName().isBlank()) {
-                return ResponseEntity.status(400).body("Name cannot be blank.");
-            } else if (user.getLastName().isBlank()) {
-                return ResponseEntity.status(400).body("Last name cannot be blank.");
-            }
-            if (jwtUtil.hasRole("ROLE_ADMIN")) {
-                if (user.getUserType().isBlank()) {
-                    return ResponseEntity.status(400).body("User type cannot be blank.");
-                }
-            } else {
-                if (user.getPassword().isBlank()) {
-                    return ResponseEntity.status(400).body("Password cannot be blank.");
-                } else if (user.getNewPassword().isBlank()) {
-                    return ResponseEntity.status(400).body("New password cannot be blank.");
-                }
-            }
-
-            // Id check
-            User existing = authenticated;
+            // Validation
+            User existing = null;
             if (jwtUtil.hasRole("ROLE_ADMIN")) {
                 if (user.getId() == null || !userRepository.existsById(user.getId())) {
                     return ResponseEntity.status(404).body("User with provided id not found.");
                 }
                 existing = userRepository.findById(user.getId()).get();
-            }
-
-            // Password check
-            if (jwtUtil.hasRole("ROLE_REGULAR")) {
+            } else if (jwtUtil.hasRole("ROLE_REGULAR")) {
                 if (user.getPassword() != null) {
-                    if (!bCryptPasswordEncoder.matches(user.getPassword(), existing.getPassword())) {
+                    if (bCryptPasswordEncoder.matches(user.getPassword(), authenticated.getPassword())) {
+                        existing = authenticated;
+                    } else {
                         return ResponseEntity.status(401).body("Wrong password. Unauthorized update request.");
                     }
                 } else {
@@ -129,25 +108,25 @@ public class UserService implements UserDetailsService {
                 }
             }
 
-            // Username check
-            if (user.getUsername() != null) {
+            // Username validation
+            if (user.getUsername() != null && !user.getUsername().isBlank()) {
                 if (!existing.getUsername().equals(user.getUsername()) && userRepository.existsByUsername(user.getUsername())) {
                     return ResponseEntity.status(400).body("User with provided username already exists.");
                 } else existing.setUsername(user.getUsername());
             }
 
-            // UserType check
+            // UserType validation
             if (user.getUserType() != null) {
                 if (jwtUtil.hasRole("ROLE_ADMIN")) {
                     if (!userTypeRepository.existsByName(user.getUserType())) {
                         return ResponseEntity.status(404).body("User Type with provided name not found.");
                     } else existing.setUserType(userTypeRepository.findByName(user.getUserType()).get());
-                } else {
-                    return ResponseEntity.status(400).body("You cannot change your user type.");
+                } else if (jwtUtil.hasRole("ROLE_REGULAR")) {
+                    return ResponseEntity.status(401).body("Regular users cannot change their user type.");
                 }
             }
 
-            // New Password check
+            // New Password validation
             if (user.getNewPassword() != null) {
                 if (user.getNewPassword().length() < 6 || !user.getNewPassword().matches(".*[0-9].*") || !user.getNewPassword().matches(".*[A-Za-z].*")) {
                     return ResponseEntity.status(400).body("New password must have at least 6 characters and contain letters and numbers.");
@@ -156,10 +135,10 @@ public class UserService implements UserDetailsService {
             }
 
             // Name and LastName
-            if (user.getName() != null) existing.setName(user.getName());
-            if (user.getLastName() != null) existing.setLastName(user.getLastName());
+            if (user.getName() != null && !user.getName().isBlank()) existing.setName(user.getName());
+            if (user.getLastName() != null && !user.getLastName().isBlank()) existing.setLastName(user.getLastName());
 
-            // Update
+            // Save
             userRepository.save(existing);
 
             final UserDetails userDetails = loadUserByUsername(existing.getUsername());
@@ -193,7 +172,7 @@ public class UserService implements UserDetailsService {
                 return ResponseEntity.status(401).body("You cannot see other users' data.");
             }
 
-            // Id check
+            // Validation
             if (!userRepository.existsById(id)) {
                 return ResponseEntity.status(404).body("User not found.");
             }
@@ -215,14 +194,14 @@ public class UserService implements UserDetailsService {
                 return ResponseEntity.status(401).body("You cannot delete other users' profile.");
             }
 
-            // Id check
+            // Validation
             if (jwtUtil.hasRole("ROLE_ADMIN")) {
                 if (!userRepository.existsById(id)) {
                     return ResponseEntity.status(404).body("User with provided id not found.");
                 }
             }
 
-            // Deleting
+            // Delete
             userRepository.deleteById(id);
 
             return ResponseEntity.ok(new JsonMessage("User deleted."));
