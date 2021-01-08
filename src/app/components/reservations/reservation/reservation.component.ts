@@ -1,7 +1,8 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import Airline from 'src/app/models/airline/airline.model';
 import Airport from 'src/app/models/airport/airport.model';
 import ReservationRequestDto from 'src/app/models/reservation/reservationRequestDto.model';
@@ -55,7 +56,9 @@ export class ReservationComponent implements OnInit {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private location: Location
-  ) {}
+  ) {
+    
+  }
 
   ngOnInit(): void {
     if (!this.authService.isUserLoggedIn()) this.router.navigate(['/']);
@@ -281,7 +284,7 @@ export class ReservationComponent implements OnInit {
         );
     }
   }
-
+  
   saveReservation(newReservationForm) {
     this.reservation.departureTicketId = newReservationForm.departureTicketId;
     this.reservation.returnTicketId = newReservationForm.returnTicketId;
@@ -290,6 +293,7 @@ export class ReservationComponent implements OnInit {
     if (!this.editReservation) {
       this.reservationsService.newReservation(this.reservation).subscribe(
         (response) => {
+          if (!this.authService.isAdminLoggedIn()) this.usersService.updateReservationCount();
           this.router.navigate(['reservations']);
         },
         (error) => {

@@ -33,4 +33,8 @@ export class ReservationsService {
   deleteReservationById(id: number) {
     return this.httpClient.delete<JsonMessage>(`${this.reservationsUrl}/${id}`);
   }
+
+  checkoutReservationById(id: number) {
+    return this.httpClient.delete<JsonMessage>(`${this.reservationsUrl}/${id}/checkout`);
+  }
 }

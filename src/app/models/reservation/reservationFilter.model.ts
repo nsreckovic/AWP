@@ -5,6 +5,7 @@ export default class ReservationFilter {
     public toDate: number,
     public fromAirportId: string,
     public toAirportId: string,
-    public airlineId: number
+    public airlineId: number,
+    public type: string
   ) {}
 }

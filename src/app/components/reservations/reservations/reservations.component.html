@@ -140,6 +140,20 @@
               </option>
             </select>
           </div>
+
+          <!-- Type -->
+          <div class="col-sm-6 col-md-3">
+            <label for="type">Type</label>
+            <select
+              id="typeSelection"
+              class="form-control"
+              [(ngModel)]="filter.type">
+              <option [ngValue]="null">- Please Choose -</option>
+              <option [ngValue]="'all'">All reservations</option>
+              <option [ngValue]="'one-way'">One way only</option>
+              <option [ngValue]="'return'">Return only</option>
+            </select>
+          </div>
         </div>
 
         <div class="row mt-3">
@@ -200,10 +214,14 @@
           <th *ngIf="authService.isAdminLoggedIn()">User</th>
           <th>Edit</th>
           <th>Delete</th>
+          <th>Checkout</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let reservation of reservations; index as i">
+        <tr 
+          *ngFor="let reservation of reservations; index as i"
+          [class.table-secondary]="reservation.departureTicket.flightInstance.flightDate < currentDate"
+          [class.text-secondary]="reservation.departureTicket.flightInstance.flightDate < currentDate">
           <th>
             {{ i + 1 }}
           </th>
@@ -284,6 +302,7 @@
             <button
               (click)="editReservation(reservation)"
               class="btn btn-sm btn-outline-secondary mr-1"
+              [disabled]="!authService.isAdminLoggedIn() && currentDatePlusOne > reservation.departureTicket.flightInstance.flightDate"
             >
               Edit
             </button>
@@ -292,8 +311,18 @@
             <button
               (click)="deleteReservation(reservation)"
               class="btn btn-sm btn-outline-danger"
-            >
+              [disabled]="!authService.isAdminLoggedIn() && currentDatePlusOne > reservation.departureTicket.flightInstance.flightDate"
+              >
               Delete
+            </button>
+          </td>
+          <td>
+            <button
+              (click)="checkout(reservation)"
+              class="btn btn-sm btn-primary"
+              [disabled]="!authService.isAdminLoggedIn() && currentDate > reservation.departureTicket.flightInstance.flightDate"
+              >
+              Checkout
             </button>
           </td>
         </tr>
@@ -328,6 +357,38 @@
             class="btn btn-sm btn-danger mx-1"
           >
             Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="checkoutReservationModal"
+  tabindex="-1"
+  aria-labelledby="checkoutReservationModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-body">
+        <div class="text-center">
+          Are you sure you want to checkout?
+        </div>
+        <div class="text-center mt-2">
+          <button
+            (click)="hideModal()"
+            class="btn btn-sm btn-outline-secondary mx-1"
+          >
+            Cancel
+          </button>
+          <button
+            (click)="checkoutReservationFinally()"
+            class="btn btn-sm btn-primary mx-1"
+          >
+            Checkout
           </button>
         </div>
       </div>

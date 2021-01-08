@@ -1,40 +1,4 @@
 <header>
-  <!-- <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
-    <a class="navbar-brand" routerLink="/">AWP H1</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/users" *ngIf="authService.isUserLoggedIn()">Users</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/groups" *ngIf="authService.isUserLoggedIn()">Groups</a>
-        </li>
-      </ul>
-      <ul class="navbar-nav ml-auto">
-        <!-- <li class="nav-item" *ngIf="authService.isUserLoggedIn()">
-          <span class="navbar-text">{{ authService.getLoggedInUser() }}</span>
-        </li> -->
-        <!--
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/login" *ngIf="!authService.isUserLoggedIn()">Log In</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/logout" *ngIf="authService.isUserLoggedIn()">Log Out</a>
-        </li>
-      </ul>
-    </div>
-  </nav> -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       <a class="navbar-brand" routerLink="/">Home</a>
@@ -63,7 +27,8 @@
             <a class="nav-link" routerLink="/tickets"><i class="las la-ticket-alt"></i> Tickets</a>
           </li>
           <li class="nav-item my-auto" *ngIf="authService.isUserLoggedIn()">
-            <a class="nav-link" routerLink="/reservations"><i class="las la-calendar"></i> Reservations</a>
+            <a class="nav-link" routerLink="/reservations">
+              <i class="las la-calendar"></i> Reservations <span *ngIf="!authService.isAdminLoggedIn()" class="badge badge-pill badge-primary"> {{ reservationCount }}</span></a>
           </li>
           <li class="nav-item my-auto" *ngIf="authService.isAdminLoggedIn()">
             <a class="nav-link" routerLink="/users"><i class="las la-user"></i> Users</a>

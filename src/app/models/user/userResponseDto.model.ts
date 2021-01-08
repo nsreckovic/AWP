@@ -7,5 +7,7 @@ export default class UserResponseDto {
     public name: string,
     public lastName: string,
     public userType: UserType,
+    public ticketCount: number,
+    public reservationCount: number
   ) {}
 }

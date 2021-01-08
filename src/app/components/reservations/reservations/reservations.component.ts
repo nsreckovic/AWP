@@ -18,10 +18,13 @@ declare var $: any;
   styleUrls: ['./reservations.component.css'],
 })
 export class ReservationsComponent implements OnInit {
+  currentDate: Date;
+  currentDatePlusOne: Date;
   reservations: ReservationResponseDto[];
   errorMessage: string = null;
   successMessage: string = null;
   private reservationForDelete = null;
+  private reservationForCheckout = null;
   filter = {
     userId: null,
     fromDate: null,
@@ -29,6 +32,7 @@ export class ReservationsComponent implements OnInit {
     fromAirportId: null,
     toAirportId: null,
     airlineId: null,
+    type: null
   };
   isCollapsed = true;
   airports: Airport[];
@@ -45,6 +49,9 @@ export class ReservationsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.currentDate = new Date()
+    this.currentDatePlusOne = new Date()
+    this.currentDatePlusOne.setDate(this.currentDatePlusOne.getDate() + 1)
     if (!this.authService.isUserLoggedIn()) this.router.navigate(['/login']);
     if (!this.authService.isAdminLoggedIn())
       this.filter.userId = this.authService.getLoggedInUserId();
@@ -169,8 +176,6 @@ export class ReservationsComponent implements OnInit {
   }
 
   deleteReservation(reservation) {
-    if (!this.authService.isAdminLoggedIn())
-      this.router.navigate(['reservations']);
     $('#deleteReservationModal').modal('show');
     this.reservationForDelete = reservation;
   }
@@ -184,6 +189,7 @@ export class ReservationsComponent implements OnInit {
           this.errorMessage = null;
           this.successMessage = response.message;
           this.getReservations();
+          if (!this.authService.isAdminLoggedIn()) this.usersService.updateReservationCount();
         },
         (error) => {
           $('#deleteReservationModal').modal('hide');
@@ -193,9 +199,34 @@ export class ReservationsComponent implements OnInit {
       );
   }
 
+  checkout(reservation) {
+    $('#checkoutReservationModal').modal('show');
+    this.reservationForCheckout = reservation;
+  }
+
+  checkoutReservationFinally() {
+    this.reservationsService
+    .checkoutReservationById(this.reservationForCheckout.id)
+    .subscribe(
+      (response) => {
+        $('#checkoutReservationModal').modal('hide');
+        this.errorMessage = null;
+        this.successMessage = response.message;
+        this.getReservations();
+        if (!this.authService.isAdminLoggedIn()) this.usersService.updateReservationCount();
+      },
+      (error) => {
+        $('#deleteReservationModal').modal('hide');
+        this.successMessage = null;
+        this.errorMessage = error.error;
+      }
+    );
+  }
+
   hideModal() {
     this.reservationForDelete = null;
     $('#deleteReservationModal').modal('hide');
+    $('#checkoutReservationModal').modal('hide');
   }
 
   resetFilter() {
@@ -206,6 +237,7 @@ export class ReservationsComponent implements OnInit {
       fromAirportId: null,
       toAirportId: null,
       airlineId: null,
+      type: null
     };
     this.getReservations();
   }

@@ -12,7 +12,7 @@ declare var $: any;
 })
 export class UserComponent implements OnInit {
   errorMessage: string;
-  user = new UserResponseDto(-1, null, null, null, null);
+  user = new UserResponseDto(-1, null, null, null, null, null, null);
   userId: number;
 
   constructor(
