@@ -43,5 +43,10 @@ public class ReservationController {
     public ResponseEntity<?> deleteReservationById(@PathVariable("id") Integer id) {
         return reservationService.deleteReservationById(id);
     }
-    
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
+    @DeleteMapping("/{id}/checkout")
+    public ResponseEntity<?> checkoutReservationById(@PathVariable("id") Integer id) {
+        return reservationService.checkoutReservationById(id);
+    }
 }

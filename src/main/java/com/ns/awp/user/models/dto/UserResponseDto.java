@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -23,6 +22,7 @@ public class UserResponseDto {
     private List<ReservationResponseDto> reservations;
     @JsonIgnore
     private List<TicketWithoutUserResponseDto> tickets;
+    private Integer reservationCount;
 
     public UserResponseDto(User user) {
         this.id = user.getId();
@@ -32,5 +32,6 @@ public class UserResponseDto {
         this.userType = user.getUserType();
         //this.reservations = user.getReservations() != null ? user.getReservations().stream().map(ReservationResponseDto::new).collect(Collectors.toList()) : null;
         //this.tickets = user.getTickets() != null ? user.getTickets().stream().map(TicketWithoutUserResponseDto::new).collect(Collectors.toList()) : null;
+        this.reservationCount = user.getReservations().size();
     }
 }

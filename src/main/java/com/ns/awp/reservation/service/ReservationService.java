@@ -60,9 +60,11 @@ public class ReservationService {
                 } else {
                     if (reservationTimestamp.after(departureTicket.getFlightInstance().getFlightDate())) {
                         return ResponseEntity.status(400).body("Reservation cannot be made for a flight in the past.");
-                    } else if (reservationTimestamp.after(new Timestamp(departureTicket.getFlightInstance().getFlightDate().getTime() - TimeUnit.DAYS.toMillis(1)))) {
-                        return ResponseEntity.status(400).body("Reservation cannot be made 24 hours before the flight.");
-                    } else {
+                    }
+//                    else if (reservationTimestamp.after(new Timestamp(departureTicket.getFlightInstance().getFlightDate().getTime() - TimeUnit.DAYS.toMillis(1)))) {
+//                        return ResponseEntity.status(400).body("Reservation cannot be made 24 hours before the flight.");
+//                    }
+                    else {
                         departureTicket.setUser(user);
                     }
                 }
@@ -125,8 +127,7 @@ public class ReservationService {
             }
 
 
-
-            // Reservation timestamp
+            // Update timestamp
             Timestamp updateTimestamp = new Timestamp(new Date().getTime());
 
 
@@ -292,6 +293,11 @@ public class ReservationService {
                     filter.getToAirportId(),
                     filter.getAirlineId()).forEach(reservation -> reservations.add(new ReservationResponseDto(reservation)));
 
+            if (filter.getType() != null && filter.getType().toLowerCase().equals("one-way")) {
+                return ResponseEntity.ok(reservations.stream().filter(r -> r.getReturnTicket() == null));
+            } else if (filter.getType() != null && filter.getType().toLowerCase().equals("return")) {
+                return ResponseEntity.ok(reservations.stream().filter(r -> r.getReturnTicket() != null));
+            }
             return ResponseEntity.ok(reservations);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error.");
@@ -336,6 +342,16 @@ public class ReservationService {
                 return ResponseEntity.status(401).body("You cannot delete another user's reservation.");
             }
 
+            // Delete timestamp
+            Timestamp deleteTimestamp = new Timestamp(new Date().getTime());
+            if (jwtUtil.hasRole("ROLE_REGULAR")) {
+                if (deleteTimestamp.after(reservation.getDepartureTicket().getFlightInstance().getFlightDate())) {
+                    return ResponseEntity.status(400).body("Past reservations cannot be deleted.");
+                } else if (deleteTimestamp.after(new Timestamp(reservation.getDepartureTicket().getFlightInstance().getFlightDate().getTime() - TimeUnit.DAYS.toMillis(1)))) {
+                    return ResponseEntity.status(400).body("Reservation cannot be deleted 24 hours before the flight.");
+                }
+            }
+
             // Delete
             Ticket departureTicket = reservation.getDepartureTicket();
             Ticket returnTicket = reservation.getReturnTicket();
@@ -349,6 +365,46 @@ public class ReservationService {
 
             return ResponseEntity.ok(new JsonMessage("Reservation deleted."));
         } catch (Exception e) {
+            return ResponseEntity.status(500).body("Internal Server Error.");
+        }
+    }
+
+    public ResponseEntity<?> checkoutReservationById(int id) {
+        try {
+            // Validation
+            if (!reservationRepository.existsById(id)) {
+                return ResponseEntity.status(404).body("Reservation with provided id not found.");
+            }
+
+            // Get by id
+            Reservation reservation = reservationRepository.findById(id).get();
+
+            // JWT check
+            User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            if (jwtUtil.hasRole("ROLE_REGULAR") && authenticated.getId() != reservation.getUser().getId()) {
+                return ResponseEntity.status(401).body("You cannot buy another user's reservation.");
+            }
+
+            // But timestamp
+            Timestamp buyTimestamp = new Timestamp(new Date().getTime());
+            if (jwtUtil.hasRole("ROLE_REGULAR")) {
+                if (buyTimestamp.after(reservation.getDepartureTicket().getFlightInstance().getFlightDate())) {
+                    return ResponseEntity.status(400).body("You cannot buy reservation in the past.");
+                }
+            }
+
+            // Buy (Delete)
+            Ticket departureTicket = reservation.getDepartureTicket();
+            Ticket returnTicket = reservation.getReturnTicket();
+            //reservationRepository.deleteById(id);
+            ticketRepository.delete(departureTicket);
+            if (returnTicket != null) {
+                ticketRepository.delete(returnTicket);
+            }
+
+            return ResponseEntity.ok(new JsonMessage("Checkout succeeded."));
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body("Internal Server Error.");
         }
     }

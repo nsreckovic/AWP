@@ -36,6 +36,12 @@ public class UserController {
         return userService.getUserById(id);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'REGULAR')")
+    @GetMapping("/{id}/reservationCount")
+    public ResponseEntity<?> getReservationCountByUserId(@PathVariable("id") Integer id) {
+        return userService.getReservationCountByUserId(id);
+    }
+
     @PreAuthorize("hasAnyRole('REGULAR', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") int id) {

@@ -186,6 +186,28 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public ResponseEntity<?> getReservationCountByUserId(Integer id) {
+        try {
+            // JWT check
+            User authenticated = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            if (jwtUtil.hasRole("ROLE_REGULAR") && authenticated.getId() != id) {
+                return ResponseEntity.status(401).body("You cannot see other users' data.");
+            }
+
+            // Validation
+            if (!userRepository.existsById(id)) {
+                return ResponseEntity.status(404).body("User with provided id not found.");
+            }
+
+            // Get by id
+            User user = userRepository.findById(id).get();
+
+            return ResponseEntity.ok(user.getReservations().size());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Internal Server Error.");
+        }
+    }
+
     public ResponseEntity<?> deleteUserById(int id) {
         try {
             // JWT check
