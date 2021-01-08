@@ -15,7 +15,7 @@ declare var $: any;
 @Component({
   selector: 'app-reservations',
   templateUrl: './reservations.component.html',
-  styleUrls: ['./reservations.component.css']
+  styleUrls: ['./reservations.component.css'],
 })
 export class ReservationsComponent implements OnInit {
   reservations: ReservationResponseDto[];
@@ -28,12 +28,12 @@ export class ReservationsComponent implements OnInit {
     toDate: null,
     fromAirportId: null,
     toAirportId: null,
-    airlineId: null
-  }
+    airlineId: null,
+  };
   isCollapsed = true;
-  airports: Airport[]
-  airlines: Airline[]
-  users: UserResponseDto[]
+  airports: Airport[];
+  airlines: Airline[];
+  users: UserResponseDto[];
 
   constructor(
     public authService: AuthenticationService,
@@ -41,12 +41,13 @@ export class ReservationsComponent implements OnInit {
     private reservationsService: ReservationsService,
     private airlinesService: AirlinesService,
     private airportsService: AirportsService,
-    private usersService: UsersService,
+    private usersService: UsersService
   ) {}
 
   ngOnInit(): void {
     if (!this.authService.isUserLoggedIn()) this.router.navigate(['/login']);
-    if (!this.authService.isAdminLoggedIn()) this.filter.userId = this.authService.getLoggedInUserId()
+    if (!this.authService.isAdminLoggedIn())
+      this.filter.userId = this.authService.getLoggedInUserId();
     this.initData();
   }
 
@@ -73,49 +74,49 @@ export class ReservationsComponent implements OnInit {
 
   fromDateInMillis(dateToValidate): number {
     if (this.dateValidator(dateToValidate)) {
-      if (dateToValidate == null) return null
-      var date = new Date()
-      date.setFullYear(dateToValidate.year)
-      date.setDate(dateToValidate.day)
-      date.setMonth(dateToValidate.month - 1)
-      date.setHours(0)
-      date.setMinutes(0)
-      date.setSeconds(0)
-      return date.getTime()
+      if (dateToValidate == null) return null;
+      var date = new Date();
+      date.setFullYear(dateToValidate.year);
+      date.setDate(dateToValidate.day);
+      date.setMonth(dateToValidate.month - 1);
+      date.setHours(0);
+      date.setMinutes(0);
+      date.setSeconds(0);
+      return date.getTime();
     }
-    return null
+    return null;
   }
 
   toDateInMillis(dateToValidate): number {
     if (this.dateValidator(dateToValidate)) {
-      if (dateToValidate == null) return null
-      var date = new Date()
-      date.setFullYear(dateToValidate.year)
-      date.setDate(dateToValidate.day)
-      date.setMonth(dateToValidate.month - 1)
-      date.setHours(23)
-      date.setMinutes(59)
-      date.setSeconds(59)
-      return date.getTime()
+      if (dateToValidate == null) return null;
+      var date = new Date();
+      date.setFullYear(dateToValidate.year);
+      date.setDate(dateToValidate.day);
+      date.setMonth(dateToValidate.month - 1);
+      date.setHours(23);
+      date.setMinutes(59);
+      date.setSeconds(59);
+      return date.getTime();
     }
-    return null
+    return null;
   }
 
   getReservations() {
-    var from = this.filter.fromDate
-    var to = this.filter.toDate
-    this.filter.fromDate = this.fromDateInMillis(this.filter.fromDate)
-    this.filter.toDate = this.toDateInMillis(this.filter.toDate)
+    var from = this.filter.fromDate;
+    var to = this.filter.toDate;
+    this.filter.fromDate = this.fromDateInMillis(this.filter.fromDate);
+    this.filter.toDate = this.toDateInMillis(this.filter.toDate);
     this.reservations = [];
     this.reservationsService.getAllReservations(this.filter).subscribe(
       (response) => {
-        this.filter.fromDate = from
-        this.filter.toDate = to
+        this.filter.fromDate = from;
+        this.filter.toDate = to;
         this.reservations = response;
       },
       (error) => {
-        this.filter.fromDate = from
-        this.filter.toDate = to
+        this.filter.fromDate = from;
+        this.filter.toDate = to;
         this.errorMessage = error.error;
       }
     );
@@ -131,7 +132,7 @@ export class ReservationsComponent implements OnInit {
         this.errorMessage = error.error;
       }
     );
-  } 
+  }
 
   getAirlines() {
     this.airlines = [];
@@ -162,30 +163,34 @@ export class ReservationsComponent implements OnInit {
   }
 
   editReservation(reservation) {
-    if (!this.authService.isAdminLoggedIn()) this.router.navigate(['reservations'])
+    if (!this.authService.isAdminLoggedIn())
+      this.router.navigate(['reservations']);
     this.router.navigate(['reservations', reservation.id, 'edit']);
   }
 
   deleteReservation(reservation) {
-    if (!this.authService.isAdminLoggedIn()) this.router.navigate(['reservations'])
+    if (!this.authService.isAdminLoggedIn())
+      this.router.navigate(['reservations']);
     $('#deleteReservationModal').modal('show');
     this.reservationForDelete = reservation;
   }
 
   deleteReservationFinally() {
-    this.reservationsService.deleteReservationById(this.reservationForDelete.id).subscribe(
-      (response) => {
-        $('#deleteReservationModal').modal('hide');
-        this.errorMessage = null;
-        this.successMessage = response.message;
-        this.getReservations();
-      },
-      (error) => {
-        $('#deleteReservationModal').modal('hide');
-        this.successMessage = null;
-        this.errorMessage = error.error;
-      }
-    );
+    this.reservationsService
+      .deleteReservationById(this.reservationForDelete.id)
+      .subscribe(
+        (response) => {
+          $('#deleteReservationModal').modal('hide');
+          this.errorMessage = null;
+          this.successMessage = response.message;
+          this.getReservations();
+        },
+        (error) => {
+          $('#deleteReservationModal').modal('hide');
+          this.successMessage = null;
+          this.errorMessage = error.error;
+        }
+      );
   }
 
   hideModal() {
@@ -200,16 +205,16 @@ export class ReservationsComponent implements OnInit {
       toDate: null,
       fromAirportId: null,
       toAirportId: null,
-      airlineId: null
-    }
-    this.getReservations()
+      airlineId: null,
+    };
+    this.getReservations();
   }
 
-  public dismissErrorAlert() {
+  public dismissError() {
     this.errorMessage = null;
   }
 
-  public dismissSuccessAlert() {
+  public dismissSuccess() {
     this.successMessage = null;
   }
 }

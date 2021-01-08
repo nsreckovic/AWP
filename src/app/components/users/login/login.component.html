@@ -7,7 +7,7 @@
     <ngb-alert
       *ngIf="errorMessage"
       [type]="'danger'"
-      (closed)="dismissErrorAlert()"
+      (closed)="dismissError()"
       class="mt-2"
       >{{ errorMessage }}
     </ngb-alert>

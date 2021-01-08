@@ -8,14 +8,13 @@
     <ngb-alert
       *ngIf="errorMessage"
       [type]="'danger'"
-      (closed)="dismissErrorAlert()"
+      (closed)="dismissError()"
       class="mt-2">
       {{ errorMessage }}
     </ngb-alert>
 
     <!-- Form -->
     <form [formGroup]="flightForm" (ngSubmit)="saveFlight(flightForm.value)">
-
       <!-- Flight Id -->
       <div class="form-group mt-1">
         <label for="flightId">Flight Id</label>
@@ -33,6 +32,9 @@
         <div *ngIf="flightId.errors?.minlength" class="invalid-feedback">
           Flight id must be at least 2 characters long.
         </div>
+        <div *ngIf="flightId.errors?.pattern" class="invalid-feedback">
+          Flight id must consist of alphanumeric characters only.
+        </div>
       </div>
 
       <!-- Departure airport -->
@@ -45,8 +47,12 @@
           class="form-control"
           [class.is-invalid]="departureAirportId.errors && (departureAirportId.dirty || departureAirportId.touched)"
           placeholder="Choose departure airport here.">
+          
           <option [ngValue]="null">- Please Choose -</option>
-          <option *ngFor="let a of airports" [ngValue]="a.id" class="text-monospace">
+          <option
+            *ngFor="let a of airports"
+            [ngValue]="a.id"
+            class="text-monospace">
             {{ a.airportId }} - {{ a.place }}
           </option>
         </select>
@@ -73,8 +79,12 @@
           class="form-control"
           [class.is-invalid]="arrivalAirportId.errors && (arrivalAirportId.dirty || arrivalAirportId.touched)"
           placeholder="Choose arrival airport here.">
+          
           <option [ngValue]="null">- Please Choose -</option>
-          <option *ngFor="let a of airports" [ngValue]="a.id" class="text-monospace">
+          <option
+            *ngFor="let a of airports"
+            [ngValue]="a.id"
+            class="text-monospace">
             {{ a.airportId }} - {{ a.place }}
           </option>
         </select>
@@ -99,6 +109,7 @@
           class="form-control"
           [class.is-invalid]="airlineId.errors && (airlineId.dirty || airlineId.touched)"
           placeholder="Choose airline here.">
+          
           <option [ngValue]="null">- Please Choose -</option>
           <option *ngFor="let a of airlines" [ngValue]="a.id">
             {{ a.name }}
@@ -113,7 +124,7 @@
         </div>
       </div>
 
-      <!-- Save button -->
+      <!-- Buttons -->
       <div class="text-center">
         <button
           type="button"

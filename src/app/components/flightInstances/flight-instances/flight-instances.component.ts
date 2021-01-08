@@ -8,7 +8,7 @@ declare var $: any;
 @Component({
   selector: 'app-flight-instances',
   templateUrl: './flight-instances.component.html',
-  styleUrls: ['./flight-instances.component.css']
+  styleUrls: ['./flight-instances.component.css'],
 })
 export class FlightInstancesComponent implements OnInit {
   flightInstances: FlightInstanceResponseDto[];
@@ -53,19 +53,21 @@ export class FlightInstancesComponent implements OnInit {
   }
 
   deleteFlightInstanceFinally() {
-    this.flightInstancesService.deleteFlightInstanceById(this.flightInstanceForDelete.id).subscribe(
-      (response) => {
-        $('#deleteFlightInstanceModal').modal('hide');
-        this.errorMessage = null;
-        this.successMessage = response.message;
-        this.getFlightInstances();
-      },
-      (error) => {
-        $('#deleteFlightInstanceModal').modal('hide');
-        this.successMessage = null;
-        this.errorMessage = error.error;
-      }
-    );
+    this.flightInstancesService
+      .deleteFlightInstanceById(this.flightInstanceForDelete.id)
+      .subscribe(
+        (response) => {
+          $('#deleteFlightInstanceModal').modal('hide');
+          this.errorMessage = null;
+          this.successMessage = response.message;
+          this.getFlightInstances();
+        },
+        (error) => {
+          $('#deleteFlightInstanceModal').modal('hide');
+          this.successMessage = null;
+          this.errorMessage = error.error;
+        }
+      );
   }
 
   hideModal() {
@@ -73,11 +75,11 @@ export class FlightInstancesComponent implements OnInit {
     $('#deleteFlightInstanceModal').modal('hide');
   }
 
-  public dismissErrorAlert() {
+  public dismissError() {
     this.errorMessage = null;
   }
 
-  public dismissSuccessAlert() {
+  public dismissSuccess() {
     this.successMessage = null;
   }
 }

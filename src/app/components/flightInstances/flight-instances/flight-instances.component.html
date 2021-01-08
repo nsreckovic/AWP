@@ -1,7 +1,6 @@
 <div class="row">
   <div class="col-md-1"></div>
   <div class="col-md-10">
-
     <!-- Name and New button -->
     <div class="row">
       <div class="col-6">
@@ -21,7 +20,7 @@
     <ngb-alert
       *ngIf="errorMessage"
       [type]="'danger'"
-      (closed)="dismissErrorAlert()"
+      (closed)="dismissError()"
       class="mt-2">
       {{ errorMessage }}
     </ngb-alert>
@@ -30,7 +29,7 @@
     <ngb-alert
       *ngIf="successMessage"
       [type]="'success'"
-      (closed)="dismissSuccessAlert()"
+      (closed)="dismissSuccess()"
       class="mt-2">
       {{ successMessage }}
     </ngb-alert>
@@ -57,7 +56,7 @@
           <tr *ngFor="let flightInstance of flightInstances">
             <!-- <td>{{ flightInstance.id }}</td> -->
             <td>
-              {{ flightInstance.flightDate | date: "yyyy-MM-dd" }}<br>
+              {{ flightInstance.flightDate | date: "yyyy-MM-dd" }}<br />
               {{ flightInstance.flightDate | date: "HH:mm" }}
             </td>
             <td>
@@ -104,7 +103,7 @@
   </div>
 
   <div class="col-md-1"></div>
-</div> 
+</div>
 
 <!-- Modal -->
 <div

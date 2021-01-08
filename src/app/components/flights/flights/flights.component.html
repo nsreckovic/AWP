@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-2"></div>
   <div class="col-md-8 container-lg">
-
+   
     <!-- Name and New button -->
     <div class="row">
       <div class="col-6">
@@ -21,7 +21,7 @@
     <ngb-alert
       *ngIf="errorMessage"
       [type]="'danger'"
-      (closed)="dismissErrorAlert()"
+      (closed)="dismissError()"
       class="mt-2">
       {{ errorMessage }}
     </ngb-alert>
@@ -30,7 +30,7 @@
     <ngb-alert
       *ngIf="successMessage"
       [type]="'success'"
-      (closed)="dismissSuccessAlert()"
+      (closed)="dismissSuccess()"
       class="mt-2">
       {{ successMessage }}
     </ngb-alert>
@@ -54,10 +54,12 @@
               {{ flight.flightId }}
             </td>
             <td class="whole-word">
-              {{ flight.departureAirport.airportId }} - {{ flight.departureAirport.place }}
+              {{ flight.departureAirport.airportId }} -
+              {{ flight.departureAirport.place }}
             </td>
             <td class="whole-word">
-              {{ flight.arrivalAirport.airportId }} - {{ flight.arrivalAirport.place }}
+              {{ flight.arrivalAirport.airportId }} -
+              {{ flight.arrivalAirport.place }}
             </td>
             <td>
               {{ flight.airline.name }}
@@ -111,7 +113,7 @@
           </button>
         </div>
       </div>
-      
+
     </div>
   </div>
 </div>

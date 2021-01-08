@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-1 col-lg-2"></div>
   <div class="col-md-10 col-lg-8 container-lg">
-
+    
     <!-- Name and New button -->
     <div class="row">
       <div class="col-6">
@@ -21,7 +21,7 @@
     <ngb-alert
       *ngIf="errorMessage"
       [type]="'danger'"
-      (closed)="dismissErrorAlert()"
+      (closed)="dismissError()"
       class="mt-2">
       {{ errorMessage }}
     </ngb-alert>
@@ -30,7 +30,7 @@
     <ngb-alert
       *ngIf="successMessage"
       [type]="'success'"
-      (closed)="dismissSuccessAlert()"
+      (closed)="dismissSuccess()"
       class="mt-2">
       {{ successMessage }}
     </ngb-alert>

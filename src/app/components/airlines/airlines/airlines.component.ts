@@ -8,7 +8,7 @@ declare var $: any;
 @Component({
   selector: 'app-airlines',
   templateUrl: './airlines.component.html',
-  styleUrls: ['./airlines.component.css']
+  styleUrls: ['./airlines.component.css'],
 })
 export class AirlinesComponent implements OnInit {
   airlines: Airline[];
@@ -69,11 +69,11 @@ export class AirlinesComponent implements OnInit {
     $('#deleteAirlineModal').modal('hide');
   }
 
-  public dismissErrorAlert() {
+  public dismissError() {
     this.errorMessage = null;
   }
 
-  public dismissSuccessAlert() {
+  public dismissSuccess() {
     this.successMessage = null;
   }
 

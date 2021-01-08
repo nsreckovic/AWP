@@ -63,7 +63,7 @@ export class AirlineComponent implements OnInit {
 
   buildForm() {
     this.newAirlineForm = this.formBuilder.group({
-      name: [null, [Validators.required, Validators.minLength(2)]],
+      name: [null, [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-Z0-9 ]+$')]],
       link: [null, [Validators.required, this.linkValidation]],
     });
   }

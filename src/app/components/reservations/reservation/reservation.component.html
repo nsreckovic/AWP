@@ -3,8 +3,8 @@
   <div class="col-md-8 col-lg-6 col-xl-4">
     <div class="row">
       <div class="col-9">
-       <h1 *ngIf="!editReservation">New Reservation</h1>
-       <h1 *ngIf="editReservation">Edit Reservation</h1>
+        <h1 *ngIf="!editReservation">New Reservation</h1>
+        <h1 *ngIf="editReservation">Edit Reservation</h1>
       </div>
       <div class="col-3 text-right">
         <button
@@ -22,8 +22,8 @@
     <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed">
       <div class="card">
         <div class="card-body p-4">
-          
           <div class="row">
+            
             <!-- From airport -->
             <div class="col-sm-12 col-md-6">
               <label for="fromAirportId">From airport</label>
@@ -31,8 +31,14 @@
                 id="fromAirportIdSelection"
                 class="form-control"
                 [(ngModel)]="filter.fromAirportId">
-                <option [ngValue]="null" class="text-monospace">- Please Choose -</option>
-                <option *ngFor="let a of airports" [ngValue]="a.id" class="text-monospace">
+                
+                <option [ngValue]="null" class="text-monospace">
+                  - Please Choose -
+                </option>
+                <option
+                  *ngFor="let a of airports"
+                  [ngValue]="a.id"
+                  class="text-monospace">
                   {{ a.airportId }} - {{ a.place }}
                 </option>
               </select>
@@ -45,8 +51,14 @@
                 id="toAirportIdSelection"
                 class="form-control"
                 [(ngModel)]="filter.toAirportId">
-                <option [ngValue]="null" class="text-monospace">- Please Choose -</option>
-                <option *ngFor="let a of airports" [ngValue]="a.id" class="text-monospace">
+                
+                <option [ngValue]="null" class="text-monospace">
+                  - Please Choose -
+                </option>
+                <option
+                  *ngFor="let a of airports"
+                  [ngValue]="a.id"
+                  class="text-monospace">
                   {{ a.airportId }} - {{ a.place }}
                 </option>
               </select>
@@ -102,7 +114,6 @@
           </div>
 
           <div class="row mt-1">
-            
             <!-- Airline -->
             <div class="col-sm-12 col-md-6">
               <label for="airlineId">Airline</label>
@@ -110,6 +121,7 @@
                 id="airlineIdSelection"
                 class="form-control"
                 [(ngModel)]="filter.airlineId">
+
                 <option [ngValue]="null">- Please Choose -</option>
                 <option *ngFor="let a of airlines" [ngValue]="a.id">
                   {{ a.name }}
@@ -136,7 +148,6 @@
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -145,13 +156,15 @@
     <ngb-alert
       *ngIf="errorMessage"
       [type]="'danger'"
-      (closed)="dismissErrorAlert()"
+      (closed)="dismissError()"
       class="mt-2">
       {{ errorMessage }}
     </ngb-alert>
 
     <!-- Form -->
-    <form [formGroup]="reservationForm" (ngSubmit)="saveReservation(reservationForm.value)">
+    <form
+      [formGroup]="reservationForm"
+      (ngSubmit)="saveReservation(reservationForm.value)">
       
       <!-- Departure ticket -->
       <div class="form-group mt-1">
@@ -163,9 +176,18 @@
           class="form-control"
           [class.is-invalid]="departureTicketId.errors && (departureTicketId.dirty || departureTicketId.touched)"
           (change)="getReturnTickets()">
-          <option [ngValue]="null" class="text-monospace">- Please Choose -</option>
-          <option *ngFor="let t of fromTickets" [ngValue]="t.id" class="text-monospace">
-            {{ t.flightInstance.flight.departureAirport.airportId }} -> {{ t.flightInstance.flight.arrivalAirport.airportId }} | {{ t.flightInstance.flightDate | date: "yyyy-MM-dd : HH:mm" }} | {{ t.flightInstance.flight.flightId }} 
+          
+          <option [ngValue]="null" class="text-monospace">
+            - Please Choose -
+          </option>
+          <option
+            *ngFor="let t of fromTickets"
+            [ngValue]="t.id"
+            class="text-monospace">
+            {{ t.flightInstance.flight.departureAirport.airportId }} ->
+            {{ t.flightInstance.flight.arrivalAirport.airportId }} |
+            {{ t.flightInstance.flightDate | date: "yyyy-MM-dd : HH:mm" }} |
+            {{ t.flightInstance.flight.flightId }}
           </option>
         </select>
 
@@ -186,10 +208,21 @@
           class="form-control"
           [class.is-invalid]="returnTicketId.errors && (returnTicketId.dirty || returnTicketId.touched)"
           placeholder="Choose return ticket.">
-          <option [ngValue]="null" class="text-monospace">- Please Choose -</option>
-          <option *ngIf="editReservation" [ngValue]="-1" class="text-monospace">No return ticket</option>
-          <option *ngFor="let t of returnTickets" [ngValue]="t.id" class="text-monospace">
-            {{ t.flightInstance.flight.departureAirport.airportId }} -> {{ t.flightInstance.flight.arrivalAirport.airportId }} | {{ t.flightInstance.flightDate | date: "yyyy-MM-dd : HH:mm" }} | {{ t.flightInstance.flight.flightId }} 
+          
+          <option [ngValue]="null" class="text-monospace">
+            - Please Choose -
+          </option>
+          <option *ngIf="editReservation" [ngValue]="-1" class="text-monospace">
+            No return ticket
+          </option>
+          <option
+            *ngFor="let t of returnTickets"
+            [ngValue]="t.id"
+            class="text-monospace">
+            {{ t.flightInstance.flight.departureAirport.airportId }} ->
+            {{ t.flightInstance.flight.arrivalAirport.airportId }} |
+            {{ t.flightInstance.flightDate | date: "yyyy-MM-dd : HH:mm" }} |
+            {{ t.flightInstance.flight.flightId }}
           </option>
         </select>
       </div>
@@ -197,12 +230,13 @@
       <!-- User -->
       <div *ngIf="authService.isAdminLoggedIn()" class="form-group mt-1">
         <label for="userId">User</label>
-        
+
         <select
           id="userIdSelection"
           formControlName="userId"
           class="form-control"
           [class.is-invalid]="userId.errors && (userId.dirty || userId.touched)">
+          
           <option [ngValue]="null">- Please Choose -</option>
           <option *ngFor="let u of users" [ngValue]="u.id">
             {{ u.username }}
@@ -214,7 +248,7 @@
         </div>
       </div>
 
-      <!-- Save button -->
+      <!-- Buttons -->
       <div class="text-center">
         <button
           type="button"

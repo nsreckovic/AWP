@@ -16,7 +16,7 @@ declare var $: any;
 @Component({
   selector: 'app-tickets',
   templateUrl: './tickets.component.html',
-  styleUrls: ['./tickets.component.css']
+  styleUrls: ['./tickets.component.css'],
 })
 export class TicketsComponent implements OnInit {
   tickets: TicketResponseDto[];
@@ -30,12 +30,12 @@ export class TicketsComponent implements OnInit {
     fromAirportId: null,
     toAirportId: null,
     airlineId: null,
-    fromTicketId: null
-  }
+    fromTicketId: null,
+  };
   isCollapsed = true;
-  airports: Airport[]
-  airlines: Airline[]
-  users: UserResponseDto[]
+  airports: Airport[];
+  airlines: Airline[];
+  users: UserResponseDto[];
 
   constructor(
     public authService: AuthenticationService,
@@ -43,12 +43,13 @@ export class TicketsComponent implements OnInit {
     private ticketsService: TicketsService,
     private airlinesService: AirlinesService,
     private airportsService: AirportsService,
-    private usersService: UsersService,
+    private usersService: UsersService
   ) {}
 
   ngOnInit(): void {
     if (!this.authService.isUserLoggedIn()) this.router.navigate(['/login']);
-    if (!this.authService.isAdminLoggedIn()) this.filter.userId = this.authService.getLoggedInUserId()
+    if (!this.authService.isAdminLoggedIn())
+      this.filter.userId = this.authService.getLoggedInUserId();
     this.initData();
   }
 
@@ -75,49 +76,49 @@ export class TicketsComponent implements OnInit {
 
   fromDateInMillis(dateToValidate): number {
     if (this.dateValidator(dateToValidate)) {
-      if (dateToValidate == null) return null
-      var date = new Date()
-      date.setFullYear(dateToValidate.year)
-      date.setDate(dateToValidate.day)
-      date.setMonth(dateToValidate.month - 1)
-      date.setHours(0)
-      date.setMinutes(0)
-      date.setSeconds(0)
-      return date.getTime()
+      if (dateToValidate == null) return null;
+      var date = new Date();
+      date.setFullYear(dateToValidate.year);
+      date.setDate(dateToValidate.day);
+      date.setMonth(dateToValidate.month - 1);
+      date.setHours(0);
+      date.setMinutes(0);
+      date.setSeconds(0);
+      return date.getTime();
     }
-    return null
+    return null;
   }
 
   toDateInMillis(dateToValidate): number {
     if (this.dateValidator(dateToValidate)) {
-      if (dateToValidate == null) return null
-      var date = new Date()
-      date.setFullYear(dateToValidate.year)
-      date.setDate(dateToValidate.day)
-      date.setMonth(dateToValidate.month - 1)
-      date.setHours(23)
-      date.setMinutes(59)
-      date.setSeconds(59)
-      return date.getTime()
+      if (dateToValidate == null) return null;
+      var date = new Date();
+      date.setFullYear(dateToValidate.year);
+      date.setDate(dateToValidate.day);
+      date.setMonth(dateToValidate.month - 1);
+      date.setHours(23);
+      date.setMinutes(59);
+      date.setSeconds(59);
+      return date.getTime();
     }
-    return null
+    return null;
   }
 
   getTickets() {
-    var from = this.filter.fromDate
-    var to = this.filter.toDate
-    this.filter.fromDate = this.fromDateInMillis(this.filter.fromDate)
-    this.filter.toDate = this.toDateInMillis(this.filter.toDate)
+    var from = this.filter.fromDate;
+    var to = this.filter.toDate;
+    this.filter.fromDate = this.fromDateInMillis(this.filter.fromDate);
+    this.filter.toDate = this.toDateInMillis(this.filter.toDate);
     this.tickets = [];
     this.ticketsService.getAllTickets(this.filter).subscribe(
       (response) => {
-        this.filter.fromDate = from
-        this.filter.toDate = to
+        this.filter.fromDate = from;
+        this.filter.toDate = to;
         this.tickets = response;
       },
       (error) => {
-        this.filter.fromDate = from
-        this.filter.toDate = to
+        this.filter.fromDate = from;
+        this.filter.toDate = to;
         this.errorMessage = error.error;
       }
     );
@@ -133,7 +134,7 @@ export class TicketsComponent implements OnInit {
         this.errorMessage = error.error;
       }
     );
-  } 
+  }
 
   getAirlines() {
     this.airlines = [];
@@ -164,12 +165,12 @@ export class TicketsComponent implements OnInit {
   }
 
   editTicket(ticket) {
-    if (!this.authService.isAdminLoggedIn()) this.router.navigate(['tickets'])
+    if (!this.authService.isAdminLoggedIn()) this.router.navigate(['tickets']);
     this.router.navigate(['tickets', ticket.id, 'edit']);
   }
 
   deleteTicket(ticket) {
-    if (!this.authService.isAdminLoggedIn()) this.router.navigate(['tickets'])
+    if (!this.authService.isAdminLoggedIn()) this.router.navigate(['tickets']);
     $('#deleteTicketModal').modal('show');
     this.ticketForDelete = ticket;
   }
@@ -203,16 +204,16 @@ export class TicketsComponent implements OnInit {
       fromAirportId: null,
       toAirportId: null,
       airlineId: null,
-      fromTicketId: null
-    }
-    this.getTickets()
+      fromTicketId: null,
+    };
+    this.getTickets();
   }
 
-  public dismissErrorAlert() {
+  public dismissError() {
     this.errorMessage = null;
   }
 
-  public dismissSuccessAlert() {
+  public dismissSuccess() {
     this.successMessage = null;
   }
 }

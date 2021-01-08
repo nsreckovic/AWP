@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
       );
   }
 
-  public dismissErrorAlert() {
+  public dismissError() {
     this.errorMessage = null;
   }
 }

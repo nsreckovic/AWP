@@ -59,7 +59,7 @@ export class EditUserComponent implements OnInit {
         username: [null, [Validators.minLength(2), Validators.required]],
         name: [null, [Validators.minLength(2), Validators.required]],
         lastName: [null, [Validators.minLength(2), Validators.required]],
-        password: [null, [Validators.minLength(6), Validators.pattern('.*[0-9].*'), Validators.pattern('.*[A-Za-z].*')]],
+        password: [null, [Validators.minLength(6), Validators.required, Validators.pattern('.*[0-9].*'), Validators.pattern('.*[A-Za-z].*')]],
         newPassword: [null, [Validators.minLength(6), Validators.pattern('.*[0-9].*'), Validators.pattern('.*[A-Za-z].*')]],
       });
     }

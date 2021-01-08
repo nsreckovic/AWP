@@ -108,7 +108,7 @@ export class FlightComponent implements OnInit {
   buildForm() {
     this.flightForm = this.formBuilder.group(
       {
-        flightId: [null, [Validators.required, Validators.minLength(2)]],
+        flightId: [null, [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-Z0-9 ]+$')]],
         departureAirportId: [null, [Validators.required, this.departureAirportValidator]],
         arrivalAirportId: [null, [Validators.required, this.arrivalAirportValidator]],
         airlineId: [null, [Validators.required]],

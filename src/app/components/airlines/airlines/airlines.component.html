@@ -21,7 +21,7 @@
     <ngb-alert
       *ngIf="errorMessage"
       [type]="'danger'"
-      (closed)="dismissErrorAlert()"
+      (closed)="dismissError()"
       class="mt-2">
       {{ errorMessage }}
     </ngb-alert>
@@ -30,7 +30,7 @@
     <ngb-alert
       *ngIf="successMessage"
       [type]="'success'"
-      (closed)="dismissSuccessAlert()"
+      (closed)="dismissSuccess()"
       class="mt-2">
       {{ successMessage }}
     </ngb-alert>
@@ -116,8 +116,7 @@
           </button>
         </div>
       </div>
-      
+
     </div>
   </div>
 </div>
-

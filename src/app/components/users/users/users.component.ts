@@ -74,11 +74,11 @@ export class UsersComponent implements OnInit {
     $('#deleteUserModal').modal('hide');
   }
 
-  dismissErrorAlert() {
+  dismissError() {
     this.errorMessage = null;
   }
 
-  dismissSuccessAlert() {
+  dismissSuccess() {
     this.successMessage = null;
   }
 }

@@ -64,9 +64,9 @@ export class AirportComponent implements OnInit {
 
   buildForm() {
     this.newAirportForm = this.formBuilder.group({
-      airportId: [null, [Validators.required, Validators.minLength(2)]],
-      name: [null, [Validators.required, Validators.minLength(2)]],
-      place: [null, [Validators.required, Validators.minLength(2)]],
+      airportId: [null, [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-Z0-9]+$')]],
+      name: [null, [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-Z0-9 ]+$')]],
+      place: [null, [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-Z0-9]+$')]],
     });
   }
 
