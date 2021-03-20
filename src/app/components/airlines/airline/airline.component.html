@@ -1,0 +1,81 @@
+<div class="row">
+  <div class="col-md-3 col-lg-4"></div>
+  <div class="col-md-6 col-lg-4 container">
+    <h1 class="text-center" *ngIf="!editAirline">New Airline</h1>
+    <h1 class="text-center" *ngIf="editAirline">Edit Airline</h1>
+
+    <!-- Error message -->
+    <ngb-alert
+      *ngIf="errorMessage"
+      [type]="'danger'"
+      (closed)="dismissError()"
+      class="mt-2">
+      {{ errorMessage }}
+    </ngb-alert>
+
+    <!-- Form -->
+    <form
+      [formGroup]="newAirlineForm"
+      (ngSubmit)="saveAirline(newAirlineForm.value)">
+      
+      <!-- Name -->
+      <div class="form-group mt-1">
+        <label for="name">Name</label>
+
+        <input
+          type="url"
+          class="form-control"
+          formControlName="name"
+          [class.is-invalid]="name.errors && (name.dirty || name.touched)"
+          placeholder="Enter the airline name here."/>
+
+        <div *ngIf="name.errors?.required" class="invalid-feedback">
+          Name is required.
+        </div>
+        <div *ngIf="name.errors?.minlength" class="invalid-feedback">
+          Name must be at least 2 characters long.
+        </div>
+        <div *ngIf="name.errors?.pattern" class="invalid-feedback">
+          Name must consist of alphanumeric characters only.
+        </div>
+      </div>
+
+      <!-- Link -->
+      <div class="form-group mt-1">
+        <label for="link">Link</label>
+
+        <input
+          type="text"
+          class="form-control"
+          formControlName="link"
+          [class.is-invalid]="link.errors && (link.dirty || link.touched)"
+          placeholder="Enter the airline link here."/>
+
+        <div *ngIf="link.errors?.required" class="invalid-feedback">
+          Link is required.
+        </div>
+        <div *ngIf="link.errors?.link" class="invalid-feedback">
+          Link must be valid.
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="text-center">
+        <button
+          type="button"
+          class="btn btn-outline-secondary mt-3 mx-1"
+          (click)="cancel()">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary mt-3 mx-1"
+          [disabled]="!newAirlineForm.valid">
+          Save
+        </button>
+      </div>
+      
+    </form>
+  </div>
+  <div class="col-md-3 col-lg-4"></div>
+</div>

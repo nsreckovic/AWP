@@ -1,0 +1,300 @@
+<div class="container">
+  <!-- Name, New and Filter button -->
+  <div class="row">
+    <div class="col-6">
+      <h1>Tickets</h1>
+    </div>
+    <div class="col-6 text-right">
+      <button
+        type="button"
+        class="btn btn-primary mt-2 mr-2"
+        (click)="newTicket()"
+        *ngIf="authService.isAdminLoggedIn()"
+      >
+        New
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary mt-2"
+        (click)="collapse.toggle()"
+        [attr.aria-expanded]="!isCollapsed"
+        aria-controls="collapseExample"
+      >
+        Filter
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed">
+    <div class="card">
+      <div class="card-body p-4">
+        <div class="row">
+          <!-- From airport -->
+          <div class="col-sm-6 col-md-3">
+            <label for="fromAirportId">From airport</label>
+            <select
+              id="fromAirportIdSelection"
+              class="form-control"
+              [(ngModel)]="filter.fromAirportId"
+            >
+              <option [ngValue]="null" class="text-monospace">
+                - Please Choose -
+              </option>
+              <option
+                *ngFor="let a of airports"
+                [ngValue]="a.id"
+                class="text-monospace"
+              >
+                {{ a.airportId }} - {{ a.place }}
+              </option>
+            </select>
+          </div>
+
+          <!-- To airport -->
+          <div class="col-sm-6 col-md-3">
+            <label for="toAirportId">To airport</label>
+            <select
+              id="toAirportIdSelection"
+              class="form-control"
+              [(ngModel)]="filter.toAirportId"
+            >
+              <option [ngValue]="null" class="text-monospace">
+                - Please Choose -
+              </option>
+              <option
+                *ngFor="let a of airports"
+                [ngValue]="a.id"
+                class="text-monospace"
+              >
+                {{ a.airportId }} - {{ a.place }}
+              </option>
+            </select>
+          </div>
+
+          <!-- From date -->
+          <div class="col-sm-6 col-md-3">
+            <label for="fromDate">From</label>
+            <div class="input-group">
+              <input
+                id="fromDate"
+                class="form-control"
+                placeholder="yyyy-mm-dd"
+                name="dp"
+                ngbDatepicker
+                #fd="ngbDatepicker"
+                [(ngModel)]="filter.fromDate"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary p-0"
+                  (click)="fd.toggle()"
+                  type="button"
+                >
+                  <i class="las la-calendar m-1" style="font-size: x-large"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- To date -->
+          <div class="col-sm-6 col-md-3">
+            <label for="toDate">To</label>
+            <div class="input-group">
+              <input
+                id="toDate"
+                class="form-control"
+                placeholder="yyyy-mm-dd"
+                name="dp"
+                ngbDatepicker
+                #td="ngbDatepicker"
+                [(ngModel)]="filter.toDate"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary p-0"
+                  (click)="td.toggle()"
+                  type="button"
+                >
+                  <i class="las la-calendar m-1" style="font-size: x-large"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <!-- Airline -->
+          <div class="col-sm-6 col-md-3">
+            <label for="airlineId">Airline</label>
+            <select
+              id="airlineIdSelection"
+              class="form-control"
+              [(ngModel)]="filter.airlineId"
+            >
+              <option [ngValue]="null">- Please Choose -</option>
+              <option *ngFor="let a of airlines" [ngValue]="a.id">
+                {{ a.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- User -->
+          <div *ngIf="authService.isAdminLoggedIn()" class="col-sm-6 col-md-3">
+            <label for="userId">User</label>
+            <select
+              id="userIdSelection"
+              class="form-control"
+              [(ngModel)]="filter.userId"
+            >
+              <option [ngValue]="null">- Please Choose -</option>
+              <option *ngFor="let u of users" [ngValue]="u.id">
+                {{ u.username }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="row mt-3">
+          <div class="col-sm-12 col-md-6"></div>
+          <div class="col-sm-12 col-md-6 text-right">
+            <button
+              type="button"
+              class="btn btn-outline-secondary mr-2"
+              (click)="resetFilter()"
+            >
+              Reset
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="getTickets()"
+            >
+              Filter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <ngb-alert
+    *ngIf="errorMessage"
+    [type]="'danger'"
+    (closed)="dismissError()"
+    class="mt-2"
+  >
+    {{ errorMessage }}
+  </ngb-alert>
+
+  <!-- Success message -->
+  <ngb-alert
+    *ngIf="successMessage"
+    [type]="'success'"
+    (closed)="dismissSuccess()"
+    class="mt-2"
+  >
+    {{ successMessage }}
+  </ngb-alert>
+
+  <!-- Tickets table -->
+  <div class="table-responsive">
+    <table class="table mt-2 table-hover text-center whole-word">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Id</th>
+          <th>Date</th>
+          <th>Flight Id</th>
+          <th>Departure airport</th>
+          <th>Arrival airport</th>
+          <th>Airline</th>
+          <th>Duration (minutes)</th>
+          <th *ngIf="authService.isAdminLoggedIn()">User</th>
+          <th *ngIf="authService.isAdminLoggedIn()">Edit</th>
+          <th *ngIf="authService.isAdminLoggedIn()">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ticket of tickets; index as i">
+          <th>{{ i + 1 }}</th>
+          <td>{{ ticket.id }}</td>
+          <td>
+            {{ ticket.flightInstance.flightDate | date: "yyyy-MM-dd" }}<br />
+            {{ ticket.flightInstance.flightDate | date: "HH:mm" }}
+          </td>
+          <td>{{ ticket.flightInstance.flight.flightId }}</td>
+          <td>
+            {{ ticket.flightInstance.flight.departureAirport.airportId }} -
+            {{ ticket.flightInstance.flight.departureAirport.place }}
+          </td>
+          <td>
+            {{ ticket.flightInstance.flight.arrivalAirport.airportId }} -
+            {{ ticket.flightInstance.flight.arrivalAirport.place }}
+          </td>
+          <td>
+            {{ ticket.flightInstance.flight.airline.name }}
+          </td>
+          <td>
+            {{ ticket.flightInstance.flightLengthInMinutes }}
+          </td>
+          <td *ngIf="authService.isAdminLoggedIn()">
+            <span *ngIf="ticket.user">{{ ticket.user.username }}</span>
+            <span *ngIf="!ticket.user">N/A</span>
+          </td>
+          <td *ngIf="authService.isAdminLoggedIn()">
+            <button
+              (click)="editTicket(ticket)"
+              class="btn btn-sm btn-outline-secondary mr-1"
+            >
+              Edit
+            </button>
+          </td>
+          <td *ngIf="authService.isAdminLoggedIn()">
+            <button
+              (click)="deleteTicket(ticket)"
+              class="btn btn-sm btn-outline-danger"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="deleteTicketModal"
+  tabindex="-1"
+  aria-labelledby="deleteTicketModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-body">
+        <div class="text-center">
+          Are you sure you want to delete this ticket?
+        </div>
+        <div class="text-center mt-2">
+          <button
+            (click)="hideModal()"
+            class="btn btn-sm btn-outline-secondary mx-1"
+          >
+            Cancel
+          </button>
+          <button
+            (click)="deleteTicketFinally()"
+            class="btn btn-sm btn-danger mx-1"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,128 @@
+<div class="row">
+  <div class="col-md-3 col-lg-4"></div>
+  <div class="col-md-6 col-lg-4">
+    <h1 class="text-center" *ngIf="authService.isAdminLoggedIn()">New User</h1>
+    <h1 class="text-center" *ngIf="!authService.isAdminLoggedIn()">Register</h1>
+
+    <!-- Error message -->
+    <ngb-alert
+      *ngIf="errorMessage"
+      [type]="'danger'"
+      (closed)="dismissError()"
+      class="mt-2"
+      >{{ errorMessage }}
+    </ngb-alert>
+
+    <!-- Register form -->
+    <form
+      [formGroup]="registerForm"
+      (ngSubmit)="registerUser(registerForm.value)"
+    >
+      <!-- Username -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="username"
+          [class.is-invalid]="
+            username.errors && (username.dirty || username.touched)
+          "
+          placeholder="Enter username here."
+        />
+        <div *ngIf="username.errors?.required" class="invalid-feedback">
+          Username is required.
+        </div>
+        <div *ngIf="username.errors?.minlength" class="invalid-feedback">
+          Username must be at least 2 characters long.
+        </div>
+      </div>
+
+      <!-- Name -->
+      <div class="form-group mt-1">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="name"
+          [class.is-invalid]="name.errors && (name.dirty || name.touched)"
+          placeholder="Enter name here."
+        />
+        <div *ngIf="name.errors?.required" class="invalid-feedback">
+          Name is required.
+        </div>
+        <div *ngIf="name.errors?.minlength" class="invalid-feedback">
+          Name must be at least 2 characters long.
+        </div>
+      </div>
+
+      <!-- Last Name -->
+      <div class="form-group mt-1">
+        <label for="lastName">Last name</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="lastName"
+          [class.is-invalid]="
+            lastName.errors && (lastName.dirty || lastName.touched)
+          "
+          placeholder="Enter last name here."
+        />
+        <div *ngIf="lastName.errors?.required" class="invalid-feedback">
+          Last name is required.
+        </div>
+        <div *ngIf="lastName.errors?.minlength" class="invalid-feedback">
+          Last name must be at least 2 characters long.
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group mt-1">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          formControlName="password"
+          [class.is-invalid]="
+            password.errors && (password.dirty || password.touched)
+          "
+          placeholder="Enter password here."
+        />
+        <div *ngIf="password.errors?.required" class="invalid-feedback">
+          Password is required.
+        </div>
+        <div *ngIf="password.errors?.minlength" class="invalid-feedback">
+          Password must be at least 6 characters long.
+        </div>
+        <div *ngIf="password.errors?.pattern" class="invalid-feedback">
+          Password must contain both numbers and letters.
+        </div>
+      </div>
+
+      <!-- Register button -->
+      <div class="text-center">
+        <button
+          type="submit"
+          class="btn btn-primary mt-3"
+          [disabled]="!registerForm.valid"
+          *ngIf="authService.isAdminLoggedIn()"
+        >
+          Save
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary mt-3"
+          [disabled]="!registerForm.valid"
+          *ngIf="!authService.isAdminLoggedIn()"
+        >
+          Register
+        </button>
+      </div>
+    </form>
+
+    <div class="text-center mt-2" *ngIf="!authService.isAdminLoggedIn()">
+      Already have an account? Log In <a routerLink="/login">here</a>.
+    </div>
+  </div>
+  <div class="col-md-3 col-lg-4"></div>
+</div>

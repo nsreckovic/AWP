@@ -1,0 +1,107 @@
+<div class="row">
+  <div class="col-md-3 col-lg-4"></div>
+  <div class="col-md-6 col-lg-4 container-lg">
+    <h1 class="text-center" *ngIf="!editAirport">New Airport</h1>
+    <h1 class="text-center" *ngIf="editAirport">Edit Airport</h1>
+
+    <!-- Error message -->
+    <ngb-alert
+      *ngIf="errorMessage"
+      [type]="'danger'"
+      (closed)="dismissError()"
+      class="mt-2">
+      {{ errorMessage }}
+    </ngb-alert>
+
+    <!-- Form -->
+    <form
+      [formGroup]="newAirportForm"
+      (ngSubmit)="saveAirport(newAirportForm.value)">
+      
+      <!-- AirportId -->
+      <div class="form-group mt-1">
+        <label for="airportId">Airport Id</label>
+
+        <input
+          type="url"
+          class="form-control"
+          formControlName="airportId"
+          [class.is-invalid]="airportId.errors && (airportId.dirty || airportId.touched)"
+          placeholder="Enter the airport id here."/>
+
+        <div *ngIf="airportId.errors?.required" class="invalid-feedback">
+          Airport id is required.
+        </div>
+        <div *ngIf="airportId.errors?.minlength" class="invalid-feedback">
+          Airport id be at least 2 characters long.
+        </div>
+        <div *ngIf="airportId.errors?.pattern" class="invalid-feedback">
+          Airport id must consist of alphanumeric characters only.
+        </div>
+      </div>
+
+      <!-- Name -->
+      <div class="form-group mt-1">
+        <label for="name">Name</label>
+
+        <input
+          type="url"
+          class="form-control"
+          formControlName="name"
+          [class.is-invalid]="name.errors && (name.dirty || name.touched)"
+          placeholder="Enter the airport name here."/>
+
+        <div *ngIf="name.errors?.required" class="invalid-feedback">
+          Name is required.
+        </div>
+        <div *ngIf="name.errors?.minlength" class="invalid-feedback">
+          Name must be at least 2 characters long.
+        </div>
+        <div *ngIf="name.errors?.pattern" class="invalid-feedback">
+          Name must consist of alphanumeric characters only.
+        </div>
+      </div>
+
+      <!-- Place -->
+      <div class="form-group mt-1">
+        <label for="place">Place</label>
+
+        <input
+          type="text"
+          class="form-control"
+          formControlName="place"
+          [class.is-invalid]="place.errors && (place.dirty || place.touched)"
+          placeholder="Enter the place where airport is here."/>
+
+        <div *ngIf="place.errors?.required" class="invalid-feedback">
+          Place is required.
+        </div>
+        <div *ngIf="place.errors?.minlength" class="invalid-feedback">
+          Place must be at least 2 characters long.
+        </div>
+        <div *ngIf="place.errors?.pattern" class="invalid-feedback">
+          Place must consist of alphanumeric characters only.
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="text-center">
+        <button
+          type="button"
+          class="btn btn-outline-secondary mt-3 mx-1"
+          (click)="cancel()">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary mt-3 mx-1"
+          [disabled]="!newAirportForm.valid">
+          Save
+        </button>
+      </div>
+      
+    </form>
+  </div>
+
+  <div class="col-md-3 col-lg-4"></div>
+</div>

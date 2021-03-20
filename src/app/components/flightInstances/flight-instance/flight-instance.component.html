@@ -1,0 +1,174 @@
+<div class="row">
+  <div class="col-md-2 col-lg-3"></div>
+  <div class="col-md-8 col-lg-6">
+    <h1 class="text-center" *ngIf="!editFlightInstance">New Flight Instance</h1>
+    <h1 class="text-center" *ngIf="editFlightInstance">Edit Flight Instance</h1>
+
+    <!-- Error message -->
+    <ngb-alert
+      *ngIf="errorMessage"
+      [type]="'danger'"
+      (closed)="dismissError()"
+      class="mt-2">
+      {{ errorMessage }}
+    </ngb-alert>
+
+    <!-- Form -->
+    <form
+      [formGroup]="flightInstanceForm"
+      (ngSubmit)="saveFlightInstance(flightInstanceForm.value)">
+      
+      <!-- Flight Id -->
+      <div class="form-group">
+        <label for="flightId">Flight Id</label>
+
+        <select
+          id="flightIdSelection"
+          formControlName="flightId"
+          class="form-control"
+          [class.is-invalid]="flightId.errors && (flightId.dirty || flightId.touched)">
+          
+          <option [ngValue]="null" class="text-monospace">
+            - Please Choose -
+          </option>
+          <option
+            *ngFor="let f of flights"
+            [ngValue]="f.id"
+            class="text-monospace">
+            {{ f.departureAirport.airportId }} ->
+            {{ f.arrivalAirport.airportId }} : {{ f.flightId }}
+          </option>
+        </select>
+
+        <div *ngIf="flightId.errors?.required" class="invalid-feedback">
+          Flight Id is required.
+        </div>
+        <div *ngIf="flightId.errors?.minlength" class="invalid-feedback">
+          Flight Id must be at least 2 characters long.
+        </div>
+      </div>
+
+      <!-- Flight date -->
+      <div class="form-group">
+        <label for="flightDate">Flight date</label>
+
+        <div class="input-group">
+          <input
+            class="form-control"
+            placeholder="Date should be in 'yyyy-mm-dd' format."
+            name="dp"
+            formControlName="flightDate"
+            ngbDatepicker
+            #d="ngbDatepicker"
+            [class.is-invalid]="flightDate.errors && (flightDate.dirty || flightDate.touched)"/>
+          
+          <div class="input-group-append">
+            <button
+              class="btn btn-outline-secondary p-0"
+              style="border-top-right-radius: 5px; border-bottom-right-radius: 5px;"
+              (click)="d.toggle()"
+              type="button">
+              <i class="las la-calendar m-1" style="font-size: x-large"></i>
+            </button>
+          </div>
+
+          <div *ngIf="flightDate.errors?.required" class="invalid-feedback">
+            Flight date is required.
+          </div>
+          <div *ngIf="flightDate.errors?.dateInvalid" class="invalid-feedback">
+            Enter a valid date.
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Flight time -->
+        <div class="col-sm-12 col-md-6">
+          <div class="form-group mt-1 row">
+            <div class="col-5 my-auto">Flight time</div>
+
+            <div class="col-7">
+              <ngb-timepicker
+                [class.form-inline]="false"
+                formControlName="flightTime"
+                [class.is-invalid]="flightTime.errors && (flightTime.dirty || flightTime.touched)">
+              </ngb-timepicker>
+            </div>
+
+            <div class="col-12">
+              <div
+                *ngIf="flightTime.errors?.required && (flightTime.dirty || flightTime.touched)"
+                class="text-danger">
+                Flight time is required.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flight length -->
+        <div class="col-sm-12 col-md-6">
+          <div class="form-group mt-1 row">
+            <div class="col-5 my-auto">Flight duration</div>
+
+            <div class="col-7">
+              <ngb-timepicker
+                [class.form-inline]="false"
+                formControlName="flightLengthInMinutes"
+                [class.is-invalid]="flightLengthInMinutes.errors && (flightLengthInMinutes.dirty || flightLengthInMinutes.touched)">
+              </ngb-timepicker>
+            </div>
+
+            <div class="col-12">
+              <div
+                *ngIf="flightLengthInMinutes.errors?.required && (flightLengthInMinutes.dirty || flightLengthInMinutes.touched)"
+                class="text-danger">
+                Flight duration is required.
+              </div>
+              <div
+                *ngIf="flightLengthInMinutes.errors?.lengthInvalid"
+                class="text-danger">
+                Flight cannot be longer than 18 hours and 59 minutes.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ticket count -->
+      <div class="form-group mt-1">
+        <label for="count">Ticket count</label>
+
+        <input
+          type="number"
+          class="form-control"
+          formControlName="count"
+          [class.is-invalid]="count.errors && (count.dirty || count.touched)"
+          placeholder="Enter the maximum ticket count here."/>
+
+        <div *ngIf="count.errors?.required" class="invalid-feedback">
+          Ticket count is required.
+        </div>
+        <div *ngIf="count.errors?.countInvalid" class="invalid-feedback">
+          Ticket count must be greater than 0.
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="text-center">
+        <button
+          type="button"
+          class="btn btn-outline-secondary mt-3 mx-1"
+          (click)="cancel()">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary mt-3 mx-1"
+          [disabled]="!flightInstanceForm.valid">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-2 col-lg-3"></div>
+</div>
